@@ -27,6 +27,10 @@ app.use(bodyParser.urlencoded({ extended: true, limit: "10mb" }));
 app.use(express.json());
 app.use(cors());
 
+if(process.env.NODE_ENV !== 'PRODUCTION') {
+  require('dotenv').config({ path: "e_commerce_backend/.env" })
+}
+
 const server = app.listen(process.env.PORT, ()=>{
   console.log(`Server is running on PORT ${process.env.PORT}`)
 })
