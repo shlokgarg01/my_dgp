@@ -1,7 +1,7 @@
 import axios from 'axios';
 
 const axiosInstance = axios.create({
-  baseURL: 'http://192.168.1.8:4000'
+  baseURL: 'https://my-dgp.onrender.com/'
 });
 
 axiosInstance.interceptors.request.use(async function (config) {
@@ -13,3 +13,6 @@ axiosInstance.interceptors.request.use(async function (config) {
 });
 
 export default axiosInstance;
+
+// local- http://192.168.1.8:4000
+// stag - https://my-dgp.onrender.com/

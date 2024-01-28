@@ -5,6 +5,7 @@
   "main": "my_dgp_backend/index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node my_dgp_backend/index.js",
     "dev": "nodemon my_dgp_backend/index.js"
   },
   "keywords": [],
