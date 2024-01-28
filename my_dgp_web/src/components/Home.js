@@ -128,7 +128,7 @@ export default function Home() {
         service: selectedService,
         serviceName,
         date,
-        hours: selectedTime,
+        hours: selectedTime.value,
         address,
         taxPrice: TAX,
         itemsPrice: getItemPrice(),
