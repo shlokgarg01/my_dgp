@@ -6,7 +6,7 @@ const Enums = require("../utils/Enums");
 
 // get all Redeem Requests -- Admin
 exports.getAllRedeemRequests = catchAsyncErrors(async (req, res, next) => {
-  const redeemRequests = await RedeemRequests.find()
+  let redeemRequests = await RedeemRequests.find()
     .populate("serviceProvider")
     .sort({ createdAt: -1 });
 
@@ -18,7 +18,7 @@ exports.getAllRedeemRequests = catchAsyncErrors(async (req, res, next) => {
 
 // update status of Redeem Request -- Admin
 exports.updateRedeemRequestStatus = catchAsyncErrors(async (req, res, next) => {
-  const status = req.body.status;
+  let status = req.body.status;
   let redeemRequest = await RedeemRequests.findById(req.params.id);
 
   if (!redeemRequest) {
@@ -73,7 +73,7 @@ exports.createRedeemRequest = catchAsyncErrors(async (req, res, next) => {
     );
   }
 
-  const redeemRequest = await RedeemRequests.create({
+  let redeemRequest = await RedeemRequests.create({
     serviceProvider: userId,
     amount: amount,
   });
