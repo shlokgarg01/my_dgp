@@ -1,14 +1,18 @@
 import React, { useEffect } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
-import Colors from "../utils/Colors";
 import { useDispatch, useSelector } from "react-redux";
 import { clearErrors, createBooking } from "../actions/BookingActions";
 import Enums from "../utils/Enums";
-import Loader from './Loader'
+import Loader from "./Loader";
+import LogoHeader from "./components/LogoHeader";
+import Btn from "./components/Btn";
+import "../styles/CheckoutStyles.css";
+import "../styles/ComponentStyles.css";
+import Maps from "../images/google_maps.png";
 
 export default function Checkout() {
   const dispatch = useDispatch();
-  const navigate = useNavigate()
+  const navigate = useNavigate();
   const { error, loading, success } = useSelector((state) => state.booking);
 
   useEffect(() => {
@@ -17,9 +21,9 @@ export default function Checkout() {
       dispatch(clearErrors());
     }
 
-    if(success) {
-      alert("Your booking has been created successfully!")
-      navigate("/")
+    if (success) {
+      alert("Your booking has been created successfully!");
+      navigate("/");
     }
   }, [dispatch, error, success]);
 
@@ -47,87 +51,73 @@ export default function Checkout() {
     dispatch(createBooking(data));
   };
 
+  const Details = ({ heading, data, isTop, isBottom, subHeading }) => (
+    <div
+      className="checkoutDetailsContainer"
+      style={{
+        borderTopRightRadius: isTop ? 7 : 0,
+        borderTopLeftRadius: isTop ? 7 : 0,
+        borderBottomLeftRadius: isBottom ? 7 : 0,
+        borderBottomRightRadius: isBottom ? 7 : 0,
+      }}
+    >
+      <div className="checkoutDetailsHeading">{heading}</div>
+      {subHeading ? (
+        <div>
+          <div className="checkoutDetails">{data}</div>
+          <div id="checkoutDetailsSubHeading">{subHeading}</div>
+        </div>
+      ) : (
+        <div className="checkoutDetails">{data}</div>
+      )}
+    </div>
+  );
+
   return (
-    <div style={{ padding: 25 }}>
+    <div className="container">
       {loading ? (
         <Loader />
       ) : (
-        <>
-          <div
-            style={{
-              fontSize: 28,
-              fontWeight: "bold",
-              textAlign: "center",
-              marginBottom: 16,
-            }}
-          >
-            Order Details
-          </div>
-
-          <div style={styles.packagePricesContainer}>
-            <div style={styles.heading}>Customer Details</div>
-            <div style={{ paddingLeft: 10 }}>
-              <b>Name:</b> {data.name}
-              <br />
-              <b>Email:</b> {data.email}
-              <br />
-              <b>Contact Number:</b> {data.contactNumber}
-              <br />
+        <div className="subContainer">
+          <div>
+            <LogoHeader />
+            <div style={{ width: "90%" }}>
+              {/* @TODO - Add static location on maps here */}
+              <img src={Maps} style={{  width: "110%" }} />
             </div>
-            <br />
 
-            <div style={styles.heading}>Service Details</div>
-            <div style={{ paddingLeft: 10 }}>
-              <b>Service:</b> {data.serviceName}
-              <br />
-              <b>Date & Time:</b> {data.date.slice(0, 15)} for {data.hours}{" "}
-              {data.hours === 1 ? "hr" : "hrs"}
-              <br />
+            <div id="checkoutDetailsParentContainer">
+              <Details isTop={true} heading="Service" data={data.serviceName} />
+              <Details
+                isBottom={true}
+                heading="Date"
+                data={`${data.date.slice(0, 10)}, for ${data.hours} ${
+                  data.hours === 1 ? "hr" : "hrs"
+                }`}
+              />
             </div>
-            <br />
 
-            <div style={styles.heading}>Charges</div>
-            <div style={{ paddingLeft: 10 }}>
-              <b>Prices:</b> ₹ {data.itemsPrice}
-              <br />
-              <b>Tax:</b> ₹ {data.taxPrice}
-              <br />
-              <b>Total Price:</b> ₹ {data.totalPrice}
-              <br />
+            <div id="checkoutDetailsParentContainer">
+              <Details
+                isTop={true}
+                heading="Location"
+                data={params.get("address")}
+              />
+              <Details
+                heading="Customer"
+                data={`${data.name}, ${data.contactNumber}`}
+              />
+              <Details
+                isBottom={true}
+                heading="Fare"
+                data={`₹ ${data.totalPrice}`}
+                subHeading="Total Fare"
+              />
             </div>
           </div>
-
-          <button
-            onClick={submit}
-            style={{
-              width: "80%",
-              backgroundColor: Colors.PRIMARY,
-              color: Colors.WHITE,
-              marginLeft: "10%",
-              borderRadius: 10,
-              border: 0,
-              marginTop: 16,
-              marginBottom: 10,
-            }}
-          >
-            Make Payment
-          </button>
-        </>
+          <Btn onClick={submit} title="Submit & Proceed" />
+        </div>
       )}
     </div>
   );
 }
-
-const styles = {
-  packagePricesContainer: {
-    marginLeft: "5%",
-    width: "90%",
-    boxShadow: `1px 1px 10px ${Colors.GRAY}`,
-    padding: 10,
-    borderRadius: 7,
-  },
-  heading: {
-    fontSize: 17,
-    fontWeight: "bold",
-  },
-};

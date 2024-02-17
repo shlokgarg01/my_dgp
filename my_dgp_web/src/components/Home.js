@@ -1,23 +1,21 @@
 import React, { useState, useEffect } from "react";
-import { IconContext } from "react-icons";
 import { FaSearch } from "react-icons/fa";
 import { GiStopwatch } from "react-icons/gi";
 import Colors from "../utils/Colors";
 import { useDispatch, useSelector } from "react-redux";
 import { clearErrors, getAllServices } from "../actions/ServiceActions";
-import Service from "../utils/Data/Service";
 import Loader from "./Loader";
-import DatePicker from "react-date-picker";
 import { createSearchParams, useNavigate } from "react-router-dom";
 import MapComponent from "./MapComponent";
-import Select from "react-select";
+import Btn from "./components/Btn";
+import InputGroup from "./components/InputGroup";
+import "../styles/ComponentStyles.css";
 
 export default function Home() {
-  const [selectedServiceIndex, setSelectedServiceIndex] = useState(0);
   const [selectedService, setSelectedService] = useState(null);
   const [serviceName, setServiceName] = useState("");
-  const [date, setDate] = useState(new Date() + 1);
-  const [selectedTime, setselectedTime] = useState({ value: "1", label: "1 hr" });
+  const [date, setDate] = useState(new Date().toISOString().substring(0, 10)); // set initial date as today's date
+  const [selectedTime, setselectedTime] = useState(1);
   const [address, setAddress] = useState("");
   const [location, setLocation] = useState({
     lat: 0,
@@ -29,19 +27,6 @@ export default function Home() {
   const navigate = useNavigate();
   const { services, error, loading } = useSelector((state) => state.services);
 
-  const options = [
-    { value: "1", label: "1 hr" },
-    { value: "2", label: "2 hr" },
-    { value: "3", label: "3 hr" },
-    { value: "4", label: "4 hr" },
-    { value: "5", label: "5 hr" },
-    { value: "6", label: "6 hr" },
-    { value: "7", label: "7 hr" },
-    { value: "8", label: "8 hr" },
-    { value: "9", label: "9 hr" },
-    { value: "10", label: "10 hr" },
-  ];
-
   useEffect(() => {
     dispatch(getAllServices());
 
@@ -51,66 +36,80 @@ export default function Home() {
     }
   }, [dispatch, error]);
 
+  useEffect(() => {
+    setSelectedService(services[0]?._id);
+    setServiceName(services[0]?.name);
+  }, [services]);
+
   const handleLocationChange = (newLocation) => setLocation(newLocation);
 
-  const SliderContent = ({ image, title, index }) => (
-    <div
-      onClick={() => setSelectedServiceIndex(index)}
-      style={styles.serviceSliderImageContainer}
-    >
-      <img alt="Services" src={image} style={styles.serviceSliderImage} />
-      <div
-        style={{
-          color: selectedServiceIndex === index ? Colors.PRIMARY : Colors.GRAY,
-          fontWeight: "bold",
-        }}
-      >
-        {title}
-      </div>
-      <div
-        style={{
-          border:
-            selectedServiceIndex === index
-              ? `1px solid ${Colors.PRIMARY}`
-              : null,
-          width: "50%",
-          marginLeft: "25%",
-          borderRadius: 100,
-        }}
-      />
+  const Packages = () => (
+    <div>
+      {services.map((service, index) => (
+        <div
+          key={index}
+          onClick={() => {
+            setSelectedService(service._id);
+            setServiceName(service.name);
+          }}
+          style={{
+            display: "flex",
+            flexDirection: "row",
+            justifyContent: "space-between",
+            alignItems: "center",
+            padding: 13,
+            fontSize: 16,
+            borderRadius: 7,
+            boxShadow:
+              selectedService === service._id
+                ? `1px 1px 4px ${Colors.GRAY}`
+                : null,
+            border:
+              selectedService === service._id
+                ? `1px solid ${Colors.GRAY}`
+                : null,
+          }}
+        >
+          <div style={{ fontWeight: "bold" }}>{service.name}</div>{" "}
+          <div style={{ fontWeight: 700 }}>₹ {service.charges}/hr</div>
+        </div>
+      ))}
     </div>
   );
 
-  const PricesContent = ({ title }) => (
+  const TimeSlider = ({ time }) => (
     <div
-      style={styles.priceContainer}
-      onClick={() => {
-        let a = services.find(
-          (x) => x.name === `${Service[selectedServiceIndex].name} ${title}`
-        );
-
-        setSelectedService(a._id);
-        setServiceName(a.name);
+      onClick={() => setselectedTime(time)}
+      style={{
+        backgroundColor: Colors.WHITE,
+        margin: 10,
+        display: "inline-flex",
+        flexDirection: "column",
+        justifyContent: "center",
+        alignItems: "center",
+        height: 50,
+        width: 50,
+        fontWeight: "bold",
+        fontSize: 17,
+        boxShadow:
+          selectedTime === time ? "0 0 0" : `1px 1px 4px ${Colors.GRAY}`,
+        border: selectedTime === time ? `1px solid ${Colors.DARK_GRAY}` : null,
+        borderRadius: 4,
       }}
     >
-      <div>{title}</div>
-      {loading === false ? (
-        <div>
-          ₹{" "}
-          {
-            services.find(
-              (x) => x.name === `${Service[selectedServiceIndex].name} ${title}`
-            ).charges
-          }
-        </div>
-      ) : null}
+      {time} hr
+      <br />
+      <div style={{ fontSize: 12, color: Colors.GRAY }}>
+        ₹{" "}
+        {time *
+          services.find((service) => service._id === selectedService)?.charges}
+      </div>
     </div>
   );
 
   const getItemPrice = () => {
-    console.log(selectedTime)
     let charges = services.find((x) => x._id === selectedService).charges;
-    return charges * selectedTime.value + TAX;
+    return charges * selectedTime + TAX;
   };
 
   const submit = () => {
@@ -142,7 +141,7 @@ export default function Home() {
       {loading ? (
         <Loader />
       ) : (
-        <>
+        <div style={{ backgroundColor: Colors.WHITE }}>
           <div
             style={{
               height: "310px",
@@ -153,28 +152,19 @@ export default function Home() {
           >
             <div
               style={{
-                marginTop: 16,
-                marginBottom: 10,
-                width: "85%",
-                borderRadius: 4,
-                boxShadow: "0px 0px 7px grey",
-                paddingLeft: 16,
-                display: "flex",
-                flexDirection: "row",
-                alignItems: "center",
+                width: "94%",
+                marginBottom: 16,
               }}
             >
-              <IconContext.Provider value={{ color: Colors.GRAY }}>
-                <FaSearch />
-              </IconContext.Provider>
-              <input
-                type="text"
+              <InputGroup
                 placeholder="Search"
-                style={{ border: 0, paddingLeft: 10, width: "100%" }}
                 onChange={(e) => setAddress(e.target.value)}
+                value={address}
+                type="text"
+                icon={<FaSearch color={Colors.GRAY} />}
+                bgColor={Colors.LIGHT_GRAY}
               />
             </div>
-
             <MapComponent
               style={{ height: 200, width: 200 }}
               handleLocationChange={handleLocationChange}
@@ -196,88 +186,67 @@ export default function Home() {
             Booking photographers & videographers made easy
           </div>
 
-          {/* Services Slider */}
-          <div style={styles.serviceSliderContainer}>
-            <SliderContent
-              image={require("../images/camera.png")}
-              title="Photography"
-              index={0}
+          <div
+            style={{
+              backgroundColor: Colors.LIGHT_GRAY,
+              height: 1,
+              marginTop: 28,
+            }}
+          />
+
+          {/* Date Selection */}
+          <div
+            style={{
+              width: "40%",
+              padding: "0 4px",
+              borderRadius: 7,
+              boxShadow: `1px 1px 4px ${Colors.GRAY}`,
+              marginTop: -31,
+              marginLeft: "55%",
+            }}
+          >
+            <InputGroup
+              value={date}
+              onChange={(e) => setDate(e.target.value)}
+              type="date"
             />
-            <SliderContent
-              image={require("../images/videogrpahy.png")}
-              title="Videography"
-              index={1}
-            />
-            {/* <SliderContent
-          image={require("../images/both.png")}
-          title="Both"
-          index={2}
-        /> */}
+          </div>
+
+          {/* Duration Selection */}
+          <div style={styles.packagePricesContainer}>
+            <div style={styles.packagePriceSubContainer}>
+              <GiStopwatch color={Colors.BLACK} size={25} />
+              <font style={{ fontWeight: "bold", marginLeft: 10 }}>
+                Duration
+              </font>
+            </div>
+
+            <div style={{ overflowX: "auto", whiteSpace: "nowrap" }}>
+              {Array.from({ length: 7 }, (_, index) => index + 1).map(
+                (item) => (
+                  <TimeSlider time={item} />
+                )
+              )}
+            </div>
           </div>
 
           {/* Package Prices */}
           <div style={styles.packagePricesContainer}>
             <div style={styles.packagePriceSubContainer}>
-              <IconContext.Provider value={{ color: Colors.BLACK, size: 25 }}>
-                <GiStopwatch />
-              </IconContext.Provider>
+              {/* <GiStopwatch color={Colors.BLACK} size={25} /> */}
               <font style={{ fontWeight: "bold", marginLeft: 10 }}>
                 Select Package
               </font>
             </div>
 
             <div>
-              <PricesContent title="Regular" />
-              <PricesContent title="Premium" />
+              <Packages />
             </div>
           </div>
 
-          {/* Date & Time Selection */}
-          {selectedService !== null ? (
-            <div style={styles.dateTimeContainer}>
-              <div style={styles.packagePriceSubContainer}>
-                <IconContext.Provider value={{ color: Colors.BLACK, size: 25 }}>
-                  <GiStopwatch />
-                </IconContext.Provider>
-                <font style={{ fontWeight: "bold", marginLeft: 10 }}>
-                  Select Date & Time
-                </font>
-              </div>
-
-              <div style={{ marginTop: 10, marginLeft: 31 }}>
-                <DatePicker
-                  required={true}
-                  value={date}
-                  onChange={(val) => setDate(val)}
-                />
-                <br />
-                <br />
-                <Select
-                  value={selectedTime}
-                  onChange={(val) => setselectedTime(val)}
-                  options={options}
-                />
-              </div>
-            </div>
-          ) : null}
-
           {/* Next Button */}
-          <button
-            onClick={submit}
-            style={{
-              width: "80%",
-              backgroundColor: Colors.PRIMARY,
-              color: Colors.WHITE,
-              marginLeft: "10%",
-              borderRadius: 10,
-              border: 0,
-              marginTop: 16,
-              marginBottom: 10,
-            }}
-          >
-            Next
-          </button>
-        </>
+          <Btn title="Next" onClick={submit} />
+        </div>
       )}
     </div>
   );
@@ -300,9 +269,8 @@ const styles = {
   },
   serviceSliderImage: { height: 40, width: 58 },
   packagePricesContainer: {
-    marginLeft: "5%",
-    width: "90%",
-    boxShadow: `1px 1px 10px ${Colors.GRAY}`,
+    marginLeft: "2.5%",
+    width: "95%",
     padding: 10,
     borderRadius: 7,
   },
@@ -319,6 +287,7 @@ const styles = {
     display: "flex",
     flexDirection: "row",
     alignItems: "center",
+    marginBottom: 13,
   },
   priceContainer: {
     backgroundColor: Colors.PRIMARY,

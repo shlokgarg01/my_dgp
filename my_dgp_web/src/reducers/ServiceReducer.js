@@ -10,6 +10,7 @@ export const ServiceReducer = (state = { services: [] }, action) => {
     case GET_SERVICES_REQUEST:
       return {
         loading: true,
+        services: []
       };
     case GET_SERVICES_SUCCESS:
       return {
@@ -22,6 +23,7 @@ export const ServiceReducer = (state = { services: [] }, action) => {
         ...state,
         loading: false,
         error: action.payload,
+        services: []
       };
     case CLEAR_ERRORS:
       return {

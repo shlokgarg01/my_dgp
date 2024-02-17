@@ -4,6 +4,7 @@ import Home from './components/Home'
 import NotFound from './components/NotFound'
 import UserDetails from './components/UserDetails'
 import Checkout from './components/Checkout'
+import './utils/Variables.css'
 
 export default function App() {
   return (

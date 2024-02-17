@@ -1,0 +1,28 @@
+.checkoutDetails {
+  font-weight: bold;
+  overflow: auto;
+  word-wrap: break-word;
+  width: 80%;
+}
+
+.checkoutDetailsHeading {
+  color: var(--gray-color);
+  margin-right: 19px;
+  width: 20%;
+}
+
+.checkoutDetailsContainer {
+  background-color: var(--white-color);
+  padding: 10px;
+  display: flex;
+  flex-direction: row;
+}
+
+#checkoutDetailsParentContainer {
+  margin: 10px 0 0 0
+}
+
+#checkoutDetailsSubHeading {
+  color: var(--gray-color);
+  font-size: 14px;
+}

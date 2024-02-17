@@ -9,7 +9,13 @@ import { useDispatch, useSelector } from "react-redux";
 import { clearErrors, loginViaOTP } from "../actions/UserActions";
 import { RecaptchaVerifier, signInWithPhoneNumber } from "firebase/auth";
 import { auth } from "../firebase/config";
-import Loader from "./Loader";
+import InputGroup from "./components/InputGroup";
+import LogoHeader from "./components/LogoHeader";
+import Btn from "./components/Btn";
+import { FaPhone } from "react-icons/fa";
+import { MdOutlineMail, MdDriveFileRenameOutline } from "react-icons/md";
+import { AiOutlineLogin } from "react-icons/ai";
+import "../styles/ComponentStyles.css";
 
 export default function UserDetails() {
   const dispatch = useDispatch();
@@ -83,64 +89,76 @@ export default function UserDetails() {
   };
 
   return (
-    <div style={{ paddingTop: 40, paddingLeft: 22, paddingRight: 22 }}>
-      <div style={{ fontSize: 22, fontWeight: "bold", marginBottom: 7 }}>
-        Please enter your details for verification
-      </div>
-      <div style={{ color: Colors.GRAY, lineHeight: 1.1 }}>
-        These details will be used for the order fullfilment and communications.
-        You shall receive an SMS with the verfication code on the below number
-      </div>
+    <div className="container">
+      <div className="subContainer">
+        <div>
+          <LogoHeader />
+          <div
+            style={{
+              fontSize: 22,
+              fontWeight: "bold",
+              marginBottom: 7,
+              textAlign: "center",
+            }}
+          >
+            Please enter your details
+          </div>
+          <div
+            style={{
+              color: Colors.GRAY,
+              lineHeight: 1.3,
+              textAlign: "center",
+              paddingLeft: 25,
+              paddingRight: 25,
+              marginBottom: 25,
+            }}
+          >
+            These details will be used for the order fullfilment and
+            communications.
+          </div>
 
-      <form onSubmit={(e) => e.preventDefault()}>
-        <input
-          placeholder="Your Name"
-          style={{ borderRadius: 7, width: "80%", marginTop: 16 }}
-          value={name}
-          onChange={(e) => setName(e.target.value)}
-        />
-        <input
-          placeholder="Your Email id"
-          style={{ borderRadius: 7, width: "80%", marginTop: 16 }}
-          type="email"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-        />
-        <input
-          placeholder="Your Number"
-          style={{ borderRadius: 7, width: "80%", marginTop: 16 }}
-          type="number"
-          value={contactNumber}
-          onChange={(e) => setContactNumber(e.target.value)}
-        />
+          <form onSubmit={(e) => e.preventDefault()}>
+            <InputGroup
+              icon={
+                <MdDriveFileRenameOutline size={25} color={Colors.DARK_GRAY} />
+              }
+              value={name}
+              onChange={(e) => setName(e.target.value)}
+              placeholder="Your Name"
+            />
+            <InputGroup
+              icon={<MdOutlineMail size={25} color={Colors.DARK_GRAY} />}
+              placeholder="Email id"
+              type="email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+            />
+            <InputGroup
+              icon={<FaPhone size={25} color={Colors.DARK_GRAY} />}
+              placeholder="Contact Number"
+              type="number"
+              value={contactNumber}
+              onChange={(e) => setContactNumber(e.target.value)}
+            />
 
-        {firebaseConfirmation ? (
-          <input
-            placeholder="Enter the OTP"
-            style={{ borderRadius: 7, width: "80%", marginTop: 16 }}
-            type="number"
-            value={otp}
-            onChange={(e) => setOtp(e.target.value)}
-          />
-        ) : null}
+            {firebaseConfirmation ? (
+              <InputGroup
+                icon={<AiOutlineLogin size={25} color={Colors.DARK_GRAY} />}
+                placeholder="Enter the OTP"
+                type="number"
+                value={otp}
+                onChange={(e) => setOtp(e.target.value)}
+              />
+            ) : null}
 
-        <div id="captcha-container"></div>
-        <button
+            <div id="captcha-container"></div>
+          </form>
+        </div>
+        <Btn
           onClick={firebaseConfirmation ? submit : sendOTP}
-          style={{
-            width: "80%",
-            backgroundColor: Colors.PRIMARY,
-            color: Colors.WHITE,
-            marginLeft: "10%",
-            borderRadius: 10,
-            border: 0,
-            marginTop: 16,
-            marginBottom: 10,
-          }}
-        >
-          {firebaseConfirmation ? "Submit" : "Send OTP"}
-        </button>
-      </form>
+          title={firebaseConfirmation ? "Submit" : "Send OTP"}
+        />
+      </div>
     </div>
   );
 }
