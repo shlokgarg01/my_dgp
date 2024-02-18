@@ -9,6 +9,11 @@ import 'react-calendar/dist/Calendar.css';
 // react-leaflet for Maps
 import 'leaflet/dist/leaflet.css';
 
+// Toast messgae styles
+import 'react-custom-alert/dist/index.css';
+
+import { ToastContainer } from 'react-custom-alert';
+
 import React from "react";
 import ReactDOM from "react-dom/client";
 import "./index.css";
@@ -19,6 +24,7 @@ import store from "./store";
 const root = ReactDOM.createRoot(document.getElementById("root"));
 root.render(
   <Provider store={store}>
+    <ToastContainer floatingTime={2000} />
     <App />
   </Provider>
 );

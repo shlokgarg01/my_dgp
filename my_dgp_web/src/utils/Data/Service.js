@@ -1,4 +1,4 @@
-export default [
+export const Service = [
   {
     index: 0,
     name: "Photography"

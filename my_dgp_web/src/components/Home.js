@@ -4,24 +4,50 @@ import { GiStopwatch } from "react-icons/gi";
 import Colors from "../utils/Colors";
 import { useDispatch, useSelector } from "react-redux";
 import { clearErrors, getAllServices } from "../actions/ServiceActions";
-import Loader from "./Loader";
+import LoaderComponent from "./Loader";
 import { createSearchParams, useNavigate } from "react-router-dom";
 import MapComponent from "./MapComponent";
 import Btn from "./components/Btn";
 import InputGroup from "./components/InputGroup";
 import "../styles/ComponentStyles.css";
+import { Service } from "../utils/Data/Service";
+import Sheet from "react-modal-sheet";
+import Picker from "react-scrollable-picker";
+import { Dates, Months, Years } from "../utils/Data/Date";
+import { toast } from "react-custom-alert";
 
 export default function Home() {
+  const [selectedServiceIndex, setSelectedServiceIndex] = useState(0);
+  const [selectedPackageIndex, setSelectedPackageIndex] = useState(0);
   const [selectedService, setSelectedService] = useState(null);
   const [serviceName, setServiceName] = useState("");
-  const [date, setDate] = useState(new Date().toISOString().substring(0, 10)); // set initial date as today's date
   const [selectedTime, setselectedTime] = useState(1);
+  const [selectedMinutes, setselectedMinutes] = useState(10);
   const [address, setAddress] = useState("");
+  const [isBottomSheetOpen, setIsBottomSheetOpen] = useState(false);
+
   const [location, setLocation] = useState({
     lat: 0,
     lng: 0,
   });
-  let TAX = 0;
+  const [date, setDate] = useState({
+    year: new Date().getFullYear().toString(),
+    month: Months.find(
+      (month) =>
+        month.value ===
+        (new Date().getMonth() <= 9
+          ? `0${new Date().getMonth()}`
+          : new Date().getMonth())
+    ).value.toString(),
+    date: new Date().getDate(),
+  });
+  let TAX = 70;
+
+  const dateGroup = {
+    year: Years,
+    month: Months,
+    date: Dates,
+  };
 
   const dispatch = useDispatch();
   const navigate = useNavigate();
@@ -31,7 +57,7 @@ export default function Home() {
     dispatch(getAllServices());
 
     if (error) {
-      alert(error);
+      toast.error(error);
       dispatch(clearErrors());
     }
   }, [dispatch, error]);
@@ -43,39 +69,39 @@ export default function Home() {
 
   const handleLocationChange = (newLocation) => setLocation(newLocation);
 
-  const Packages = () => (
-    <div>
-      {services.map((service, index) => (
-        <div
-          key={index}
-          onClick={() => {
-            setSelectedService(service._id);
-            setServiceName(service.name);
-          }}
-          style={{
-            display: "flex",
-            flexDirection: "row",
-            justifyContent: "space-between",
-            alignItems: "center",
-            padding: 13,
-            fontSize: 16,
-            borderRadius: 7,
-            boxShadow:
-              selectedService === service._id
-                ? `1px 1px 4px ${Colors.GRAY}`
-                : null,
-            border:
-              selectedService === service._id
-                ? `1px solid ${Colors.GRAY}`
-                : null,
-          }}
-        >
-          <div style={{ fontWeight: "bold" }}>{service.name}</div>{" "}
-          <div style={{ fontWeight: 700 }}>₹ {service.charges}/hr</div>
-        </div>
-      ))}
-    </div>
-  );
+  // const Packages = () => (
+  //   <div>
+  //     {services.map((service, index) => (
+  //       <div
+  //         key={index}
+  //         onClick={() => {
+  //           setSelectedService(service._id);
+  //           setServiceName(service.name);
+  //         }}
+  //         style={{
+  //           display: "flex",
+  //           flexDirection: "row",
+  //           justifyContent: "space-between",
+  //           alignItems: "center",
+  //           padding: 13,
+  //           fontSize: 16,
+  //           borderRadius: 7,
+  //           boxShadow:
+  //             selectedService === service._id
+  //               ? `1px 1px 4px ${Colors.LIGHT_GRAY}`
+  //               : null,
+  //           border:
+  //             selectedService === service._id
+  //               ? `1px solid ${Colors.GRAY}`
+  //               : null,
+  //         }}
+  //       >
+  //         <div style={{ fontWeight: 600 }}>{service.name}</div>{" "}
+  //         <div>₹ {service.charges}/hr</div>
+  //       </div>
+  //     ))}
+  //   </div>
+  // );
 
   const TimeSlider = ({ time }) => (
     <div
@@ -92,7 +118,7 @@ export default function Home() {
         fontWeight: "bold",
         fontSize: 17,
         boxShadow:
-          selectedTime === time ? "0 0 0" : `1px 1px 4px ${Colors.GRAY}`,
+          selectedTime === time ? "0 0 0" : `1px 1px 4px ${Colors.LIGHT_GRAY}`,
         border: selectedTime === time ? `1px solid ${Colors.DARK_GRAY}` : null,
         borderRadius: 4,
       }}
@@ -107,17 +133,97 @@ export default function Home() {
     </div>
   );
 
+  const SliderContent = ({ title, index }) => (
+    <div
+      onClick={() => {
+        setSelectedServiceIndex(index);
+
+        let package_name = selectedPackageIndex === 0 ? "Regular" : "Premium";
+        let a = services.find(
+          (service) => service.name === `${Service[index].name} ${package_name}`
+        );
+        setSelectedService(a._id);
+        setServiceName(a.name);
+      }}
+      style={styles.serviceSliderImageContainer}
+    >
+      <div
+        style={{
+          color: selectedServiceIndex === index ? Colors.PRIMARY : Colors.GRAY,
+          fontWeight: "bold",
+        }}
+      >
+        {title}
+      </div>
+      <div
+        style={{
+          border:
+            selectedServiceIndex === index
+              ? `1px solid ${Colors.PRIMARY}`
+              : null,
+          width: "50%",
+          marginLeft: "25%",
+          borderRadius: 100,
+        }}
+      />
+    </div>
+  );
+
+  const PricesContent = ({ title, index }) => (
+    <div
+      style={{
+        display: "flex",
+        flexDirection: "row",
+        justifyContent: "space-between",
+        alignItems: "center",
+        padding: 13,
+        fontSize: 16,
+        borderRadius: 7,
+        marginLeft: 34,
+        boxShadow:
+          selectedPackageIndex === index
+            ? `1px 1px 4px ${Colors.LIGHT_GRAY}`
+            : null,
+        border:
+          selectedPackageIndex === index ? `1px solid ${Colors.GRAY}` : null,
+      }}
+      onClick={() => {
+        let a = services.find(
+          (service) =>
+            service.name === `${Service[selectedServiceIndex].name} ${title}`
+        );
+
+        setSelectedPackageIndex(index);
+        setSelectedService(a._id);
+        setServiceName(a.name);
+      }}
+    >
+      <div>{title}</div>
+      {/* {loading === false ? (
+        <div>
+          ₹{" "}
+          {
+            services.find(
+              (x) => x.name === `${Service[selectedServiceIndex].name} ${title}`
+            ).charges
+          }
+          /hr
+        </div>
+      ) : null} */}
+    </div>
+  );
+
   const getItemPrice = () => {
     let charges = services.find((x) => x._id === selectedService).charges;
-    return charges * selectedTime + TAX;
+    return charges * selectedTime;
   };
 
   const submit = () => {
     if (!address) {
-      alert("Please enter valid address");
+      toast.error("Please enter valid address");
       return;
     } else if (!selectedService) {
-      alert("Plese select a service");
+      toast.error("Plese select a service");
       return;
     }
 
@@ -126,12 +232,12 @@ export default function Home() {
       search: createSearchParams({
         service: selectedService,
         serviceName,
-        date,
-        hours: selectedTime.value,
+        date: `${date.year}-${date.month}-${date.date}`,
+        hours: selectedTime,
         address,
         taxPrice: TAX,
         itemsPrice: getItemPrice(),
-        totalPrice: getItemPrice(),
+        totalPrice: getItemPrice() + TAX,
       }).toString(),
     });
   };
@@ -139,7 +245,7 @@ export default function Home() {
   return (
     <div>
       {loading ? (
-        <Loader />
+        <LoaderComponent />
       ) : (
         <div style={{ backgroundColor: Colors.WHITE }}>
           <div
@@ -186,30 +292,32 @@ export default function Home() {
             Booking photographers & videographers made easy
           </div>
 
-          <div
+          {/* <div
             style={{
-              backgroundColor: Colors.LIGHT_GRAY,
+              backgroundColor: 'red',
               height: 1,
               marginTop: 28,
             }}
-          />
+          /> */}
 
           {/* Date Selection */}
           <div
             style={{
-              width: "40%",
+              width: "25%",
               padding: "0 4px",
               borderRadius: 7,
               boxShadow: `1px 1px 4px ${Colors.GRAY}`,
-              marginTop: -31,
-              marginLeft: "55%",
+              marginTop: 10, // -13
+              // zIndex: 10,
+              marginLeft: "70%",
             }}
           >
-            <InputGroup
-              value={date}
-              onChange={(e) => setDate(e.target.value)}
-              type="date"
-            />
+            <div
+              style={{ textAlign: "center" }}
+              onClick={() => setIsBottomSheetOpen(true)}
+            >
+              {date.year}-{date.month}-{date.date}
+            </div>
           </div>
 
           {/* Duration Selection */}
@@ -222,7 +330,55 @@ export default function Home() {
             </div>
 
             <div style={{ overflowX: "auto", whiteSpace: "nowrap" }}>
-              {Array.from({ length: 7 }, (_, index) => index + 1).map(
+              {/* + - minutes component */}
+              <div
+                style={{
+                  backgroundColor: Colors.WHITE,
+                  margin: 10,
+                  display: "inline-flex",
+                  flexDirection: "column",
+                  justifyContent: "center",
+                  alignItems: "center",
+                  height: 50,
+                  width: 50,
+                  fontWeight: "bold",
+                  fontSize: 17,
+                  boxShadow: `1px 1px 4px ${Colors.LIGHT_GRAY}`,
+                  border: `1px solid ${Colors.DARK_GRAY}`,
+                  borderRadius: 4,
+                }}
+              >
+                <div
+                  style={{
+                    display: "flex",
+                    flexDirection: "row",
+                    justifyContent: "center",
+                    alignItems: "center",
+                    fontSize: 15,
+                  }}
+                >
+                  <div
+                    style={{ marginRight: 1, fontSize: 17 }}
+                    onClick={() =>
+                      selectedMinutes > 10
+                        ? setselectedMinutes(selectedMinutes - 1)
+                        : null
+                    }
+                  >
+                    -
+                  </div>
+                  {selectedMinutes}
+                  <div
+                    style={{ marginLeft: 2, fontSize: 16 }}
+                    onClick={() => setselectedMinutes(selectedMinutes + 1)}
+                  >
+                    +
+                  </div>
+                </div>
+                <div style={{ fontSize: 12, color: Colors.GRAY }}>mins.</div>
+              </div>
+
+              {Array.from({ length: 14 }, (_, index) => index + 1).map(
                 (item) => (
                   <TimeSlider time={item} />
                 )
@@ -231,9 +387,8 @@ export default function Home() {
           </div>
 
           {/* Package Prices */}
-          <div style={styles.packagePricesContainer}>
+          {/* <div style={styles.packagePricesContainer}>
             <div style={styles.packagePriceSubContainer}>
-              {/* <GiStopwatch color={Colors.BLACK} size={25} /> */}
               <font style={{ fontWeight: "bold", marginLeft: 10 }}>
                 Select Package
               </font>
@@ -242,10 +397,58 @@ export default function Home() {
             <div>
               <Packages />
             </div>
+          </div> */}
+
+          {/* Services Slider */}
+          <div style={styles.serviceSliderContainer}>
+            <SliderContent
+              // image={require("../images/camera.png")}
+              title="Photography"
+              index={0}
+            />
+            <SliderContent
+              // image={require("../images/videogrpahy.png")}
+              title="Videography"
+              index={1}
+            />
+          </div>
+
+          {/* Package Prices */}
+          <div style={styles.packagePricesContainer}>
+            <div style={styles.packagePriceSubContainer}>
+              <GiStopwatch color={Colors.BLACK} size={25} />
+              <font style={{ fontWeight: "bold", marginLeft: 10 }}>
+                Select Package
+              </font>
+            </div>
+
+            <div>
+              <PricesContent title="Regular" index={0} />
+              <PricesContent title="Premium" index={1} />
+            </div>
           </div>
 
           {/* Next Button */}
           <Btn title="Next" onClick={submit} />
+
+          <Sheet
+            isOpen={isBottomSheetOpen}
+            onClose={() => setIsBottomSheetOpen(false)}
+            detent="content-height"
+          >
+            <Sheet.Container>
+              <Sheet.Header />
+              <Sheet.Content>
+                <Picker
+                  optionGroups={dateGroup}
+                  valueGroups={date}
+                  onChange={(name, val) => setDate({ ...date, [name]: val })}
+                />
+                <Btn title="Save" onClick={() => setIsBottomSheetOpen(false)} />
+              </Sheet.Content>
+            </Sheet.Container>
+            <Sheet.Backdrop />
+          </Sheet>
         </div>
       )}
     </div>
@@ -273,15 +476,6 @@ const styles = {
     width: "95%",
     padding: 10,
     borderRadius: 7,
-  },
-  dateTimeContainer: {
-    marginLeft: "5%",
-    width: "90%",
-    boxShadow: `1px 1px 10px ${Colors.GRAY}`,
-    padding: 10,
-    borderRadius: 7,
-    marginTop: 10,
-    marginBottom: 10,
   },
   packagePriceSubContainer: {
     display: "flex",

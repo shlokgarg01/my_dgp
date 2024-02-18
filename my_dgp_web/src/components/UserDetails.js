@@ -16,6 +16,8 @@ import { FaPhone } from "react-icons/fa";
 import { MdOutlineMail, MdDriveFileRenameOutline } from "react-icons/md";
 import { AiOutlineLogin } from "react-icons/ai";
 import "../styles/ComponentStyles.css";
+import LoaderComponent from "./Loader";
+import { toast } from "react-custom-alert";
 
 export default function UserDetails() {
   const dispatch = useDispatch();
@@ -23,6 +25,7 @@ export default function UserDetails() {
   const navigate = useNavigate();
 
   const { user, error, isAuthenticated } = useSelector((state) => state.user);
+  const [otpLoading, setOtpLoading] = useState(false);
   const [contactNumber, setContactNumber] = useState();
   const [email, setEmail] = useState("");
   const [name, setName] = useState("");
@@ -31,11 +34,12 @@ export default function UserDetails() {
 
   useEffect(() => {
     if (error) {
-      alert(error);
+      toast.error(error)
       dispatch(clearErrors());
     }
 
     if (isAuthenticated) {
+      setOtpLoading(false)
       navigate({
         pathname: "/checkout",
         search: createSearchParams({
@@ -54,17 +58,18 @@ export default function UserDetails() {
         }).toString(),
       });
     }
+    // eslint-disable-next-line
   }, [dispatch, error, isAuthenticated]);
 
   const sendOTP = async () => {
     if (!name) {
-      alert("Please enter your name");
+      toast.error("Please enter your name");
       return;
     } else if (!email) {
-      alert("Please enter your email");
+      toast.error("Please enter your email");
       return;
     } else if (!contactNumber || contactNumber.length !== 10) {
-      alert("Invalid contact number");
+      toast.error("Invalid contact number");
       return;
     }
 
@@ -81,84 +86,94 @@ export default function UserDetails() {
 
   const submit = async () => {
     try {
+      setOtpLoading(true)
       await firebaseConfirmation.confirm(otp);
       dispatch(loginViaOTP({ name, email, contactNumber }));
     } catch (err) {
-      alert(err);
+      toast.error(error)
     }
   };
 
   return (
-    <div className="container">
-      <div className="subContainer">
-        <div>
-          <LogoHeader />
-          <div
-            style={{
-              fontSize: 22,
-              fontWeight: "bold",
-              marginBottom: 7,
-              textAlign: "center",
-            }}
-          >
-            Please enter your details
+    <div>
+      {otpLoading ? (
+        <LoaderComponent />
+      ) : (
+        <div className="container">
+          <div className="subContainer" style={{ height: "100%" }}>
+            <div>
+              <LogoHeader />
+              <div
+                style={{
+                  fontSize: 22,
+                  fontWeight: "bold",
+                  marginBottom: 7,
+                  textAlign: "center",
+                }}
+              >
+                Please enter your details
+              </div>
+              <div
+                style={{
+                  color: Colors.GRAY,
+                  lineHeight: 1.3,
+                  textAlign: "center",
+                  paddingLeft: 25,
+                  paddingRight: 25,
+                  marginBottom: 25,
+                }}
+              >
+                These details will be used for the order fullfilment and
+                communications.
+              </div>
+
+              <form onSubmit={(e) => e.preventDefault()}>
+                <InputGroup
+                  icon={
+                    <MdDriveFileRenameOutline
+                      size={25}
+                      color={Colors.DARK_GRAY}
+                    />
+                  }
+                  value={name}
+                  onChange={(e) => setName(e.target.value)}
+                  placeholder="Your Name"
+                />
+                <InputGroup
+                  icon={<MdOutlineMail size={25} color={Colors.DARK_GRAY} />}
+                  placeholder="Email id"
+                  type="email"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                />
+                <InputGroup
+                  icon={<FaPhone size={25} color={Colors.DARK_GRAY} />}
+                  placeholder="Contact Number"
+                  type="number"
+                  value={contactNumber}
+                  onChange={(e) => setContactNumber(e.target.value)}
+                />
+
+                {firebaseConfirmation ? (
+                  <InputGroup
+                    icon={<AiOutlineLogin size={25} color={Colors.DARK_GRAY} />}
+                    placeholder="Enter the OTP"
+                    type="number"
+                    value={otp}
+                    onChange={(e) => setOtp(e.target.value)}
+                  />
+                ) : null}
+
+                <div id="captcha-container"></div>
+              </form>
+            </div>
+            <Btn
+              onClick={firebaseConfirmation ? submit : sendOTP}
+              title={firebaseConfirmation ? "Submit" : "Send OTP"}
+            />
           </div>
-          <div
-            style={{
-              color: Colors.GRAY,
-              lineHeight: 1.3,
-              textAlign: "center",
-              paddingLeft: 25,
-              paddingRight: 25,
-              marginBottom: 25,
-            }}
-          >
-            These details will be used for the order fullfilment and
-            communications.
-          </div>
-
-          <form onSubmit={(e) => e.preventDefault()}>
-            <InputGroup
-              icon={
-                <MdDriveFileRenameOutline size={25} color={Colors.DARK_GRAY} />
-              }
-              value={name}
-              onChange={(e) => setName(e.target.value)}
-              placeholder="Your Name"
-            />
-            <InputGroup
-              icon={<MdOutlineMail size={25} color={Colors.DARK_GRAY} />}
-              placeholder="Email id"
-              type="email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-            />
-            <InputGroup
-              icon={<FaPhone size={25} color={Colors.DARK_GRAY} />}
-              placeholder="Contact Number"
-              type="number"
-              value={contactNumber}
-              onChange={(e) => setContactNumber(e.target.value)}
-            />
-
-            {firebaseConfirmation ? (
-              <InputGroup
-                icon={<AiOutlineLogin size={25} color={Colors.DARK_GRAY} />}
-                placeholder="Enter the OTP"
-                type="number"
-                value={otp}
-                onChange={(e) => setOtp(e.target.value)}
-              />
-            ) : null}
-
-            <div id="captcha-container"></div>
-          </form>
         </div>
-        <Btn
-          onClick={firebaseConfirmation ? submit : sendOTP}
-          title={firebaseConfirmation ? "Submit" : "Send OTP"}
-        />
-      </div>
+      )}
     </div>
   );
 }

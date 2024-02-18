@@ -1,14 +1,16 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { clearErrors, createBooking } from "../actions/BookingActions";
 import Enums from "../utils/Enums";
-import Loader from "./Loader";
+import LoaderComponent from "./Loader";
 import LogoHeader from "./components/LogoHeader";
 import Btn from "./components/Btn";
 import "../styles/CheckoutStyles.css";
 import "../styles/ComponentStyles.css";
 import Maps from "../images/google_maps.png";
+import Colors from "../utils/Colors";
+import { toast } from "react-custom-alert";
 
 export default function Checkout() {
   const dispatch = useDispatch();
@@ -17,14 +19,15 @@ export default function Checkout() {
 
   useEffect(() => {
     if (error) {
-      alert(error);
+      toast.error(error);
       dispatch(clearErrors());
     }
 
     if (success) {
-      alert("Your booking has been created successfully!");
+      toast.success("Your booking has been created successfully!");
       navigate("/");
     }
+    // eslint-disable-next-line
   }, [dispatch, error, success]);
 
   let [params] = useSearchParams();
@@ -51,7 +54,7 @@ export default function Checkout() {
     dispatch(createBooking(data));
   };
 
-  const Details = ({ heading, data, isTop, isBottom, subHeading }) => (
+  const Details = ({ heading, data, isTop, isBottom, subHeading, showTax }) => (
     <div
       className="checkoutDetailsContainer"
       style={{
@@ -64,30 +67,60 @@ export default function Checkout() {
       <div className="checkoutDetailsHeading">{heading}</div>
       {subHeading ? (
         <div>
-          <div className="checkoutDetails">{data}</div>
+          <div className="checkoutDetails">
+            {data}
+            {showTax ? (
+              <>
+                <div>₹ {params.get("taxPrice")}</div>
+                <div
+                  style={{
+                    backgroundColor: Colors.BLACK,
+                    height: 1,
+                    marginTop: 4,
+                    marginBottom: 4,
+                  }}
+                />
+                <div>
+                  ₹{" "}
+                  {parseInt(params.get("taxPrice")) +
+                    parseInt(params.get("itemsPrice"))}
+                </div>
+              </>
+            ) : null}
+          </div>
           <div id="checkoutDetailsSubHeading">{subHeading}</div>
         </div>
       ) : (
-        <div className="checkoutDetails">{data}</div>
+        <div className="checkoutDetails">
+          <div>{data}</div>
+        </div>
       )}
     </div>
   );
 
   return (
-    <div className="container">
+    <div className="container" style={{ padding: 0 }}>
       {loading ? (
-        <Loader />
+        <LoaderComponent />
       ) : (
-        <div className="subContainer">
+        <div
+          className="subContainer"
+          style={{ padding: "25px 13px 13px 13px" }}
+        >
           <div>
             <LogoHeader />
             <div style={{ width: "90%" }}>
               {/* @TODO - Add static location on maps here */}
-              <img src={Maps} style={{  width: "110%" }} />
+              <img src={Maps} style={{ width: "110%" }} alt="" />
             </div>
 
             <div id="checkoutDetailsParentContainer">
-              <Details isTop={true} heading="Service" data={data.serviceName} />
+              <Details
+                isTop={true}
+                heading="Service"
+                data={data.serviceName}
+                subHeading="Unlimited photos & video-shoot in between the timings"
+              />
               <Details
                 isBottom={true}
                 heading="Date"
@@ -110,9 +143,17 @@ export default function Checkout() {
               <Details
                 isBottom={true}
                 heading="Fare"
-                data={`₹ ${data.totalPrice}`}
+                data={`₹ ${data.itemsPrice}`}
                 subHeading="Total Fare"
+                showTax={true}
               />
+            </div>
+            <div
+              id="checkoutDetailsSubHeading"
+              style={{ paddingLeft: 10, paddingRight: 10 }}
+            >
+              <b>Note - </b>We will provide you all the raw photos & videos
+              within 24 hrs.
             </div>
           </div>
           <Btn onClick={submit} title="Submit & Proceed" />
