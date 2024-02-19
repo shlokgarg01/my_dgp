@@ -34,12 +34,12 @@ export default function UserDetails() {
 
   useEffect(() => {
     if (error) {
-      toast.error(error)
+      toast.error(error);
       dispatch(clearErrors());
     }
 
     if (isAuthenticated) {
-      setOtpLoading(false)
+      setOtpLoading(false);
       navigate({
         pathname: "/checkout",
         search: createSearchParams({
@@ -73,24 +73,27 @@ export default function UserDetails() {
       return;
     }
 
+    console.log("---------------------");
     const recaptcha = new RecaptchaVerifier(auth, "captcha-container", {
       size: "invisible",
     });
+    console.log("==========================", recaptcha);
     const confirmation = await signInWithPhoneNumber(
       auth,
       `+91${contactNumber}`,
       recaptcha
     );
+    console.log("################################", confirmation);
     setFirebaseConfirmation(confirmation);
   };
 
   const submit = async () => {
     try {
-      setOtpLoading(true)
+      setOtpLoading(true);
       await firebaseConfirmation.confirm(otp);
       dispatch(loginViaOTP({ name, email, contactNumber }));
     } catch (err) {
-      toast.error(error)
+      toast.error(error);
     }
   };
 

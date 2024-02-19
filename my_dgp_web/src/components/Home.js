@@ -15,6 +15,7 @@ import Sheet from "react-modal-sheet";
 import Picker from "react-scrollable-picker";
 import { Dates, Months, Years } from "../utils/Data/Date";
 import { toast } from "react-custom-alert";
+import { IoMdAlarm } from "react-icons/io";
 
 export default function Home() {
   const [selectedServiceIndex, setSelectedServiceIndex] = useState(0);
@@ -35,9 +36,9 @@ export default function Home() {
     month: Months.find(
       (month) =>
         month.value ===
-        (new Date().getMonth() <= 9
-          ? `0${new Date().getMonth()}`
-          : new Date().getMonth())
+        (new Date().getMonth() + 1 <= 9
+          ? `0${new Date().getMonth() + 1}`
+          : new Date().getMonth() + 1)
     ).value.toString(),
     date: new Date().getDate(),
   });
@@ -69,40 +70,6 @@ export default function Home() {
 
   const handleLocationChange = (newLocation) => setLocation(newLocation);
 
-  // const Packages = () => (
-  //   <div>
-  //     {services.map((service, index) => (
-  //       <div
-  //         key={index}
-  //         onClick={() => {
-  //           setSelectedService(service._id);
-  //           setServiceName(service.name);
-  //         }}
-  //         style={{
-  //           display: "flex",
-  //           flexDirection: "row",
-  //           justifyContent: "space-between",
-  //           alignItems: "center",
-  //           padding: 13,
-  //           fontSize: 16,
-  //           borderRadius: 7,
-  //           boxShadow:
-  //             selectedService === service._id
-  //               ? `1px 1px 4px ${Colors.LIGHT_GRAY}`
-  //               : null,
-  //           border:
-  //             selectedService === service._id
-  //               ? `1px solid ${Colors.GRAY}`
-  //               : null,
-  //         }}
-  //       >
-  //         <div style={{ fontWeight: 600 }}>{service.name}</div>{" "}
-  //         <div>₹ {service.charges}/hr</div>
-  //       </div>
-  //     ))}
-  //   </div>
-  // );
-
   const TimeSlider = ({ time }) => (
     <div
       onClick={() => setselectedTime(time)}
@@ -124,12 +91,12 @@ export default function Home() {
       }}
     >
       {time} hr
-      <br />
+      {/* <br />
       <div style={{ fontSize: 12, color: Colors.GRAY }}>
         ₹{" "}
         {time *
           services.find((service) => service._id === selectedService)?.charges}
-      </div>
+      </div> */}
     </div>
   );
 
@@ -199,17 +166,15 @@ export default function Home() {
       }}
     >
       <div>{title}</div>
-      {/* {loading === false ? (
+      {loading === false ? (
         <div>
           ₹{" "}
-          {
-            services.find(
-              (x) => x.name === `${Service[selectedServiceIndex].name} ${title}`
-            ).charges
-          }
+          {services.find(
+            (x) => x.name === `${Service[selectedServiceIndex].name} ${title}`
+          ).charges * selectedTime}
           /hr
         </div>
-      ) : null} */}
+      ) : null}
     </div>
   );
 
@@ -250,7 +215,7 @@ export default function Home() {
         <div style={{ backgroundColor: Colors.WHITE }}>
           <div
             style={{
-              height: "310px",
+              height: "220px",
               display: "flex",
               flexDirection: "column",
               alignItems: "center",
@@ -258,8 +223,9 @@ export default function Home() {
           >
             <div
               style={{
-                width: "94%",
-                marginBottom: 16,
+                width: "100%",
+                marginTop: -16,
+                // marginBottom: 16,
               }}
             >
               <InputGroup
@@ -292,41 +258,61 @@ export default function Home() {
             Booking photographers & videographers made easy
           </div>
 
-          {/* <div
-            style={{
-              backgroundColor: 'red',
-              height: 1,
-              marginTop: 28,
-            }}
-          /> */}
-
-          {/* Date Selection */}
-          <div
-            style={{
-              width: "25%",
-              padding: "0 4px",
-              borderRadius: 7,
-              boxShadow: `1px 1px 4px ${Colors.GRAY}`,
-              marginTop: 10, // -13
-              // zIndex: 10,
-              marginLeft: "70%",
-            }}
-          >
-            <div
-              style={{ textAlign: "center" }}
-              onClick={() => setIsBottomSheetOpen(true)}
-            >
-              {date.year}-{date.month}-{date.date}
-            </div>
+          {/* Services Slider */}
+          <div style={styles.serviceSliderContainer}>
+            {Service.map((service, index) => (
+              <SliderContent
+                // image={require("../images/camera.png")}
+                title={service.name}
+                index={service.index}
+              />
+            ))}
           </div>
 
           {/* Duration Selection */}
           <div style={styles.packagePricesContainer}>
             <div style={styles.packagePriceSubContainer}>
-              <GiStopwatch color={Colors.BLACK} size={25} />
-              <font style={{ fontWeight: "bold", marginLeft: 10 }}>
-                Duration
-              </font>
+              <div style={{ display: "flex", flexDirection: "row" }}>
+                <GiStopwatch color={Colors.BLACK} size={25} />
+                <font style={{ fontWeight: "bold", marginLeft: 10 }}>
+                  Duration
+                </font>
+              </div>
+
+              {/* Date Selection */}
+              <div
+                style={{
+                  width: "16%",
+                  padding: 4,
+                  borderRadius: 7,
+                  boxShadow: `1px 1px 4px ${Colors.GRAY}`,
+                  marginLeft: "55%",
+                }}
+              >
+                <div
+                  style={{
+                    display: "flex",
+                    flexDirection: "column",
+                    alignItems: "center",
+                    justifyContent: "center",
+                  }}
+                  onClick={() => setIsBottomSheetOpen(true)}
+                >
+                  {new Date(`${date.year}-${date.month}-${date.date}`).setHours(
+                    0,
+                    0,
+                    0,
+                    0
+                  ) === new Date().setHours(0, 0, 0, 0) ? (
+                    <>
+                      <IoMdAlarm color={Colors.BLACK} size={25} />
+                      Now
+                    </>
+                  ) : (
+                    `${date.year}-${date.month}-${date.date}`
+                  )}
+                </div>
+              </div>
             </div>
 
             <div style={{ overflowX: "auto", whiteSpace: "nowrap" }}>
@@ -335,12 +321,13 @@ export default function Home() {
                 style={{
                   backgroundColor: Colors.WHITE,
                   margin: 10,
+                  marginTop: 0,
                   display: "inline-flex",
-                  flexDirection: "column",
+                  // flexDirection: "column",
                   justifyContent: "center",
                   alignItems: "center",
                   height: 50,
-                  width: 50,
+                  width: 70,
                   fontWeight: "bold",
                   fontSize: 17,
                   boxShadow: `1px 1px 4px ${Colors.LIGHT_GRAY}`,
@@ -351,14 +338,12 @@ export default function Home() {
                 <div
                   style={{
                     display: "flex",
-                    flexDirection: "row",
-                    justifyContent: "center",
                     alignItems: "center",
-                    fontSize: 15,
+                    fontSize: 17,
                   }}
                 >
                   <div
-                    style={{ marginRight: 1, fontSize: 17 }}
+                    style={{ marginRight: 1, fontSize: 22 }}
                     onClick={() =>
                       selectedMinutes > 10
                         ? setselectedMinutes(selectedMinutes - 1)
@@ -369,48 +354,21 @@ export default function Home() {
                   </div>
                   {selectedMinutes}
                   <div
-                    style={{ marginLeft: 2, fontSize: 16 }}
+                    style={{ marginLeft: 2, fontSize: 22 }}
                     onClick={() => setselectedMinutes(selectedMinutes + 1)}
                   >
                     +
                   </div>
                 </div>
-                <div style={{ fontSize: 12, color: Colors.GRAY }}>mins.</div>
+                {/* <div style={{ fontSize: 12, color: Colors.GRAY }}>mins.</div> */}
               </div>
 
-              {Array.from({ length: 14 }, (_, index) => index + 1).map(
+              {Array.from({ length: 12 }, (_, index) => index + 1).map(
                 (item) => (
                   <TimeSlider time={item} />
                 )
               )}
             </div>
-          </div>
-
-          {/* Package Prices */}
-          {/* <div style={styles.packagePricesContainer}>
-            <div style={styles.packagePriceSubContainer}>
-              <font style={{ fontWeight: "bold", marginLeft: 10 }}>
-                Select Package
-              </font>
-            </div>
-
-            <div>
-              <Packages />
-            </div>
-          </div> */}
-
-          {/* Services Slider */}
-          <div style={styles.serviceSliderContainer}>
-            <SliderContent
-              // image={require("../images/camera.png")}
-              title="Photography"
-              index={0}
-            />
-            <SliderContent
-              // image={require("../images/videogrpahy.png")}
-              title="Videography"
-              index={1}
-            />
           </div>
 
           {/* Package Prices */}
@@ -461,14 +419,18 @@ const styles = {
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-between",
+    overflowX: "auto",
+    whiteSpace: "nowrap",
     paddingTop: 7,
     paddingBottom: 7,
   },
   serviceSliderImageContainer: {
     textAlign: "center",
-    width: "50%", // TODO - make it 33.33 for 3 services
+    whiteSpace: "pre-wrap",
     cursor: "pointer",
     marginBottom: 7,
+    marginRight: 10,
+    width: 100,
   },
   serviceSliderImage: { height: 40, width: 58 },
   packagePricesContainer: {
