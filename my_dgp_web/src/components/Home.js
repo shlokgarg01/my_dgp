@@ -13,7 +13,7 @@ import "../styles/ComponentStyles.css";
 import { Service } from "../utils/Data/Service";
 import Sheet from "react-modal-sheet";
 import Picker from "react-scrollable-picker";
-import { Dates, Months, Years } from "../utils/Data/Date";
+import { Dates, Hours, Months, Years } from "../utils/Data/Date";
 import { toast } from "react-custom-alert";
 import { IoMdAlarm } from "react-icons/io";
 
@@ -45,7 +45,7 @@ export default function Home() {
   let TAX = 70;
 
   const dateGroup = {
-    year: Years,
+    //year: Years,
     month: Months,
     date: Dates,
   };
@@ -75,13 +75,14 @@ export default function Home() {
       onClick={() => setselectedTime(time)}
       style={{
         backgroundColor: Colors.WHITE,
-        margin: 10,
+       //margin: 10,
         display: "inline-flex",
         flexDirection: "column",
         justifyContent: "center",
         alignItems: "center",
         height: 50,
-        width: 50,
+        //width: 50,
+        flex:"0.05  0 50px",
         fontWeight: "bold",
         fontSize: 17,
         boxShadow:
@@ -146,7 +147,7 @@ export default function Home() {
         padding: 13,
         fontSize: 16,
         borderRadius: 7,
-        marginLeft: 34,
+       // marginLeft: 34,
         boxShadow:
           selectedPackageIndex === index
             ? `1px 1px 4px ${Colors.LIGHT_GRAY}`
@@ -255,7 +256,7 @@ export default function Home() {
               fontSize: 14,
             }}
           >
-            Booking photographers & videographers made easy
+            Book photographer & videographers instantly.
           </div>
 
           {/* Services Slider */}
@@ -270,7 +271,7 @@ export default function Home() {
           </div>
 
           {/* Duration Selection */}
-          <div style={styles.packagePricesContainer}>
+          <div style={{...styles.packagePricesContainer,borderBottom: "1px solid grey"}}>
             <div style={styles.packagePriceSubContainer}>
               <div style={{ display: "flex", flexDirection: "row" }}>
                 <GiStopwatch color={Colors.BLACK} size={25} />
@@ -315,19 +316,20 @@ export default function Home() {
               </div>
             </div>
 
-            <div style={{ overflowX: "auto", whiteSpace: "nowrap" }}>
+            <div style={{ overflowX: "auto", whiteSpace: "nowrap", display:"flex",alignItems: "center",gap:"15px"}}>
               {/* + - minutes component */}
               <div
                 style={{
                   backgroundColor: Colors.WHITE,
-                  margin: 10,
+                  //margin: 10,
                   marginTop: 0,
                   display: "inline-flex",
                   // flexDirection: "column",
                   justifyContent: "center",
                   alignItems: "center",
                   height: 50,
-                  width: 70,
+                  //width: 100,
+                  flex:"0.2 0 100px",
                   fontWeight: "bold",
                   fontSize: 17,
                   boxShadow: `1px 1px 4px ${Colors.LIGHT_GRAY}`,
@@ -340,6 +342,8 @@ export default function Home() {
                     display: "flex",
                     alignItems: "center",
                     fontSize: 17,
+                    justifyContent: "space-around",
+                    width: "100%"
                   }}
                 >
                   <div
@@ -376,7 +380,7 @@ export default function Home() {
             <div style={styles.packagePriceSubContainer}>
               <GiStopwatch color={Colors.BLACK} size={25} />
               <font style={{ fontWeight: "bold", marginLeft: 10 }}>
-                Select Package
+                {`Select Service (${serviceName && serviceName.replace('Regular', '')})`}
               </font>
             </div>
 
@@ -387,7 +391,7 @@ export default function Home() {
           </div>
 
           {/* Next Button */}
-          <Btn title="Next" onClick={submit} />
+          <Btn title="Next" onClick={submit} firstScreen={true}/>
 
           <Sheet
             isOpen={isBottomSheetOpen}
@@ -422,7 +426,8 @@ const styles = {
     overflowX: "auto",
     whiteSpace: "nowrap",
     paddingTop: 7,
-    paddingBottom: 7,
+    paddingBottom: 7,    
+    borderBottom: "1px solid grey"
   },
   serviceSliderImageContainer: {
     textAlign: "center",
@@ -434,8 +439,8 @@ const styles = {
   },
   serviceSliderImage: { height: 40, width: 58 },
   packagePricesContainer: {
-    marginLeft: "2.5%",
-    width: "95%",
+    //marginLeft: "2.5%",
+    //width: "95%",
     padding: 10,
     borderRadius: 7,
   },

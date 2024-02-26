@@ -74,3 +74,58 @@ export const Years = [
   { value: "2045", label: "2045" },
   { value: "2046", label: "2046" },
 ];
+
+export const Hours = [
+  { value: "00", label: "00" },
+  { value: "01", label: "01" },
+  { value: "02", label: "02" },
+  { value: "03", label: "03" },
+  { value: "04", label: "04" },
+  { value: "05", label: "05" },
+  { value: "06", label: "06" },
+  { value: "07", label: "07" },
+  { value: "08", label: "08" },
+  { value: "09", label: "09" },
+  { value: "10", label: "10" },
+  { value: "11", label: "11" },
+  { value: "12", label: "12" }
+];
+
+export const AmPm = [
+  { value: "AM", label: "AM" },
+  { value: "PM", label: "PM" }
+];
+
+
+export const generateDatesArray = () => {
+  const currentDate = new Date();
+  const currentDay = currentDate.getDate();
+  const currentMonth = currentDate.getMonth() + 1; // Note: Month starts from 0 (January)
+
+  const dates = [];
+
+  // Loop through the next 31 days
+  for (let i = currentDay; i <= currentDay + 31; i++) {
+    const date = new Date(currentDate.getFullYear(), currentMonth - 1, i);
+    const day = date.getDate();
+    const month = date.toLocaleString('default', { month: 'short' });
+    const formattedDate = `${day} ${month}`;
+
+    // Check if the date is in the future (excluding current date)
+    if (date > currentDate) {
+      dates.push({ value: i, label: formattedDate });
+    }
+  }
+
+  return dates;
+};
+
+
+export const tryDate = generateDatesArray()
+
+export const Minutes = [];
+for (let i = 0; i < 60; i++) {
+  const value = i < 10 ? `0${i}` : `${i}`; // Pad single-digit numbers with leading zero
+  Minutes.push({ value, label: value });
+}
+
