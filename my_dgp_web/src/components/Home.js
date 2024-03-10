@@ -13,7 +13,7 @@ import "../styles/ComponentStyles.css";
 import { Service } from "../utils/Data/Service";
 import Sheet from "react-modal-sheet";
 import Picker from "react-scrollable-picker";
-import { Dates, Hours, Months, Years } from "../utils/Data/Date";
+import { Dates, Hours, Months, AmPm } from "../utils/Data/Date";
 import { toast } from "react-custom-alert";
 import { IoMdAlarm } from "react-icons/io";
 
@@ -41,13 +41,16 @@ export default function Home() {
           : new Date().getMonth() + 1)
     ).value.toString(),
     date: new Date().getDate(),
+    hour: new Date().getHours() <= 9 ? `0${new Date().getHours()}` : `${new Date().getHours()}`,
+    ampm: new Date().toLocaleString('en-US', {timeZone: 'Asia/Kolkata'}).slice(-2)
   });
   let TAX = 70;
 
   const dateGroup = {
-    //year: Years,
-    month: Months,
     date: Dates,
+    month: Months,
+    hour: Hours,
+    ampm: AmPm,
   };
 
   const dispatch = useDispatch();
@@ -75,14 +78,12 @@ export default function Home() {
       onClick={() => setselectedTime(time)}
       style={{
         backgroundColor: Colors.WHITE,
-       //margin: 10,
         display: "inline-flex",
         flexDirection: "column",
         justifyContent: "center",
         alignItems: "center",
         height: 50,
-        //width: 50,
-        flex:"0.05  0 50px",
+        flex: "0.05  0 50px",
         fontWeight: "bold",
         fontSize: 17,
         boxShadow:
@@ -92,12 +93,6 @@ export default function Home() {
       }}
     >
       {time} hr
-      {/* <br />
-      <div style={{ fontSize: 12, color: Colors.GRAY }}>
-        ₹{" "}
-        {time *
-          services.find((service) => service._id === selectedService)?.charges}
-      </div> */}
     </div>
   );
 
@@ -147,7 +142,6 @@ export default function Home() {
         padding: 13,
         fontSize: 16,
         borderRadius: 7,
-       // marginLeft: 34,
         boxShadow:
           selectedPackageIndex === index
             ? `1px 1px 4px ${Colors.LIGHT_GRAY}`
@@ -173,7 +167,6 @@ export default function Home() {
           {services.find(
             (x) => x.name === `${Service[selectedServiceIndex].name} ${title}`
           ).charges * selectedTime}
-          /hr
         </div>
       ) : null}
     </div>
@@ -226,7 +219,6 @@ export default function Home() {
               style={{
                 width: "100%",
                 marginTop: -16,
-                // marginBottom: 16,
               }}
             >
               <InputGroup
@@ -262,16 +254,17 @@ export default function Home() {
           {/* Services Slider */}
           <div style={styles.serviceSliderContainer}>
             {Service.map((service, index) => (
-              <SliderContent
-                // image={require("../images/camera.png")}
-                title={service.name}
-                index={service.index}
-              />
+              <SliderContent title={service.name} index={service.index} />
             ))}
           </div>
 
           {/* Duration Selection */}
-          <div style={{...styles.packagePricesContainer,borderBottom: "1px solid grey"}}>
+          <div
+            style={{
+              ...styles.packagePricesContainer,
+              borderBottom: "1px solid grey",
+            }}
+          >
             <div style={styles.packagePriceSubContainer}>
               <div style={{ display: "flex", flexDirection: "row" }}>
                 <GiStopwatch color={Colors.BLACK} size={25} />
@@ -316,20 +309,25 @@ export default function Home() {
               </div>
             </div>
 
-            <div style={{ overflowX: "auto", whiteSpace: "nowrap", display:"flex",alignItems: "center",gap:"15px"}}>
+            <div
+              style={{
+                overflowX: "auto",
+                whiteSpace: "nowrap",
+                display: "flex",
+                alignItems: "center",
+                gap: "15px",
+              }}
+            >
               {/* + - minutes component */}
               <div
                 style={{
                   backgroundColor: Colors.WHITE,
-                  //margin: 10,
                   marginTop: 0,
                   display: "inline-flex",
-                  // flexDirection: "column",
                   justifyContent: "center",
                   alignItems: "center",
                   height: 50,
-                  //width: 100,
-                  flex:"0.2 0 100px",
+                  flex: "0.2 0 100px",
                   fontWeight: "bold",
                   fontSize: 17,
                   boxShadow: `1px 1px 4px ${Colors.LIGHT_GRAY}`,
@@ -343,7 +341,7 @@ export default function Home() {
                     alignItems: "center",
                     fontSize: 17,
                     justifyContent: "space-around",
-                    width: "100%"
+                    width: "100%",
                   }}
                 >
                   <div
@@ -364,7 +362,6 @@ export default function Home() {
                     +
                   </div>
                 </div>
-                {/* <div style={{ fontSize: 12, color: Colors.GRAY }}>mins.</div> */}
               </div>
 
               {Array.from({ length: 12 }, (_, index) => index + 1).map(
@@ -380,7 +377,9 @@ export default function Home() {
             <div style={styles.packagePriceSubContainer}>
               <GiStopwatch color={Colors.BLACK} size={25} />
               <font style={{ fontWeight: "bold", marginLeft: 10 }}>
-                {`Select Service (${serviceName && serviceName.replace('Regular', '')})`}
+                {`Select Service (${
+                  serviceName && serviceName.replace("Regular", "")
+                })`}
               </font>
             </div>
 
@@ -391,7 +390,7 @@ export default function Home() {
           </div>
 
           {/* Next Button */}
-          <Btn title="Next" onClick={submit} firstScreen={true}/>
+          <Btn title="Next" onClick={submit} firstScreen={true} />
 
           <Sheet
             isOpen={isBottomSheetOpen}
@@ -426,8 +425,8 @@ const styles = {
     overflowX: "auto",
     whiteSpace: "nowrap",
     paddingTop: 7,
-    paddingBottom: 7,    
-    borderBottom: "1px solid grey"
+    paddingBottom: 7,
+    borderBottom: "1px solid grey",
   },
   serviceSliderImageContainer: {
     textAlign: "center",
@@ -439,8 +438,6 @@ const styles = {
   },
   serviceSliderImage: { height: 40, width: 58 },
   packagePricesContainer: {
-    //marginLeft: "2.5%",
-    //width: "95%",
     padding: 10,
     borderRadius: 7,
   },

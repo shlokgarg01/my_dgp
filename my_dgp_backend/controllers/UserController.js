@@ -158,7 +158,6 @@ exports.updateDutyStatus = catchAsyncErrors(async (req, res, next) => {
       useFindAndModify: false,
     }
   );
-  console.log("---------------------------------", status, req.user.name);
 
   res.status(200).json({
     success: true,

@@ -1,0 +1,2 @@
+- For any frontend changes
+- [ ] generate the build locally and upload it to the server manually for this project. Runnung ```npm run build``` on prod server gives some project size error.

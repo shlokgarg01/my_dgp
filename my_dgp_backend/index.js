@@ -28,7 +28,7 @@ app.use(express.json());
 app.use(cors());
 
 if(process.env.NODE_ENV !== 'PRODUCTION') {
-  require('dotenv').config({ path: "e_commerce_backend/.env" })
+  require('dotenv').config({ path: "my_dgp_backend/.env" })
 }
 
 const server = app.listen(process.env.PORT, ()=>{

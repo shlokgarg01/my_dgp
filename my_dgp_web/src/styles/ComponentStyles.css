@@ -10,10 +10,26 @@
   flex-direction: column;
   justify-content: space-between;
   padding-bottom: 25px;
-  background-color: #F5F5F5;
+  background-color: #f5f5f5;
 }
 
 /* Hide scrollbar of the duration section */
 ::-webkit-scrollbar {
-  display: none; 
+  display: none;
+}
+
+.spinner {
+  animation-name: spin;
+  animation-duration: 500ms;
+  animation-iteration-count: infinite;
+  animation-timing-function: linear;
+}
+
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
 }

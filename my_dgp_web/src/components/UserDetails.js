@@ -26,6 +26,7 @@ export default function UserDetails() {
 
   const { user, error, isAuthenticated } = useSelector((state) => state.user);
   const [otpLoading, setOtpLoading] = useState(false);
+  const [loading, setLoading] = useState(false);
   const [contactNumber, setContactNumber] = useState();
   const [email, setEmail] = useState("");
   const [name, setName] = useState("");
@@ -73,17 +74,16 @@ export default function UserDetails() {
       return;
     }
 
-    console.log("---------------------");
+    setLoading(true)
     const recaptcha = new RecaptchaVerifier(auth, "captcha-container", {
       size: "invisible",
     });
-    console.log("==========================", recaptcha);
     const confirmation = await signInWithPhoneNumber(
       auth,
       `+91${contactNumber}`,
       recaptcha
     );
-    console.log("################################", confirmation);
+    setLoading(false)
     setFirebaseConfirmation(confirmation);
   };
 
@@ -173,6 +173,7 @@ export default function UserDetails() {
             <Btn
               onClick={firebaseConfirmation ? submit : sendOTP}
               title={firebaseConfirmation ? "Submit" : "Send OTP"}
+              loading={loading}
             />
           </div>
         </div>

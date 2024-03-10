@@ -1,7 +1,9 @@
 import React from "react";
 import Colors from "../../utils/Colors";
+import "../../styles/ComponentStyles.css";
+import { ReactComponent as Loader } from "./Spinner.svg";
 
-export default function Btn({ title, onClick ,firstScreen}) {
+export default function Btn({ title, onClick, firstScreen, loading }) {
   return (
     <button
       onClick={onClick}
@@ -10,15 +12,15 @@ export default function Btn({ title, onClick ,firstScreen}) {
         height: 40,
         backgroundColor: Colors.PRIMARY,
         color: Colors.WHITE,
-        marginLeft:firstScreen ? "0%" :"5%",
-        borderRadius:firstScreen ?0: 10,
+        marginLeft: firstScreen ? "0%" : "5%",
+        borderRadius: firstScreen ? 0 : 10,
         border: 0,
         marginTop: 25,
         marginBottom: firstScreen? 0:10,
         fontSize: 20
       }}
     >
-      {title}
+      {loading ? <Loader className="spinner" /> : title}
     </button>
   );
 }

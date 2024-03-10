@@ -128,8 +128,6 @@ exports.updateBookingStatus = catchAsyncErrors(async (req, res, next) => {
         { $inc: { amountToBeRedeemed: 10 } },
         { new: true }
       ); // TODO - update the logic to add the amount
-
-      console.log("=======================", redeem)
     }
   } else {
     return next(

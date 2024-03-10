@@ -2,10 +2,6 @@
 import "bootstrap/dist/css/bootstrap.min.css";
 import "bootstrap/dist/js/bootstrap.bundle.min";
 
-// Date Picker
-import 'react-date-picker/dist/DatePicker.css';
-import 'react-calendar/dist/Calendar.css';
-
 // react-leaflet for Maps
 import 'leaflet/dist/leaflet.css';
 
