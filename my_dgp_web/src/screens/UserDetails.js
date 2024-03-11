@@ -9,14 +9,14 @@ import { useDispatch, useSelector } from "react-redux";
 import { clearErrors, loginViaOTP } from "../actions/UserActions";
 import { RecaptchaVerifier, signInWithPhoneNumber } from "firebase/auth";
 import { auth } from "../firebase/config";
-import InputGroup from "./components/InputGroup";
-import LogoHeader from "./components/LogoHeader";
-import Btn from "./components/Btn";
+import InputGroup from "../components/components/InputGroup";
+import LogoHeader from "../components/components/LogoHeader";
+import Btn from "../components/components/Btn";
 import { FaPhone } from "react-icons/fa";
 import { MdOutlineMail, MdDriveFileRenameOutline } from "react-icons/md";
 import { AiOutlineLogin } from "react-icons/ai";
 import "../styles/ComponentStyles.css";
-import LoaderComponent from "./Loader";
+import LoaderComponent from "../components/Loader";
 import { toast } from "react-custom-alert";
 
 export default function UserDetails() {

@@ -3,9 +3,9 @@ import { useNavigate, useSearchParams } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { clearErrors, createBooking } from "../actions/BookingActions";
 import Enums from "../utils/Enums";
-import LoaderComponent from "./Loader";
-import LogoHeader from "./components/LogoHeader";
-import Btn from "./components/Btn";
+import LoaderComponent from "../components/Loader";
+import LogoHeader from "../components/components/LogoHeader";
+import Btn from "../components/components/Btn";
 import "../styles/CheckoutStyles.css";
 import "../styles/ComponentStyles.css";
 import Maps from "../images/google_maps.png";
@@ -52,6 +52,7 @@ export default function Checkout() {
 
   const submit = () => {
     dispatch(createBooking(data));
+    // navigate("/searchingRider")
   };
 
   const Details = ({ heading, data, isTop, isBottom, subHeading, showTax }) => (

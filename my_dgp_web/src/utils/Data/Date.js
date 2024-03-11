@@ -33,18 +33,18 @@ export const Dates = [
 ];
 
 export const Months = [
-  { value: "01", label: "January" },
-  { value: "02", label: "February" },
-  { value: "03", label: "March" },
-  { value: "04", label: "April" },
-  { value: "05", label: "May" },
-  { value: "06", label: "June" },
-  { value: "07", label: "July" },
-  { value: "08", label: "August" },
-  { value: "09", label: "September" },
-  { value: "10", label: "October" },
-  { value: "11", label: "November" },
-  { value: "12", label: "December" },
+  { value: "01", label: "January", abr: "Jan" },
+  { value: "02", label: "February", abr: "Feb" },
+  { value: "03", label: "March", abr: "Mar" },
+  { value: "04", label: "April", abr: "Apr" },
+  { value: "05", label: "May", abr: "May" },
+  { value: "06", label: "June", abr: "Jun" },
+  { value: "07", label: "July", abr: "Jul" },
+  { value: "08", label: "August", abr: "Aug" },
+  { value: "09", label: "September", abr: "Sep" },
+  { value: "10", label: "October", abr: "Oct" },
+  { value: "11", label: "November", abr: "Nov" },
+  { value: "12", label: "December", abr: "Dec" },
 ];
 
 export const Years = [
@@ -90,6 +90,13 @@ export const Hours = [
   { value: "11", label: "11" },
   { value: "12", label: "12" }
 ];
+
+export const Quaters = [
+  {value: "00", label: "00"},
+  {value: "15", label: "15"},
+  {value: "30", label: "30"},
+  {value: "45", label: "45"},
+]
 
 export const AmPm = [
   { value: "AM", label: "AM" },

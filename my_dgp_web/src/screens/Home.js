@@ -4,16 +4,16 @@ import { GiStopwatch } from "react-icons/gi";
 import Colors from "../utils/Colors";
 import { useDispatch, useSelector } from "react-redux";
 import { clearErrors, getAllServices } from "../actions/ServiceActions";
-import LoaderComponent from "./Loader";
+import LoaderComponent from "../components/Loader";
 import { createSearchParams, useNavigate } from "react-router-dom";
-import MapComponent from "./MapComponent";
-import Btn from "./components/Btn";
-import InputGroup from "./components/InputGroup";
+import MapComponent from "../components/MapComponent";
+import Btn from "../components/components/Btn";
+import InputGroup from "../components/components/InputGroup";
 import "../styles/ComponentStyles.css";
 import { Service } from "../utils/Data/Service";
 import Sheet from "react-modal-sheet";
 import Picker from "react-scrollable-picker";
-import { Dates, Hours, Months, AmPm } from "../utils/Data/Date";
+import { Hours, AmPm, Minutes, Months, Quaters } from "../utils/Data/Date";
 import { toast } from "react-custom-alert";
 import { IoMdAlarm } from "react-icons/io";
 
@@ -23,7 +23,8 @@ export default function Home() {
   const [selectedService, setSelectedService] = useState(null);
   const [serviceName, setServiceName] = useState("");
   const [selectedTime, setselectedTime] = useState(1);
-  const [selectedMinutes, setselectedMinutes] = useState(10);
+  const [selectedMinutes, setselectedMinutes] = useState({ minutes: "10" });
+  const [isMinutesSheetOpen, setIsMinutesSheetOpen] = useState(false);
   const [address, setAddress] = useState("");
   const [isBottomSheetOpen, setIsBottomSheetOpen] = useState(false);
 
@@ -32,27 +33,39 @@ export default function Home() {
     lng: 0,
   });
   const [date, setDate] = useState({
-    year: new Date().getFullYear().toString(),
-    month: Months.find(
-      (month) =>
-        month.value ===
-        (new Date().getMonth() + 1 <= 9
-          ? `0${new Date().getMonth() + 1}`
-          : new Date().getMonth() + 1)
-    ).value.toString(),
-    date: new Date().getDate(),
-    hour: new Date().getHours() <= 9 ? `0${new Date().getHours()}` : `${new Date().getHours()}`,
-    ampm: new Date().toLocaleString('en-US', {timeZone: 'Asia/Kolkata'}).slice(-2)
+    date: new Date().toString().slice(4, 15),
+    hour:
+      new Date().getHours() <= 9
+        ? `0${new Date().getHours()}`
+        : `${new Date().getHours()}`,
+    ampm: new Date()
+      .toLocaleString("en-US", { timeZone: "Asia/Kolkata" })
+      .slice(-2),
+    quaters: "00"
   });
   let TAX = 70;
 
+  const getDates = () => {
+    let dates = [];
+
+    for (let i = 1; i <= 7; ++i) {
+      let date = new Date(Date.now() + 3600 * 1000 * 24 * i);
+      dates.push({
+        value: date.toString().slice(4, 15),
+        label: date.toString().slice(4, 10),
+      });
+    }
+    return dates;
+  };
+
   const dateGroup = {
-    date: Dates,
-    month: Months,
+    date: getDates(),
     hour: Hours,
+    quaters: Quaters,
     ampm: AmPm,
   };
 
+  const minutesGroup = { minutes: Minutes };
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const { services, error, loading } = useSelector((state) => state.services);
@@ -186,12 +199,13 @@ export default function Home() {
       return;
     }
 
+    let finalDate = `${date.date.slice(7, 11)}-${Months.find(month => month.abr === date.date.slice(0, 3)).value}-${date.date.slice(4,6)}`
     navigate({
       pathname: "/details",
       search: createSearchParams({
         service: selectedService,
         serviceName,
-        date: `${date.year}-${date.month}-${date.date}`,
+        date: finalDate,
         hours: selectedTime,
         address,
         taxPrice: TAX,
@@ -289,6 +303,7 @@ export default function Home() {
                     flexDirection: "column",
                     alignItems: "center",
                     justifyContent: "center",
+                    textAlign: 'center'
                   }}
                   onClick={() => setIsBottomSheetOpen(true)}
                 >
@@ -303,7 +318,7 @@ export default function Home() {
                       Now
                     </>
                   ) : (
-                    `${date.year}-${date.month}-${date.date}`
+                    `${date.date}`
                   )}
                 </div>
               </div>
@@ -334,6 +349,7 @@ export default function Home() {
                   border: `1px solid ${Colors.DARK_GRAY}`,
                   borderRadius: 4,
                 }}
+                onClick={() => setIsMinutesSheetOpen(true)}
               >
                 <div
                   style={{
@@ -348,16 +364,22 @@ export default function Home() {
                     style={{ marginRight: 1, fontSize: 22 }}
                     onClick={() =>
                       selectedMinutes > 10
-                        ? setselectedMinutes(selectedMinutes - 1)
+                        ? setselectedMinutes({
+                            minutes: selectedMinutes.minutes - 1,
+                          })
                         : null
                     }
                   >
                     -
                   </div>
-                  {selectedMinutes}
+                  {selectedMinutes.minutes}
                   <div
                     style={{ marginLeft: 2, fontSize: 22 }}
-                    onClick={() => setselectedMinutes(selectedMinutes + 1)}
+                    onClick={() =>
+                      setselectedMinutes({
+                        minutes: selectedMinutes.minutes + 1,
+                      })
+                    }
                   >
                     +
                   </div>
@@ -396,6 +418,7 @@ export default function Home() {
             isOpen={isBottomSheetOpen}
             onClose={() => setIsBottomSheetOpen(false)}
             detent="content-height"
+            disableDrag={true}
           >
             <Sheet.Container>
               <Sheet.Header />
@@ -405,7 +428,39 @@ export default function Home() {
                   valueGroups={date}
                   onChange={(name, val) => setDate({ ...date, [name]: val })}
                 />
+                <div style={{ display: 'flex', flexDirection: "row", justifyContent: 'space-evenly' }}>
                 <Btn title="Save" onClick={() => setIsBottomSheetOpen(false)} />
+                <Btn title="Close" onClick={() => setIsBottomSheetOpen(false)} />
+                </div>
+              </Sheet.Content>
+            </Sheet.Container>
+            <Sheet.Backdrop />
+          </Sheet>
+
+          <Sheet
+            isOpen={isMinutesSheetOpen}
+            onClose={() => setIsBottomSheetOpen(false)}
+            detent="content-height"
+            disableDrag={true}
+          >
+            <Sheet.Container>
+              <Sheet.Header />
+              <Sheet.Content>
+                <Picker
+                  optionGroups={minutesGroup}
+                  valueGroups={selectedMinutes}
+                  onChange={(name, val) => setselectedMinutes({ [name]: val })}
+                />
+                <div style={{ display: 'flex', flexDirection: "row", justifyContent: 'space-evenly' }}>
+                <Btn
+                  title="Save"
+                  onClick={() => setIsMinutesSheetOpen(false)}
+                />
+                <Btn
+                  title="Close"
+                  onClick={() => setIsMinutesSheetOpen(false)}
+                />
+                </div>
               </Sheet.Content>
             </Sheet.Container>
             <Sheet.Backdrop />
