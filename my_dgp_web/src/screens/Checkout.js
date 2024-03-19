@@ -23,10 +23,10 @@ export default function Checkout() {
       dispatch(clearErrors());
     }
 
-    // if (success) {
-    //   toast.success("Your booking has been created successfully!");
-    //   navigate("/");
-    // }
+    if (success) {
+      toast.success("Your booking has been created successfully!");
+      navigate("/");
+    }
     // eslint-disable-next-line
   }, [dispatch, error, success]);
 
@@ -52,7 +52,7 @@ export default function Checkout() {
 
   const submit = () => {
     dispatch(createBooking(data));
-    navigate("/searchingRider")
+    // navigate("/searchingRider")
   };
 
   const Details = ({ heading, data, isTop, isBottom, subHeading, showTax }) => (
