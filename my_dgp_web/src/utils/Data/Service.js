@@ -9,7 +9,7 @@ export const Service = [
   },
   {
     index: 2,
-    name: "Photography + Videography",
+    name: "Both",
   },
   // {
   //   index: 2,

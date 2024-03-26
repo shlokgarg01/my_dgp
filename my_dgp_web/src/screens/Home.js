@@ -15,7 +15,12 @@ import Sheet from "react-modal-sheet";
 import Picker from "react-scrollable-picker";
 import { Hours, AmPm, Minutes, Months, Quaters } from "../utils/Data/Date";
 import { toast } from "react-custom-alert";
-import { IoMdAlarm } from "react-icons/io";
+import { IoMdAlarm, IoMdClose } from "react-icons/io";
+import {
+  MdOutlineAddAPhoto,
+  MdOutlineVideocam,
+  MdOutlineVideoCameraFront,
+} from "react-icons/md";
 
 export default function Home() {
   const [selectedServiceIndex, setSelectedServiceIndex] = useState(0);
@@ -28,21 +33,25 @@ export default function Home() {
   const [address, setAddress] = useState("");
   const [isBottomSheetOpen, setIsBottomSheetOpen] = useState(false);
 
+  const currentTime = () => {
+    return {
+      date: new Date().toString().slice(4, 15),
+      hour:
+        new Date().getHours() % 12 <= 9
+          ? `0${new Date().getHours() % 12}`
+          : `${new Date().getHours() % 12}`,
+      ampm: new Date()
+        .toLocaleString("en-US", { timeZone: "Asia/Kolkata" })
+        .slice(-2),
+      quaters: "00",
+    }
+  };
+
   const [location, setLocation] = useState({
     lat: 0,
     lng: 0,
   });
-  const [date, setDate] = useState({
-    date: new Date().toString().slice(4, 15),
-    hour:
-      new Date().getHours() <= 9
-        ? `0${new Date().getHours()}`
-        : `${new Date().getHours()}`,
-    ampm: new Date()
-      .toLocaleString("en-US", { timeZone: "Asia/Kolkata" })
-      .slice(-2),
-    quaters: "00"
-  });
+  const [date, setDate] = useState(currentTime());
   let TAX = 70;
 
   const getDates = () => {
@@ -109,7 +118,7 @@ export default function Home() {
     </div>
   );
 
-  const SliderContent = ({ title, index }) => (
+  const SliderContent = ({ title, index, icon }) => (
     <div
       onClick={() => {
         setSelectedServiceIndex(index);
@@ -123,6 +132,7 @@ export default function Home() {
       }}
       style={styles.serviceSliderImageContainer}
     >
+      {icon}
       <div
         style={{
           color: selectedServiceIndex === index ? Colors.PRIMARY : Colors.GRAY,
@@ -199,7 +209,9 @@ export default function Home() {
       return;
     }
 
-    let finalDate = `${date.date.slice(7, 11)}-${Months.find(month => month.abr === date.date.slice(0, 3)).value}-${date.date.slice(4,6)}`
+    let finalDate = `${date.date.slice(7, 11)}-${
+      Months.find((month) => month.abr === date.date.slice(0, 3)).value
+    }-${date.date.slice(4, 6)}`;
     navigate({
       pathname: "/details",
       search: createSearchParams({
@@ -268,9 +280,46 @@ export default function Home() {
           {/* Services Slider */}
           <div style={styles.serviceSliderContainer}>
             {Service.map((service, index) => (
-              <SliderContent title={service.name} index={service.index} />
+              <SliderContent
+                title={service.name}
+                index={service.index}
+                icon={
+                  index === 0 ? (
+                    <MdOutlineAddAPhoto
+                      size={25}
+                      color={
+                        selectedServiceIndex === service.index
+                          ? Colors.PRIMARY
+                          : Colors.GRAY
+                      }
+                    />
+                  ) : index === 1 ? (
+                    <MdOutlineVideocam
+                      size={25}
+                      color={
+                        selectedServiceIndex === service.index
+                          ? Colors.PRIMARY
+                          : Colors.GRAY
+                      }
+                    />
+                  ) : (
+                    <MdOutlineVideoCameraFront
+                      size={25}
+                      color={
+                        selectedServiceIndex === service.index
+                          ? Colors.PRIMARY
+                          : Colors.GRAY
+                      }
+                    />
+                  )
+                }
+              />
             ))}
           </div>
+
+          {/* <h5 style={{ marginLeft: 10, marginTop: 10 }}>
+            Service - {serviceName}
+          </h5> */}
 
           {/* Duration Selection */}
           <div
@@ -279,12 +328,25 @@ export default function Home() {
               borderBottom: "1px solid grey",
             }}
           >
-            <div style={styles.packagePriceSubContainer}>
-              <div style={{ display: "flex", flexDirection: "row" }}>
+            <div
+              style={{
+                ...styles.packagePriceSubContainer,
+                alignItems: "flex-start",
+              }}
+            >
+              <div style={{ display: "flex" }}>
                 <GiStopwatch color={Colors.BLACK} size={25} />
-                <font style={{ fontWeight: "bold", marginLeft: 10 }}>
-                  Duration
-                </font>
+                <div>
+                  <div
+                    style={{ fontWeight: "bold", marginLeft: 10, fontSize: 18 }}
+                  >
+                    Select service duration
+                  </div>
+                  <div style={{ color: Colors.GRAY }}>
+                    You can book a service for the timing as per your need
+                    (minnimum 1 minute to maximum time as you wish)
+                  </div>
+                </div>
               </div>
 
               {/* Date Selection */}
@@ -294,7 +356,6 @@ export default function Home() {
                   padding: 4,
                   borderRadius: 7,
                   boxShadow: `1px 1px 4px ${Colors.GRAY}`,
-                  marginLeft: "55%",
                 }}
               >
                 <div
@@ -303,7 +364,7 @@ export default function Home() {
                     flexDirection: "column",
                     alignItems: "center",
                     justifyContent: "center",
-                    textAlign: 'center'
+                    textAlign: "center",
                   }}
                   onClick={() => setIsBottomSheetOpen(true)}
                 >
@@ -372,7 +433,7 @@ export default function Home() {
                   >
                     -
                   </div>
-                  {selectedMinutes.minutes}
+                  00:{selectedMinutes.minutes}
                   <div
                     style={{ marginLeft: 2, fontSize: 22 }}
                     onClick={() =>
@@ -400,7 +461,7 @@ export default function Home() {
               <GiStopwatch color={Colors.BLACK} size={25} />
               <font style={{ fontWeight: "bold", marginLeft: 10 }}>
                 {`Select Service (${
-                  serviceName && serviceName.replace("Regular", "")
+                  serviceName && serviceName.replace(" Regular", "")
                 })`}
               </font>
             </div>
@@ -412,7 +473,7 @@ export default function Home() {
           </div>
 
           {/* Next Button */}
-          <Btn title="Next" onClick={submit} firstScreen={true} />
+          <Btn title="Proceed" onClick={submit} firstScreen={true} />
 
           <Sheet
             isOpen={isBottomSheetOpen}
@@ -423,14 +484,48 @@ export default function Home() {
             <Sheet.Container>
               <Sheet.Header />
               <Sheet.Content>
-                <Picker
-                  optionGroups={dateGroup}
-                  valueGroups={date}
-                  onChange={(name, val) => setDate({ ...date, [name]: val })}
-                />
-                <div style={{ display: 'flex', flexDirection: "row", justifyContent: 'space-evenly' }}>
-                <Btn title="Save" onClick={() => setIsBottomSheetOpen(false)} />
-                <Btn title="Close" onClick={() => setIsBottomSheetOpen(false)} />
+                <div
+                  style={{
+                    display: "flex",
+                    flexDirection: "row",
+                    justifyContent: "space-between",
+                    marginLeft: 16,
+                    marginRight: 16,
+                    alignItems: "center",
+                  }}
+                >
+                  <h3>Schedule a service</h3>
+                  <IoMdClose
+                    size={28}
+                    onClick={() => setIsBottomSheetOpen(false)}
+                  />
+                </div>
+                <div style={{ marginLeft: 25, marginRight: 25 }}>
+                  <Picker
+                    optionGroups={dateGroup}
+                    valueGroups={date}
+                    onChange={(name, val) => setDate({ ...date, [name]: val })}
+                  />
+                </div>
+                <div
+                  style={{
+                    display: "flex",
+                    flexDirection: "row",
+                    justifyContent: "space-evenly",
+                  }}
+                >
+                  <Btn
+                    title="Save"
+                    onClick={() => setIsBottomSheetOpen(false)}
+                  />
+                  <Btn
+                    title="Refresh"
+                    onClick={() => {
+                      let z = currentTime()
+                      console.log("------------------", date, z);
+                      setDate(z);
+                    }}
+                  />
                 </div>
               </Sheet.Content>
             </Sheet.Container>
@@ -451,15 +546,21 @@ export default function Home() {
                   valueGroups={selectedMinutes}
                   onChange={(name, val) => setselectedMinutes({ [name]: val })}
                 />
-                <div style={{ display: 'flex', flexDirection: "row", justifyContent: 'space-evenly' }}>
-                <Btn
-                  title="Save"
-                  onClick={() => setIsMinutesSheetOpen(false)}
-                />
-                <Btn
-                  title="Close"
-                  onClick={() => setIsMinutesSheetOpen(false)}
-                />
+                <div
+                  style={{
+                    display: "flex",
+                    flexDirection: "row",
+                    justifyContent: "space-evenly",
+                  }}
+                >
+                  <Btn
+                    title="Save"
+                    onClick={() => setIsMinutesSheetOpen(false)}
+                  />
+                  <Btn
+                    title="Close"
+                    onClick={() => setIsMinutesSheetOpen(false)}
+                  />
                 </div>
               </Sheet.Content>
             </Sheet.Container>
