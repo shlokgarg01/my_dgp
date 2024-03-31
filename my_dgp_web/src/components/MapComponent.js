@@ -1,5 +1,5 @@
 import React, { useMemo, useRef, useState } from "react";
-import { MapContainer, TileLayer, Marker, Popup } from "react-leaflet";
+import { MapContainer, TileLayer, Marker } from "react-leaflet";
 import L from "leaflet";
 
 delete L.Icon.Default.prototype._getIconUrl;
@@ -33,11 +33,6 @@ const MapComponent = ({ handleLocationChange, initialLocation }) => {
     }),
     []
   );
-
-  const handleMapClick = (e) => {
-    const { lat, lng } = e.latlng;
-    handleLocationChange({ lat, lng });
-  };
 
   return (
     <MapContainer

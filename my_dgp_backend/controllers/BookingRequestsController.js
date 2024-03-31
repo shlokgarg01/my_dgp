@@ -3,12 +3,11 @@ const Booking = require("../models/BookingModel");
 const catchAsyncErrors = require("../middleware/CatchAsyncErrors");
 const ErrorHandler = require("../utils/errorHandler");
 const Enums = require("../utils/Enums");
-const { getAvailableServiceProviders } = require("../helpers/UserHelpers");
 
 // get all booking requests
 exports.getAllBookingRequests = catchAsyncErrors(async (req, res, next) => {
   let bookingRequests = await BookingRequest.find({
-    serviceProvider: req.user._id,
+    serviceProviders: { $elemMatch: { $eq: req.user._id } },
   }).populate("booking customer serviceProvider service address");
 
   res.status(201).json({
@@ -29,9 +28,10 @@ exports.updateStatusOfBookingRequest = catchAsyncErrors(
     */
 
     const { status } = req.body;
+    let service_provider_id = req.user._id;
     const bookingRequest = await BookingRequest.findOne({
       _id: req.params.id,
-      serviceProvider: req.user._id,
+      serviceProviders: { $elemMatch: { $eq: service_provider_id } }, // booking request which contains the current service provider in the array
     });
 
     if (!bookingRequest) {
@@ -48,37 +48,18 @@ exports.updateStatusOfBookingRequest = catchAsyncErrors(
     if (status === Enums.BOOKING_REQUEST_STATUS.ACCEPTED) {
       booking = await Booking.findByIdAndUpdate(
         bookingRequest.booking,
-        { status, serviceProvider: req.user._id },
+        { status, serviceProviders: service_provider_id },
         { new: true, runValidators: true, useFindAndModify: false }
       );
       await bookingRequest.deleteOne();
     } else if (status === Enums.BOOKING_REQUEST_STATUS.REJECTED) {
       booking = await Booking.findById(bookingRequest.booking);
-      let allServiceProviders = await getAvailableServiceProviders(
-        booking.date,
-        booking.service
-      );
-
-      // finding the current service provider's index from the list
-      let currentServiceProviderIndex = allServiceProviders.indexOf(
-        bookingRequest.serviceProvider.toString()
-      );
-
-      // new service provider's index = If current index is last index, then assigning the first index, else assiging the next index.
-      let newServiceProviderIndex =
-        currentServiceProviderIndex === allServiceProviders.length - 1
-          ? 0
-          : currentServiceProviderIndex + 1;
-      
-      // getting the new service provider from the list based on the above index.
-      let newServiceProvider = allServiceProviders[newServiceProviderIndex];
 
       await BookingRequest.findByIdAndUpdate(
         req.params.id,
-        { serviceProvider: newServiceProvider },
+        { $pull: { serviceProviders: service_provider_id } }, // remove the current service provider from the booking request
         { new: true, runValidators: true, useFindAndModify: false }
       );
-
     }
 
     res.status(200).json({

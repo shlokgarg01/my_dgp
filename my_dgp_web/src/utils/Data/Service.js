@@ -2,14 +2,17 @@ export const Service = [
   {
     index: 0,
     name: "Photography",
+    subServices: ['Nature, landscape', 'Night Scape, Star', 'Wildlife, Animal, Birds', 'Selfie', 'Portrait', 'Models', 'Street', 'Travel', 'Music Recitals', 'Showstage', 'Sports', 'Wedding', 'Event', 'Fashion/Beauty', 'Food', 'Macro Shooting', 'Still Life', 'Transportation', 'Aerial', 'Architecture', 'Underwater', 'Vlog', 'Pet']
   },
   {
     index: 1,
     name: "Videography",
+    subServices: ['Nature, landscape', 'Night Scape, Star', 'Wildlife, Animal, Birds', 'Selfie', 'Portrait', 'Models', 'Street', 'Travel', 'Music Recitals', 'Showstage', 'Sports', 'Wedding', 'Event', 'Fashion/Beauty', 'Food', 'Macro Shooting', 'Still Life', 'Transportation', 'Aerial', 'Architecture', 'Underwater', 'Vlog', 'Pet']
   },
   {
     index: 2,
     name: "Both",
+    subServices: ['Nature, landscape', 'Night Scape, Star', 'Wildlife, Animal, Birds', 'Selfie', 'Portrait', 'Models', 'Street', 'Travel', 'Music Recitals', 'Showstage', 'Sports', 'Wedding', 'Event', 'Fashion/Beauty', 'Food', 'Macro Shooting', 'Still Life', 'Transportation', 'Aerial', 'Architecture', 'Underwater', 'Vlog', 'Pet']
   },
   // {
   //   index: 2,

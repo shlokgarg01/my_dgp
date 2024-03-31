@@ -12,7 +12,7 @@
 
 
 - [ ] refresh button instead of close on bottom sheet
-- [ ] rates not updating on changing minutes
+- [x] rates not updating on changing minutes
 - [x] service name - "both"
 - [x] Next -> proceed
 - [x] Add a line - "Schedule a service"
@@ -26,4 +26,3 @@
 
 
 - [ ] bottom sheet not detecting current time. - not possible to detect exact time bcz minutes hm bs 00/15/30/45 le rahe hain.
-- [ ] add category selected name in blank space - Already added hai. again needed?

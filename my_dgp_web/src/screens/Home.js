@@ -27,6 +27,8 @@ export default function Home() {
   const [selectedPackageIndex, setSelectedPackageIndex] = useState(0);
   const [selectedService, setSelectedService] = useState(null);
   const [serviceName, setServiceName] = useState("");
+  const [subService, selectSubService] = useState("");
+  const [selectedSubServiceIndex, setSelectedSubServiceIndex] = useState();
   const [selectedHours, setSelectedHours] = useState(1);
   const [selectedMinutes, setselectedMinutes] = useState({ minutes: "00" });
   const [isMinutesSheetOpen, setIsMinutesSheetOpen] = useState(false);
@@ -36,8 +38,6 @@ export default function Home() {
     28.570679971663644, 77.16227241314306,
   ]);
   let TAX = 70;
-
-  // let SubService =selectedServiceIndex == 0 ? Imageservices :  Viedoservices
 
   const currentTime = () => {
     return {
@@ -91,6 +91,8 @@ export default function Home() {
   useEffect(() => {
     setSelectedService(services[0]?._id);
     setServiceName(services[0]?.name);
+    selectSubService(Service[0]?.subServices[0]);
+    setSelectedServiceIndex(0);
   }, [services]);
 
   const handleLocationChange = (newLocation) => setLocation(newLocation);
@@ -118,7 +120,7 @@ export default function Home() {
     </div>
   );
 
-  const SliderContent = ({ title, index, icon }) => (
+  const ServiceSlider = ({ title, index, icon }) => (
     <div
       onClick={() => {
         setSelectedServiceIndex(index);
@@ -145,6 +147,39 @@ export default function Home() {
         style={{
           border:
             selectedServiceIndex === index
+              ? `1px solid ${Colors.PRIMARY}`
+              : null,
+          width: "50%",
+          marginLeft: "25%",
+          borderRadius: 100,
+        }}
+      />
+    </div>
+  );
+
+  const SubServiceSlider = ({ title, index }) => (
+    <div
+      onClick={() => setSelectedSubServiceIndex(index)}
+      style={{...styles.serviceSliderImageContainer, padding: 2}}
+    >
+      <div
+        style={{
+          color: selectedSubServiceIndex === index ? Colors.PRIMARY : Colors.GRAY,
+          fontWeight: "bold",
+          overflow: 'hidden',
+          fontSize: 14,
+          display: '-webkit-box',
+          WebkitBoxOrient: 'vertical',
+          WebkitLineClamp: '2',
+          width: 100
+        }}
+      >
+        {title}
+      </div>
+      <div
+        style={{
+          border:
+            selectedSubServiceIndex === index
               ? `1px solid ${Colors.PRIMARY}`
               : null,
           width: "50%",
@@ -281,9 +316,9 @@ export default function Home() {
           </div>
 
           {/* Services Slider */}
-          <div style={styles.serviceSliderContainer}>
+          <div style={{...styles.serviceSliderContainer, borderBottom: 0}}>
             {Service.map((service, index) => (
-              <SliderContent
+              <ServiceSlider
                 key={index}
                 title={service.name}
                 index={service.index}
@@ -321,49 +356,14 @@ export default function Home() {
             ))}
           </div>
 
-          {/* Service Description and Form */}
-          {/* <div style={styles.serviceSliderContainer}>
-            {SubService.map((service, index) => (
-              <SliderContent
-                title={service.name}
-                index={service.index}
-                icon={
-                  index === 0 ? (
-                    <MdOutlineAddAPhoto
-                      size={25}
-                      color={
-                        selectedServiceIndex === service.index
-                          ? Colors.PRIMARY
-                          : Colors.GRAY
-                      }
-                    />
-                  ) : index === 1 ? (
-                    <MdOutlineVideocam
-                      size={25}
-                      color={
-                        selectedServiceIndex === service.index
-                          ? Colors.PRIMARY
-                          : Colors.GRAY
-                      }
-                    />
-                  ) : (
-                    <MdOutlineVideoCameraFront
-                      size={25}
-                      color={
-                        selectedServiceIndex === service.index
-                          ? Colors.PRIMARY
-                          : Colors.GRAY
-                      }
-                    />
-                  )
-                }
-              />
+          {/* Sub Service Slider */}
+          <div style={{...styles.serviceSliderContainer, paddingLeft: 16, paddingRight: 16}}>
+            {Service.find(
+              (x) => x.name === serviceName?.split(" ")[0]
+            )?.subServices.map((subService, index) => (
+              <SubServiceSlider key={index} title={subService} index={index} />
             ))}
-          </div>  */}
-
-          {/* <h5 style={{ marginLeft: 10, marginTop: 10 }}>
-            Service - {serviceName}
-          </h5> */}
+          </div>
 
           {/* Duration Selection */}
           <div

@@ -42,45 +42,34 @@ export const ConfirmBookingReducer = (
   state = { confirmedBooking: {} },
   action
 ) => {
-  console.log(
-    "INSIDE CONFIRM BOOKING STATUS REDUCER - ",
-    action.payload,
-    action.type,
-  );
   switch (action.type) {
     case CONFIRM_BOOKING_STATUS_REQUEST:
       return {
         loading: true,
-        status: "XXXXXXXXXXXXXX",
-        booking: state?.booking,
-        service_provider: state?.service_provider
+        status: state?.status,
       };
     case CONFIRM_BOOKING_STATUS_SUCCESS:
-      let x = {
+      return {
         ...state,
         success: true,
         loading: false,
         booking: action.payload.booking,
-        status: "BBBBBBBBBBBBBBB",
+        status: action.payload.status,
         service_provider: action.payload.service_provider,
       };
-      console.log("STATE FROM REDUCER - ", x);
-      return x;
     case CONFIRM_BOOKING_STATUS_FAIL:
       return {
         ...state,
         loading: false,
         success: false,
-        status: "CCCCCCCCCCCCCCCCCCCC",
         error: action.payload,
       };
     case CLEAR_ERRORS:
       return {
         ...state,
-        status: "DDDDDDDDDDDDDDDDDDD",
         error: null,
       };
     default:
-      return {...state, status: state.status};
+      return state;
   }
 };

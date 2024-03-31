@@ -1,6 +1,5 @@
 import React, { useEffect } from "react";
 import {
-  createSearchParams,
   useNavigate,
   useSearchParams,
 } from "react-router-dom";
@@ -30,7 +29,6 @@ export default function Checkout() {
     }
 
     if (success) {
-      // toast.success("Your booking has been created successfully!");
       navigate("/searchingRider", { state: { bookingId: booking._id } });
     }
     // eslint-disable-next-line

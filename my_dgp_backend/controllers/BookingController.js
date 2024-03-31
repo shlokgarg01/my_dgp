@@ -36,7 +36,6 @@ exports.createBooking = catchAsyncErrors(async (req, res, next) => {
       )
     );
   }
-  let serviceProvider = allServiceProviders[0];
 
   // TODO- remove this as it is temporary for Phase - I
   // creating address as we get address not id
@@ -64,11 +63,13 @@ exports.createBooking = catchAsyncErrors(async (req, res, next) => {
     paidAt: Date.now(),
   });
 
+  const service_providers = await User.find({ service, role: Enums.USER_ROLES.SERVICE_PROVIDER }).select('_id')
+
   // create a request in BookingRequest table
   await BookingRequest.create({
     customer,
     booking: booking._id,
-    serviceProvider,
+    serviceProviders: service_providers,
     address: newAddress,
     service,
   });

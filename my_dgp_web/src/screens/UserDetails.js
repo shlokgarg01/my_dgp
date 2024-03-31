@@ -143,7 +143,7 @@ export default function UserDetails() {
                   value={name}
                   onChange={(e) => setName(e.target.value)}
                   placeholder="Your Name"
-                  disabled={firebaseConfirmation}
+                  disabled={firebaseConfirmation || loading}
                 />
                 <InputGroup
                   icon={<MdOutlineMail size={25} color={Colors.DARK_GRAY} />}
@@ -151,7 +151,7 @@ export default function UserDetails() {
                   type="email"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
-                  disabled={firebaseConfirmation}
+                  disabled={firebaseConfirmation || loading}
                 />
                 <InputGroup
                   icon={<FaPhone size={25} color={Colors.DARK_GRAY} />}
@@ -159,7 +159,7 @@ export default function UserDetails() {
                   type="number"
                   value={contactNumber}
                   onChange={(e) => setContactNumber(e.target.value)}
-                  disabled={firebaseConfirmation}
+                  disabled={firebaseConfirmation || loading}
                 />
 
                 {firebaseConfirmation ? (

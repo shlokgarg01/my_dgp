@@ -7,15 +7,17 @@ const bookingRequestsSchema = new mongoose.Schema(
       ref: "User",
       required: true,
     },
-    serviceProvider: {
-      type: mongoose.Schema.ObjectId,
-      ref: "User",
-      required: true,
-    },
+    serviceProviders: [
+      {
+        type: mongoose.Schema.ObjectId,
+        ref: "User",
+        required: true,
+      },
+    ],
     service: {
       type: mongoose.Schema.ObjectId,
-      ref: 'Service',
-      required: true
+      ref: "Service",
+      required: true,
     },
     booking: {
       type: mongoose.Schema.ObjectId,
@@ -24,9 +26,9 @@ const bookingRequestsSchema = new mongoose.Schema(
     },
     address: {
       type: mongoose.Schema.ObjectId,
-      ref: 'Address',
-      required: true
-    }
+      ref: "Address",
+      required: true,
+    },
   },
   {
     timestamps: {

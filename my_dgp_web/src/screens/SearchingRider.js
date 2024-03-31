@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { useLocation, useNavigate, useSearchParams } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import Maps from "../images/google_maps.png";
 import Colors from "../utils/Colors";
 import SearchRider from "../images/search_rider.png";
@@ -10,42 +10,32 @@ import { toast } from "react-custom-alert";
 
 export default function SearchingRider() {
   const navigate = useNavigate();
-  const dispatch = useDispatch()
+  const dispatch = useDispatch();
   const location = useLocation();
   const [loadingPercentage, setLoadingPercentage] = useState(10);
-  const { error, loading, booking, status, service_provider } = useSelector(state => state.confirmedBooking)
-  // console.info("-------------------------", booking, status, service_provider)
+  const { status } = useSelector((state) => state.confirmedBooking);
 
   useEffect(() => {
-    // Simulated API call
+    let fetchDataTimeout;
     const fetchData = async () => {
       try {
-        // Make your API call here
-        // dispatch(confirmBookingStatus(location.state.bookingId))
-        console.log("BOOKING ID - ", location.state.bookingId, status)
+        dispatch(confirmBookingStatus(location.state.bookingId));
 
-        // if (status === Enums.BOOKING_STATUS.ACCEPTED) {
-          // navigate to home  screen here & show the success popup here
-          // console.log("Booking Accepted - ", booking, status, service_provider)
+        fetchDataTimeout = setTimeout(() => {
+          fetchData();
+        }, 1500);
+
+        if (status === Enums.BOOKING_STATUS.ACCEPTED) {
           setTimeout(() => {
-            console.log("YOU CAN NAVIGATE NOW");
-            toast.success("Booking confirmed.")
-            navigate("/")
-            // Navigate to another screen, you can use router or any navigation method here
-          }, 4000);
-        // } else {
-          // console.log("Booking still in placed status - ", booking, status, service_provider)
-        //   setTimeout(fetchData, 1500) // call the API  every 1.5 seconds
-        // }
-        // For demonstration, I'm using a setTimeout to simulate a delay
-        // await new Promise((resolve) => setTimeout(resolve, 2000));
+            toast.success("Booking Confirmed");
+            navigate("/");
+          }, 2000);
+        }
       } catch (error) {
-        // If API call fails, handle the error
         console.error("Error fetching data:", error);
       }
     };
 
-    // Start fetching data when the component mounts
     fetchData();
 
     const interval = setInterval(() => {
@@ -54,14 +44,11 @@ export default function SearchingRider() {
       });
     }, 25);
 
-    // Stop updating loading percentage when API call is successful
-    return () => clearInterval(interval);
-  }, []);
-
-  // useEffect(() => {
-
-  //   return () => clearTimeout(timer);
-  // }, []);
+    return () => {
+      clearInterval(interval);
+      clearTimeout(fetchDataTimeout);
+    };
+  }, [dispatch, location.state.bookingId, status]);
 
   return (
     <div style={{ height: "100%", textAlign: "center" }}>
