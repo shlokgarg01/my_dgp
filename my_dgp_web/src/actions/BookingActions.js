@@ -1,5 +1,13 @@
 import axiosInstance from "../config/Axios";
-import { CLEAR_ERRORS, CREATE_BOOKING_FAIL, CREATE_BOOKING_REQUEST, CREATE_BOOKING_SUCCESS } from "../constants/BookingsConstants";
+import {
+  CLEAR_ERRORS,
+  CONFIRM_BOOKING_STATUS_FAIL,
+  CONFIRM_BOOKING_STATUS_REQUEST,
+  CONFIRM_BOOKING_STATUS_SUCCESS,
+  CREATE_BOOKING_FAIL,
+  CREATE_BOOKING_REQUEST,
+  CREATE_BOOKING_SUCCESS,
+} from "../constants/BookingsConstants";
 
 // create a new booking
 export const createBooking = (bookingData) => async (dispatch) => {
@@ -16,6 +24,23 @@ export const createBooking = (bookingData) => async (dispatch) => {
   } catch (error) {
     dispatch({
       type: CREATE_BOOKING_FAIL,
+      payload: error.response.data.message,
+    });
+  }
+};
+
+// confirm booking status from searching rider screen
+export const confirmBookingStatus = (bookingId) => async (dispatch) => {
+  try {
+    dispatch({ type: CONFIRM_BOOKING_STATUS_REQUEST });
+    const { data } = await axiosInstance.get(
+      `/api/v1/bookings/status/${bookingId}`
+    );
+
+    dispatch({ type: CONFIRM_BOOKING_STATUS_SUCCESS, payload: data });
+  } catch (error) {
+    dispatch({
+      type: CONFIRM_BOOKING_STATUS_FAIL,
       payload: error.response.data.message,
     });
   }

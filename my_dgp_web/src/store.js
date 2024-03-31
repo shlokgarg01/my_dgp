@@ -2,12 +2,14 @@ import { applyMiddleware, createStore, combineReducers } from "redux";
 import { thunk } from "redux-thunk";
 import { UserReducer } from "./reducers/UserReducers";
 import { ServiceReducer } from "./reducers/ServiceReducer";
-import { BookingReducer } from "./reducers/BookingReducer";
+import { BookingReducer, ConfirmBookingReducer } from "./reducers/BookingReducer";
 
 const reducer = combineReducers({
   user: UserReducer,
   services: ServiceReducer,
-  booking: BookingReducer
+
+  booking: BookingReducer,
+  confirmedBooking: ConfirmBookingReducer
 });
 
 const initialState = {};

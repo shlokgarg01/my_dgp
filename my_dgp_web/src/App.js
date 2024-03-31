@@ -6,6 +6,7 @@ import UserDetails from './screens/UserDetails'
 import Checkout from './screens/Checkout'
 import './utils/Variables.css'
 import SearchingRider from './screens/SearchingRider'
+// import "leaflet/dist/leaflet.css";
 
 export default function App() {
   return (

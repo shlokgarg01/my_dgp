@@ -42,11 +42,13 @@ export default function UserDetails() {
     if (isAuthenticated) {
       setOtpLoading(false);
       navigate({
-        pathname: "/searchingRider",
+        pathname: "/checkout",
         search: createSearchParams({
           service: params.get("service"),
           serviceName: params.get("serviceName"),
           address: params.get("address"),
+          lat: params.get("lat"),
+          lng: params.get("lng"),
           date: params.get("date"),
           hours: params.get("hours"),
           customer: user._id,
@@ -141,6 +143,7 @@ export default function UserDetails() {
                   value={name}
                   onChange={(e) => setName(e.target.value)}
                   placeholder="Your Name"
+                  disabled={firebaseConfirmation}
                 />
                 <InputGroup
                   icon={<MdOutlineMail size={25} color={Colors.DARK_GRAY} />}
@@ -148,6 +151,7 @@ export default function UserDetails() {
                   type="email"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
+                  disabled={firebaseConfirmation}
                 />
                 <InputGroup
                   icon={<FaPhone size={25} color={Colors.DARK_GRAY} />}
@@ -155,6 +159,7 @@ export default function UserDetails() {
                   type="number"
                   value={contactNumber}
                   onChange={(e) => setContactNumber(e.target.value)}
+                  disabled={firebaseConfirmation}
                 />
 
                 {firebaseConfirmation ? (

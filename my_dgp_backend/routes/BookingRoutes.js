@@ -6,6 +6,7 @@ const {
   getCurrentBookingsOfAUser,
   getCompletedBookingsOfAUser,
   updateBookingStatus,
+  confirmBookingStatus,
 } = require("../controllers/BookingController");
 const router = express.Router();
 
@@ -23,5 +24,6 @@ router
 router
   .route("/bookings/current")
   .get(isAuthenticatedUser, getCurrentBookingsOfAUser);
+router.route("/bookings/status/:id").get(isAuthenticatedUser, confirmBookingStatus);
 
 module.exports = router;

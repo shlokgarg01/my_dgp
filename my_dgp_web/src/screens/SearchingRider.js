@@ -1,63 +1,67 @@
 import React, { useEffect, useState } from "react";
-import {
-  createSearchParams,
-  useNavigate,
-  useSearchParams,
-} from "react-router-dom";
+import { useLocation, useNavigate, useSearchParams } from "react-router-dom";
 import Maps from "../images/google_maps.png";
 import Colors from "../utils/Colors";
 import SearchRider from "../images/search_rider.png";
+import { useDispatch, useSelector } from "react-redux";
+import { confirmBookingStatus } from "../actions/BookingActions";
+import Enums from "../utils/Enums";
+import { toast } from "react-custom-alert";
 
 export default function SearchingRider() {
   const navigate = useNavigate();
-  let [params] = useSearchParams();
+  const dispatch = useDispatch()
+  const location = useLocation();
   const [loadingPercentage, setLoadingPercentage] = useState(10);
+  const { error, loading, booking, status, service_provider } = useSelector(state => state.confirmedBooking)
+  // console.info("-------------------------", booking, status, service_provider)
 
-  // updating the counter
   useEffect(() => {
-    const timer = setTimeout(() => {
-      const interval = setInterval(() => {
-        setLoadingPercentage((prevPercentage) => {
-          const newPercentage = prevPercentage + 1;
-          if (newPercentage === 100) {
-            clearInterval(interval);
-            setTimeout(() => {
-              setLoadingPercentage(0);
-              setTimeout(() => {
-                const loadingInterval = setInterval(() => {
-                  setLoadingPercentage(
-                    (prevPercentage) => (prevPercentage + 1) % 101
-                  );
-                }, 50); // Update loading percentage every 10 milliseconds
-                setTimeout(() => {
-                  clearInterval(loadingInterval);
-                  navigate({
-                    pathname: "/checkout",
-                    search: createSearchParams({
-                      service: params.get("service"),
-                      serviceName: params.get("serviceName"),
-                      address: params.get("address"),
-                      date: params.get("date"),
-                      hours: params.get("hours"),
-                      customer: params.get("customer"),
-                      taxPrice: params.get("taxPrice"),
-                      itemsPrice: params.get("itemsPrice"),
-                      totalPrice: params.get("totalPrice"),
-                      name: params.get("name"),
-                      email: params.get("email"),
-                      contactNumber: params.get("contactNumber"),
-                    }).toString(),
-                  });
-                }, 4000);
-              }, 0);
-            }, 0);
-          }
-          return newPercentage % 101;
-        });
-      }, 50); // Update loading percentage every 10 milliseconds
-    }, 0);
-    return () => clearTimeout(timer);
+    // Simulated API call
+    const fetchData = async () => {
+      try {
+        // Make your API call here
+        // dispatch(confirmBookingStatus(location.state.bookingId))
+        console.log("BOOKING ID - ", location.state.bookingId, status)
+
+        // if (status === Enums.BOOKING_STATUS.ACCEPTED) {
+          // navigate to home  screen here & show the success popup here
+          // console.log("Booking Accepted - ", booking, status, service_provider)
+          setTimeout(() => {
+            console.log("YOU CAN NAVIGATE NOW");
+            toast.success("Booking confirmed.")
+            navigate("/")
+            // Navigate to another screen, you can use router or any navigation method here
+          }, 4000);
+        // } else {
+          // console.log("Booking still in placed status - ", booking, status, service_provider)
+        //   setTimeout(fetchData, 1500) // call the API  every 1.5 seconds
+        // }
+        // For demonstration, I'm using a setTimeout to simulate a delay
+        // await new Promise((resolve) => setTimeout(resolve, 2000));
+      } catch (error) {
+        // If API call fails, handle the error
+        console.error("Error fetching data:", error);
+      }
+    };
+
+    // Start fetching data when the component mounts
+    fetchData();
+
+    const interval = setInterval(() => {
+      setLoadingPercentage((prevPercentage) => {
+        return (prevPercentage + 1) % 101;
+      });
+    }, 25);
+
+    // Stop updating loading percentage when API call is successful
+    return () => clearInterval(interval);
   }, []);
+
+  // useEffect(() => {
+
+  //   return () => clearTimeout(timer);
+  // }, []);
 
   return (
     <div style={{ height: "100%", textAlign: "center" }}>

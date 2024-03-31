@@ -8,6 +8,7 @@ export default function InputGroup({
   type,
   icon,
   bgColor,
+  disabled
 }) {
   return (
     <div
@@ -23,6 +24,7 @@ export default function InputGroup({
     >
       {icon}
       <input
+      disabled={disabled}
         placeholder={placeholder}
         type={type}
         style={{

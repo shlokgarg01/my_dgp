@@ -1,5 +1,9 @@
 import React, { useEffect } from "react";
-import { useNavigate, useSearchParams } from "react-router-dom";
+import {
+  createSearchParams,
+  useNavigate,
+  useSearchParams,
+} from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { clearErrors, createBooking } from "../actions/BookingActions";
 import Enums from "../utils/Enums";
@@ -15,7 +19,9 @@ import { toast } from "react-custom-alert";
 export default function Checkout() {
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const { error, loading, success } = useSelector((state) => state.booking);
+  const { error, loading, success, booking } = useSelector(
+    (state) => state.booking
+  );
 
   useEffect(() => {
     if (error) {
@@ -24,8 +30,8 @@ export default function Checkout() {
     }
 
     if (success) {
-      toast.success("Your booking has been created successfully!");
-      navigate("/");
+      // toast.success("Your booking has been created successfully!");
+      navigate("/searchingRider", { state: { bookingId: booking._id } });
     }
     // eslint-disable-next-line
   }, [dispatch, error, success]);
@@ -35,6 +41,7 @@ export default function Checkout() {
     service: params.get("service"),
     serviceName: params.get("serviceName"),
     address: params.get("address"),
+    coordinates: { lat: params.get("lat"), lng: params.get("lng") },
     date: params.get("date"),
     hours: parseInt(params.get("hours")),
     customer: "65769bb6f664dbb6722e90ba",

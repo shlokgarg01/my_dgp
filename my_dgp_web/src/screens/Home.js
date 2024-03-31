@@ -10,7 +10,7 @@ import MapComponent from "../components/MapComponent";
 import Btn from "../components/components/Btn";
 import InputGroup from "../components/components/InputGroup";
 import "../styles/ComponentStyles.css";
-import { Service , Imageservices , Viedoservices } from "../utils/Data/Service";
+import { Service } from "../utils/Data/Service";
 import Sheet from "react-modal-sheet";
 import Picker from "react-scrollable-picker";
 import { Hours, AmPm, Minutes, Months, Quaters } from "../utils/Data/Date";
@@ -27,13 +27,17 @@ export default function Home() {
   const [selectedPackageIndex, setSelectedPackageIndex] = useState(0);
   const [selectedService, setSelectedService] = useState(null);
   const [serviceName, setServiceName] = useState("");
-  const [selectedTime, setselectedTime] = useState(1);
-  const [selectedMinutes, setselectedMinutes] = useState({ minutes: "10" });
+  const [selectedHours, setSelectedHours] = useState(1);
+  const [selectedMinutes, setselectedMinutes] = useState({ minutes: "00" });
   const [isMinutesSheetOpen, setIsMinutesSheetOpen] = useState(false);
   const [address, setAddress] = useState("");
   const [isBottomSheetOpen, setIsBottomSheetOpen] = useState(false);
+  const [location, setLocation] = useState([
+    28.570679971663644, 77.16227241314306,
+  ]);
+  let TAX = 70;
 
-  let SubService =selectedServiceIndex == 0 ? Imageservices :  Viedoservices
+  // let SubService =selectedServiceIndex == 0 ? Imageservices :  Viedoservices
 
   const currentTime = () => {
     return {
@@ -46,15 +50,9 @@ export default function Home() {
         .toLocaleString("en-US", { timeZone: "Asia/Kolkata" })
         .slice(-2),
       quaters: "00",
-    }
+    };
   };
-
-  const [location, setLocation] = useState({
-    lat: 0,
-    lng: 0,
-  });
   const [date, setDate] = useState(currentTime());
-  let TAX = 70;
 
   const getDates = () => {
     let dates = [];
@@ -99,7 +97,7 @@ export default function Home() {
 
   const TimeSlider = ({ time }) => (
     <div
-      onClick={() => setselectedTime(time)}
+      onClick={() => setSelectedHours(time)}
       style={{
         backgroundColor: Colors.WHITE,
         display: "inline-flex",
@@ -111,8 +109,8 @@ export default function Home() {
         fontWeight: "bold",
         fontSize: 17,
         boxShadow:
-          selectedTime === time ? "0 0 0" : `1px 1px 4px ${Colors.LIGHT_GRAY}`,
-        border: selectedTime === time ? `1px solid ${Colors.DARK_GRAY}` : null,
+          selectedHours === time ? "0 0 0" : `1px 1px 4px ${Colors.LIGHT_GRAY}`,
+        border: selectedHours === time ? `1px solid ${Colors.DARK_GRAY}` : null,
         borderRadius: 4,
       }}
     >
@@ -191,7 +189,8 @@ export default function Home() {
           ₹{" "}
           {services.find(
             (x) => x.name === `${Service[selectedServiceIndex].name} ${title}`
-          ).charges * selectedTime}
+          ).charges *
+            (selectedHours * 60 + parseInt(selectedMinutes.minutes))}
         </div>
       ) : null}
     </div>
@@ -199,7 +198,7 @@ export default function Home() {
 
   const getItemPrice = () => {
     let charges = services.find((x) => x._id === selectedService).charges;
-    return charges * selectedTime;
+    return charges * selectedHours * 60; // selected time is in hours & charges need to be calculated based on minutes
   };
 
   const submit = () => {
@@ -220,8 +219,10 @@ export default function Home() {
         service: selectedService,
         serviceName,
         date: finalDate,
-        hours: selectedTime,
+        hours: selectedHours,
         address,
+        lat: location[0],
+        lng: location[1],
         taxPrice: TAX,
         itemsPrice: getItemPrice(),
         totalPrice: getItemPrice() + TAX,
@@ -283,6 +284,7 @@ export default function Home() {
           <div style={styles.serviceSliderContainer}>
             {Service.map((service, index) => (
               <SliderContent
+                key={index}
                 title={service.name}
                 index={service.index}
                 icon={
@@ -319,8 +321,8 @@ export default function Home() {
             ))}
           </div>
 
-{/* Service Description and Form */}
-          <div style={styles.serviceSliderContainer}>
+          {/* Service Description and Form */}
+          {/* <div style={styles.serviceSliderContainer}>
             {SubService.map((service, index) => (
               <SliderContent
                 title={service.name}
@@ -357,7 +359,7 @@ export default function Home() {
                 }
               />
             ))}
-          </div> 
+          </div>  */}
 
           {/* <h5 style={{ marginLeft: 10, marginTop: 10 }}>
             Service - {serviceName}
@@ -376,12 +378,10 @@ export default function Home() {
                 alignItems: "flex-start",
               }}
             >
-              <div style={{ display: "flex" }}>
-                <GiStopwatch color={Colors.BLACK} size={25} />
+              <div style={{ display: "flex", paddingRight: 10 }}>
+                {/* <GiStopwatch color={Colors.BLACK} size={25} /> */}
                 <div>
-                  <div
-                    style={{ fontWeight: "bold", marginLeft: 10, fontSize: 18 }}
-                  >
+                  <div style={{ fontWeight: "bold", fontSize: 18 }}>
                     Select service duration
                   </div>
                   <div style={{ color: Colors.GRAY }}>
@@ -490,8 +490,8 @@ export default function Home() {
               </div>
 
               {Array.from({ length: 12 }, (_, index) => index + 1).map(
-                (item) => (
-                  <TimeSlider time={item} />
+                (item, index) => (
+                  <TimeSlider key={index} time={item} />
                 )
               )}
             </div>
@@ -560,14 +560,7 @@ export default function Home() {
                     title="Save"
                     onClick={() => setIsBottomSheetOpen(false)}
                   />
-                  <Btn
-                    title="Refresh"
-                    onClick={() => {
-                      let z = currentTime()
-                      console.log("------------------", date, z);
-                      setDate(z);
-                    }}
-                  />
+                  <Btn title="Refresh" onClick={() => setDate(currentTime())} />
                 </div>
               </Sheet.Content>
             </Sheet.Container>

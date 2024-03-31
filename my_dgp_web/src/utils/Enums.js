@@ -1,6 +1,13 @@
 module.exports = {
+  BOOKING_STATUS: {
+    PLACED: "PLACED",
+    ACCEPTED: "ACCEPTED",
+    ONGOING: "ONGOING",
+    CLOSED: "CLOSED",
+    CANCELLED: "CANCELLED",
+  },
   PAYMENT_STATUS: {
     PAID: "PAID",
-    NOT_PAID: "NOT_PAID"
-  }
-}
+    NOT_PAID: "NOT_PAID",
+  },
+};

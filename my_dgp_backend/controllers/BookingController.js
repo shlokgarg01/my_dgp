@@ -2,7 +2,7 @@ const Booking = require("../models/BookingModel");
 const BookingRequest = require("../models/BookingRequestsModel");
 const User = require("../models/UserModel");
 const Redeem = require("../models/RedeemModel");
-const Address = require('../models/AddressModel')
+const Address = require("../models/AddressModel");
 
 const catchAsyncErrors = require("../middleware/CatchAsyncErrors");
 const { getAvailableServiceProviders } = require("../helpers/UserHelpers");
@@ -14,6 +14,7 @@ exports.createBooking = catchAsyncErrors(async (req, res, next) => {
   const {
     customer,
     address,
+    coordinates,
     paymentInfo,
     coupon,
     couponDiscount,
@@ -41,10 +42,11 @@ exports.createBooking = catchAsyncErrors(async (req, res, next) => {
   // creating address as we get address not id
   const newAddress = await Address.create({
     address,
+    coordinates,
     name: req.user.name,
     contactNumber: req.user.contactNumber,
-    user: req.user
-  })
+    user: req.user,
+  });
 
   // create a booking
   const booking = await Booking.create({
@@ -197,5 +199,27 @@ exports.getFutureBookingsOfAUser = catchAsyncErrors(async (req, res, next) => {
   res.status(200).json({
     success: true,
     bookings,
+  });
+});
+
+// Called from search rider screen to get booking status. If booking is accepted, then get service provider details as well.
+exports.confirmBookingStatus = catchAsyncErrors(async (req, res, next) => {
+  let booking = await Booking.findOne({ _id: req.params.id });
+  if (!booking) {
+    return next(new ErrorHandler("No such booking found", 400));
+  }
+  let status = booking.status;
+  let service_provider = null;
+
+  if (booking.status === Enums.BOOKING_STATUS.ACCEPTED) {
+    service_provider = await User.findOne({ _id: booking.serviceProvider });
+  }
+
+  return res.status(200).json({
+    success: true,
+    message: "Status fetched",
+    status,
+    booking,
+    service_provider,
   });
 });
