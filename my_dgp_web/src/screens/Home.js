@@ -10,7 +10,7 @@ import MapComponent from "../components/MapComponent";
 import Btn from "../components/components/Btn";
 import InputGroup from "../components/components/InputGroup";
 import "../styles/ComponentStyles.css";
-import { Service } from "../utils/Data/Service";
+import { Service , Imageservices , Viedoservices } from "../utils/Data/Service";
 import Sheet from "react-modal-sheet";
 import Picker from "react-scrollable-picker";
 import { Hours, AmPm, Minutes, Months, Quaters } from "../utils/Data/Date";
@@ -32,6 +32,8 @@ export default function Home() {
   const [isMinutesSheetOpen, setIsMinutesSheetOpen] = useState(false);
   const [address, setAddress] = useState("");
   const [isBottomSheetOpen, setIsBottomSheetOpen] = useState(false);
+
+  let SubService =selectedServiceIndex == 0 ? Imageservices :  Viedoservices
 
   const currentTime = () => {
     return {
@@ -316,6 +318,46 @@ export default function Home() {
               />
             ))}
           </div>
+
+{/* Service Description and Form */}
+          <div style={styles.serviceSliderContainer}>
+            {SubService.map((service, index) => (
+              <SliderContent
+                title={service.name}
+                index={service.index}
+                icon={
+                  index === 0 ? (
+                    <MdOutlineAddAPhoto
+                      size={25}
+                      color={
+                        selectedServiceIndex === service.index
+                          ? Colors.PRIMARY
+                          : Colors.GRAY
+                      }
+                    />
+                  ) : index === 1 ? (
+                    <MdOutlineVideocam
+                      size={25}
+                      color={
+                        selectedServiceIndex === service.index
+                          ? Colors.PRIMARY
+                          : Colors.GRAY
+                      }
+                    />
+                  ) : (
+                    <MdOutlineVideoCameraFront
+                      size={25}
+                      color={
+                        selectedServiceIndex === service.index
+                          ? Colors.PRIMARY
+                          : Colors.GRAY
+                      }
+                    />
+                  )
+                }
+              />
+            ))}
+          </div> 
 
           {/* <h5 style={{ marginLeft: 10, marginTop: 10 }}>
             Service - {serviceName}
