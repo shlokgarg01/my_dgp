@@ -42,7 +42,7 @@ export default function UserDetails() {
     if (isAuthenticated) {
       setOtpLoading(false);
       navigate({
-        pathname: "/checkout",
+        pathname: "/searchingRider",
         search: createSearchParams({
           service: params.get("service"),
           serviceName: params.get("serviceName"),
