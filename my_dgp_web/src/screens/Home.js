@@ -316,7 +316,7 @@ export default function Home() {
           </div>
 
           {/* Services Slider */}
-          <div style={{...styles.serviceSliderContainer, borderBottom: 0}}>
+          <div style={{...styles.serviceSliderContainer}}>
             {Service.map((service, index) => (
               <ServiceSlider
                 key={index}
