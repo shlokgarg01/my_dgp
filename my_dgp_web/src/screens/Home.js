@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from "react";
-import { FaSearch } from "react-icons/fa";
 import { GiStopwatch } from "react-icons/gi";
 import Colors from "../utils/Colors";
 import { useDispatch, useSelector } from "react-redux";
@@ -8,7 +7,6 @@ import LoaderComponent from "../components/Loader";
 import { createSearchParams, useNavigate } from "react-router-dom";
 import MapComponent from "../components/MapComponent";
 import Btn from "../components/components/Btn";
-import InputGroup from "../components/components/InputGroup";
 import "../styles/ComponentStyles.css";
 import { Service } from "../utils/Data/Service";
 import Sheet from "react-modal-sheet";
@@ -30,7 +28,10 @@ export default function Home() {
   const [subService, selectSubService] = useState("");
   const [selectedSubServiceIndex, setSelectedSubServiceIndex] = useState();
   const [selectedHours, setSelectedHours] = useState(1);
-  const [selectedMinutes, setselectedMinutes] = useState({ minutes: "00" });
+  const [selectedMinutes, setselectedMinutes] = useState({
+    hours: "00",
+    minutes: "00",
+  });
   const [isMinutesSheetOpen, setIsMinutesSheetOpen] = useState(false);
   const [address, setAddress] = useState("");
   const [isBottomSheetOpen, setIsBottomSheetOpen] = useState(false);
@@ -57,7 +58,7 @@ export default function Home() {
   const getDates = () => {
     let dates = [];
 
-    for (let i = 1; i <= 7; ++i) {
+    for (let i = 0; i < 7; ++i) {
       let date = new Date(Date.now() + 3600 * 1000 * 24 * i);
       dates.push({
         value: date.toString().slice(4, 15),
@@ -74,7 +75,7 @@ export default function Home() {
     ampm: AmPm,
   };
 
-  const minutesGroup = { minutes: Minutes };
+  const minutesGroup = { hours: Hours, minutes: Minutes };
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const { services, error, loading } = useSelector((state) => state.services);
@@ -159,19 +160,27 @@ export default function Home() {
 
   const SubServiceSlider = ({ title, index }) => (
     <div
-      onClick={() => setSelectedSubServiceIndex(index)}
-      style={{...styles.serviceSliderImageContainer, padding: 2}}
+      onClick={() => {
+        setSelectedSubServiceIndex(index);
+        selectSubService(title);
+      }}
+      style={{
+        ...styles.serviceSliderImageContainer,
+        paddingRight: 4,
+        paddingLeft: 4,
+      }}
     >
       <div
         style={{
-          color: selectedSubServiceIndex === index ? Colors.PRIMARY : Colors.GRAY,
+          color:
+            selectedSubServiceIndex === index ? Colors.PRIMARY : Colors.GRAY,
           fontWeight: "bold",
-          overflow: 'hidden',
+          overflow: "hidden",
           fontSize: 14,
-          display: '-webkit-box',
-          WebkitBoxOrient: 'vertical',
-          WebkitLineClamp: '2',
-          width: 100
+          display: "-webkit-box",
+          WebkitBoxOrient: "vertical",
+          WebkitLineClamp: "2",
+          width: "auto",
         }}
       >
         {title}
@@ -225,15 +234,26 @@ export default function Home() {
           {services.find(
             (x) => x.name === `${Service[selectedServiceIndex].name} ${title}`
           ).charges *
-            (selectedHours * 60 + parseInt(selectedMinutes.minutes))}
+            (selectedMinutes.hours === "00" && selectedMinutes.minutes === "00"
+              ? selectedHours * 60
+              : parseInt(selectedMinutes.hours) * 60 +
+                parseInt(selectedMinutes.minutes))}
         </div>
       ) : null}
     </div>
   );
 
   const getItemPrice = () => {
-    let charges = services.find((x) => x._id === selectedService).charges;
-    return charges * selectedHours * 60; // selected time is in hours & charges need to be calculated based on minutes
+    let charges = services.find((x) => x._id === selectedService)?.charges;
+    let time = 0;
+    if (charges) {
+      time =
+        selectedMinutes.hours === "00" && selectedMinutes.minutes === "00"
+          ? selectedHours * 60
+          : parseInt(selectedMinutes.hours) * 60 +
+            parseInt(selectedMinutes.minutes);
+    }
+    return charges * time; // selected time is in hours & charges need to be calculated based on minutes
   };
 
   const submit = () => {
@@ -273,31 +293,18 @@ export default function Home() {
         <div style={{ backgroundColor: Colors.WHITE }}>
           <div
             style={{
-              height: "220px",
+              height: "250px",
               display: "flex",
               flexDirection: "column",
               alignItems: "center",
             }}
           >
-            <div
-              style={{
-                width: "100%",
-                marginTop: -16,
-              }}
-            >
-              <InputGroup
-                placeholder="Search"
-                onChange={(e) => setAddress(e.target.value)}
-                value={address}
-                type="text"
-                icon={<FaSearch color={Colors.GRAY} />}
-                bgColor={Colors.LIGHT_GRAY}
-              />
-            </div>
             <MapComponent
               style={{ height: 200, width: 200 }}
+              onSearchChange={(e) => setAddress(e.target.value)}
               handleLocationChange={handleLocationChange}
               initialLocation={location}
+              searchValue={address}
             />
           </div>
 
@@ -316,7 +323,7 @@ export default function Home() {
           </div>
 
           {/* Services Slider */}
-          <div style={{...styles.serviceSliderContainer, borderBottom: 0}}>
+          <div style={{ ...styles.serviceSliderContainer, borderBottom: 0 }}>
             {Service.map((service, index) => (
               <ServiceSlider
                 key={index}
@@ -357,7 +364,13 @@ export default function Home() {
           </div>
 
           {/* Sub Service Slider */}
-          <div style={{...styles.serviceSliderContainer, paddingLeft: 16, paddingRight: 16}}>
+          <div
+            style={{
+              ...styles.serviceSliderContainer,
+              paddingLeft: 16,
+              paddingRight: 16,
+            }}
+          >
             {Service.find(
               (x) => x.name === serviceName?.split(" ")[0]
             )?.subServices.map((subService, index) => (
@@ -394,7 +407,7 @@ export default function Home() {
               {/* Date Selection */}
               <div
                 style={{
-                  width: "16%",
+                  width: "50%",
                   padding: 4,
                   borderRadius: 7,
                   boxShadow: `1px 1px 4px ${Colors.GRAY}`,
@@ -421,7 +434,11 @@ export default function Home() {
                       Now
                     </>
                   ) : (
-                    `${date.date}`
+                    <>
+                      {date.date.slice(0, 6)}
+                      <br />
+                      {date.hour}:{date.quaters} {date.ampm}
+                    </>
                   )}
                 </div>
               </div>
@@ -452,7 +469,6 @@ export default function Home() {
                   border: `1px solid ${Colors.DARK_GRAY}`,
                   borderRadius: 4,
                 }}
-                onClick={() => setIsMinutesSheetOpen(true)}
               >
                 <div
                   style={{
@@ -466,22 +482,28 @@ export default function Home() {
                   <div
                     style={{ marginRight: 1, fontSize: 22 }}
                     onClick={() =>
-                      selectedMinutes > 10
+                      parseInt(selectedMinutes.minutes) > 0
                         ? setselectedMinutes({
-                            minutes: selectedMinutes.minutes - 1,
+                            hours: selectedMinutes.hours,
+                            minutes: parseInt(selectedMinutes.minutes) - 1,
                           })
                         : null
                     }
                   >
                     -
                   </div>
-                  00:{selectedMinutes.minutes}
+                  <div onClick={() => setIsMinutesSheetOpen(true)}>
+                    {selectedMinutes.hours}:{selectedMinutes.minutes}
+                  </div>
                   <div
                     style={{ marginLeft: 2, fontSize: 22 }}
                     onClick={() =>
-                      setselectedMinutes({
-                        minutes: selectedMinutes.minutes + 1,
-                      })
+                      parseInt(selectedMinutes.minutes) < 59
+                        ? setselectedMinutes({
+                            hours: selectedMinutes.hours,
+                            minutes: parseInt(selectedMinutes.minutes) + 1,
+                          })
+                        : null
                     }
                   >
                     +
@@ -503,14 +525,15 @@ export default function Home() {
               <GiStopwatch color={Colors.BLACK} size={25} />
               <font style={{ fontWeight: "bold", marginLeft: 10 }}>
                 {`Select Service (${
-                  serviceName && serviceName.replace(" Regular", "")
-                })`}
+                  serviceName && serviceName.split(" ")[0]
+                } - ${subService})`}
               </font>
             </div>
 
             <div>
               <PricesContent title="Regular" index={0} />
-              <PricesContent title="Premium" index={1} />
+              <PricesContent title="Standard" index={1} />
+              <PricesContent title="Premium" index={2} />
             </div>
           </div>
 
@@ -542,7 +565,7 @@ export default function Home() {
                     onClick={() => setIsBottomSheetOpen(false)}
                   />
                 </div>
-                <div style={{ marginLeft: 25, marginRight: 25 }}>
+                <div>
                   <Picker
                     optionGroups={dateGroup}
                     valueGroups={date}
@@ -576,10 +599,28 @@ export default function Home() {
             <Sheet.Container>
               <Sheet.Header />
               <Sheet.Content>
+                <div
+                  style={{
+                    display: "flex",
+                    flexDirection: "row",
+                    justifyContent: "space-between",
+                    marginLeft: 16,
+                    marginRight: 16,
+                    alignItems: "center",
+                  }}
+                >
+                  <h3>Selected Duration</h3>
+                  <IoMdClose
+                    size={28}
+                    onClick={() => setIsMinutesSheetOpen(false)}
+                  />
+                </div>
                 <Picker
                   optionGroups={minutesGroup}
                   valueGroups={selectedMinutes}
-                  onChange={(name, val) => setselectedMinutes({ [name]: val })}
+                  onChange={(name, val) =>
+                    setselectedMinutes({ ...selectedMinutes, [name]: val })
+                  }
                 />
                 <div
                   style={{
@@ -593,8 +634,10 @@ export default function Home() {
                     onClick={() => setIsMinutesSheetOpen(false)}
                   />
                   <Btn
-                    title="Close"
-                    onClick={() => setIsMinutesSheetOpen(false)}
+                    title="Refresh"
+                    onClick={() => {
+                      setselectedMinutes({ hours: "00", minutes: "00" });
+                    }}
                   />
                 </div>
               </Sheet.Content>

@@ -8,7 +8,8 @@ export default function InputGroup({
   type,
   icon,
   bgColor,
-  disabled
+  disabled,
+  roundedBorder,
 }) {
   return (
     <div
@@ -16,7 +17,7 @@ export default function InputGroup({
         backgroundColor: bgColor ? bgColor : Colors.WHITE,
         display: "flex",
         flexDirection: "row",
-        borderRadius: 7,
+        borderRadius: roundedBorder ? 100 : 7,
         alignItems: "center",
         marginTop: 16,
         paddingLeft: 10,
@@ -24,7 +25,7 @@ export default function InputGroup({
     >
       {icon}
       <input
-      disabled={disabled}
+        disabled={disabled}
         placeholder={placeholder}
         type={type}
         style={{
@@ -35,7 +36,7 @@ export default function InputGroup({
           paddingLeft: 10,
           height: 34,
           outline: "none", // removes border on focus
-          borderRadius: 7
+          borderRadius: roundedBorder ? 100 : 7,
         }}
         value={value}
         onChange={onChange}

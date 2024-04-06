@@ -1,13 +1,9 @@
-import React, { useEffect } from "react";
-import {
-  useNavigate,
-  useSearchParams,
-} from "react-router-dom";
+import React, { useEffect, useState } from "react";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { clearErrors, createBooking } from "../actions/BookingActions";
 import Enums from "../utils/Enums";
 import LoaderComponent from "../components/Loader";
-import LogoHeader from "../components/components/LogoHeader";
 import Btn from "../components/components/Btn";
 import "../styles/CheckoutStyles.css";
 import "../styles/ComponentStyles.css";
@@ -18,6 +14,7 @@ import { toast } from "react-custom-alert";
 export default function Checkout() {
   const dispatch = useDispatch();
   const navigate = useNavigate();
+  const [paymentMode, setPaymentMode] = useState("Pay using cash");
   const { error, loading, success, booking } = useSelector(
     (state) => state.booking
   );
@@ -114,9 +111,7 @@ export default function Checkout() {
           style={{ padding: "25px 13px 13px 13px" }}
         >
           <div>
-            <LogoHeader />
             <div style={{ width: "90%" }}>
-              {/* @TODO - Add static location on maps here */}
               <img src={Maps} style={{ width: "110%" }} alt="" />
             </div>
 
@@ -125,7 +120,13 @@ export default function Checkout() {
                 isTop={true}
                 heading="Service"
                 data={data.serviceName}
-                subHeading="Unlimited photos & video-shoot in between the timings"
+                subHeading={`Unlimited ${
+                  params.get("serviceName").split(" ")[0] === "Photography"
+                    ? "photos"
+                    : params.get("serviceName").split(" ")[0] === "Videography"
+                    ? "videos"
+                    : "photos & videos"
+                } in between the timings`}
               />
               <Details
                 isBottom={true}
@@ -161,6 +162,26 @@ export default function Checkout() {
               <b>Note - </b>We will provide you all the raw photos & videos
               within 24 hrs.
             </div>
+          </div>
+
+          {/* Payment Mode Radio Button */}
+          <div
+            style={{
+              display: "flex",
+              flexDirection: "row",
+              alignItems: "center",
+              marginLeft: 16,
+              marginTop: 10
+            }}
+          >
+            <input
+            style={{accentColor: Colors.PRIMARY}}
+              type="radio"
+              id="paymentMode"
+              value={paymentMode}
+              checked={paymentMode === "Pay using cash"}
+            />
+            <label style={{fontSize: 18, marginLeft: 7}} htmlFor="paymentMode">{paymentMode}</label>
           </div>
           <Btn onClick={submit} title="Submit & Proceed" />
         </div>
