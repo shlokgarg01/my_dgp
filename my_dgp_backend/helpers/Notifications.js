@@ -6,10 +6,11 @@ const sendRiderPushNotifications = async (fcm_tokens, message) => {
     var fcm = new FCM(SERVER_KEY);
 
     var push_notification = {
-      registration_ids: ["fmY-a15CTcahuGg8xHbP7q:APA91bF3YwO0B-Pi4ti5pP30d-XtPpaWeAAH9s0SOcWkpDm5n8E8H0NgDDAwN8anCX0bM3ONBIGN_hanJQorexSAb-IJizwVV6G5Ws1T93IZR4gWXKeyAxjShc03_jiyTTB04E-e5P0H"],
+      registration_ids: fcm_tokens,
       content_available: true,
       mutable_content: true,
       notification: {
+        title: "You have a new booking request.",
         body: message,
       },
     };
