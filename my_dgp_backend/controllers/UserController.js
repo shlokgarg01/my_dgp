@@ -5,7 +5,6 @@ const Redeem = require("../models/RedeemModel");
 const Booking = require("../models/BookingModel");
 const sendToken = require("../utils/JwtToken");
 const Enums = require("../utils/Enums");
-const cloudinary = require("cloudinary");
 const { getDaysFromCreatedAt } = require("../utils/orderUtils");
 
 // Logout User
@@ -79,7 +78,7 @@ exports.sendOTPForLogin = catchAsyncErrors(async (req, res, next) => {
   });
 });
 
-// autheticate the OTP for Login
+// autheticate the User for Login
 exports.authenticateUserViaOTPForLogin = catchAsyncErrors(
   async (req, res, next) => {
     const { contactNumber } = req.body;
@@ -135,7 +134,24 @@ exports.updateProfile = catchAsyncErrors(async (req, res, next) => {
   });
 });
 
-// change the onduty / status
+// update fcm token
+exports.updateFCMTokem = catchAsyncErrors(async (req, res, next) => {
+  const {fcm_token} = req.body
+
+  const user = await User.findByIdAndUpdate(req.user.id, {fcm_token}, {
+    new: true,
+    runValidators: true,
+    useFindAndModify: false,
+  });
+
+  res.status(200).json({
+    success: true,
+    user,
+    message: "FCM token updated successfully"
+  });
+});
+
+// change the on duty / status
 exports.updateDutyStatus = catchAsyncErrors(async (req, res, next) => {
   const status = req.body.status;
   if (

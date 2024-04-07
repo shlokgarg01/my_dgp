@@ -47,6 +47,10 @@ const userSchema = new mongoose.Schema(
         // required: true,
       },
     },
+    fcm_token: {
+      type: String,
+      default: ""
+    },
     role: {
       type: String,
       default: Enums.USER_ROLES.USER,
