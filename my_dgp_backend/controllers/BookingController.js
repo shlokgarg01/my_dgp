@@ -8,6 +8,8 @@ const catchAsyncErrors = require("../middleware/CatchAsyncErrors");
 const { getAvailableServiceProviders } = require("../helpers/UserHelpers");
 const Enums = require("../utils/Enums");
 const ErrorHandler = require("../utils/errorHandler");
+const { sendRiderPushNotifications } = require("../helpers/Notifications");
+const NotificationMessages = require("../Data/Messages");
 
 // create a booking
 exports.createBooking = catchAsyncErrors(async (req, res, next) => {
@@ -63,16 +65,25 @@ exports.createBooking = catchAsyncErrors(async (req, res, next) => {
     paidAt: Date.now(),
   });
 
-  const service_providers = await User.find({ service, role: Enums.USER_ROLES.SERVICE_PROVIDER }).select('_id')
+  const service_providers = await User.find({
+    service,
+    role: Enums.USER_ROLES.SERVICE_PROVIDER,
+  }).select("_id fcm_token");
 
   // create a request in BookingRequest table
   await BookingRequest.create({
     customer,
     booking: booking._id,
-    serviceProviders: service_providers,
+    serviceProviders: service_providers.map((item) => item.id),
     address: newAddress,
     service,
   });
+
+  // sending push notification to riders device for a new booking
+  sendRiderPushNotifications(
+    service_providers.map((item) => item.fcm_token),
+    NotificationMessages.NEW_RIDER_BOOKING
+  );
 
   res.status(201).json({
     success: true,
