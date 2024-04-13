@@ -8,8 +8,8 @@ const catchAsyncErrors = require("../middleware/CatchAsyncErrors");
 const { getAvailableServiceProviders } = require("../helpers/UserHelpers");
 const Enums = require("../utils/Enums");
 const ErrorHandler = require("../utils/errorHandler");
-const { sendRiderPushNotifications } = require("../helpers/Notifications");
-const NotificationMessages = require("../Data/Messages");
+const { sendRiderPushNotifications, sendEmail } = require("../helpers/Notifications");
+const {BOOKING_START, BOOKING_COMPLETE, NEW_RIDER_BOOKING} = require("../Data/Messages");
 
 // create a booking
 exports.createBooking = catchAsyncErrors(async (req, res, next) => {
@@ -82,7 +82,7 @@ exports.createBooking = catchAsyncErrors(async (req, res, next) => {
   // sending push notification to riders device for a new booking
   sendRiderPushNotifications(
     service_providers.map((item) => item.fcm_token),
-    NotificationMessages.NEW_RIDER_BOOKING
+    NEW_RIDER_BOOKING
   );
 
   res.status(201).json({
@@ -136,8 +136,16 @@ exports.updateBookingStatus = catchAsyncErrors(async (req, res, next) => {
       req.params.id,
       { status: newStatus },
       { new: true, runValidators: true, useFindAndModify: false }
-    );
+    ).populate("customer")
 
+    // triggering email
+    if (newStatus === Enums.BOOKING_STATUS.ONGOING)  {
+      sendEmail([booking.customer.email], "Booking Started", BOOKING_START)
+    } else if (newStatus === Enums.BOOKING_STATUS.CLOSED) {
+      sendEmail([booking.customer.email], "Booking Completed", BOOKING_COMPLETE)
+    }
+
+    // updating rider amount for redemption
     if (newStatus === Enums.BOOKING_STATUS.CLOSED) {
       // Updating total Earnings on the User
       let totalEarnings = (req.user.totalEarnings || 0) + booking.totalPrice;

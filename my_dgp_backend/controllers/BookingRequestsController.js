@@ -5,6 +5,7 @@ const ErrorHandler = require("../utils/errorHandler");
 const Enums = require("../utils/Enums");
 const { generateOTP } = require("../helpers/UserHelpers");
 const { sendEmail } = require("../helpers/Notifications");
+const { BOOKING_OTP, BOOKING_ACCEPTANCE } = require("../Data/Messages");
 
 // get all booking requests
 exports.getAllBookingRequests = catchAsyncErrors(async (req, res, next) => {
@@ -52,9 +53,30 @@ exports.updateStatusOfBookingRequest = catchAsyncErrors(
         bookingRequest.booking,
         { status, serviceProvider: service_provider_id, otp: generateOTP() },
         { new: true, runValidators: true, useFindAndModify: false }
+      )
+        .select("+otp")
+        .populate("customer address serviceProvider service");
+
+      sendEmail(
+        [booking.customer.email],
+        "Booking Confirmation",
+        null,
+        `
+          ${BOOKING_ACCEPTANCE}
+          <h3>Booking Details</h3>
+          <b>Booking Date</b>: ${new Date(booking.date).toDateString()}<br />
+          <b>Name</b>: ${booking.customer.name}<br />
+          <b>Address</b>: ${booking.address.address}, ${booking.address.country}<br />
+          <b>Amount</b>: ₹ ${booking.totalPrice}<br />
+          <b>Service</b>: ${booking.service.name}<br />
+          <b>Service Provider</b>: ${booking.serviceProvider.name}<br />
+        `
       );
-      // TODO - send otp to email here
-      // sendEmail()
+      sendEmail(
+        [booking.customer.email],
+        "Booking OTP",
+        BOOKING_OTP + booking.otp
+      );
       await bookingRequest.deleteOne();
     } else if (status === Enums.BOOKING_REQUEST_STATUS.REJECTED) {
       booking = await Booking.findById(bookingRequest.booking);

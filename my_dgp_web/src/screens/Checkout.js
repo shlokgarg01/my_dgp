@@ -10,6 +10,7 @@ import "../styles/ComponentStyles.css";
 import Maps from "../images/google_maps.png";
 import Colors from "../utils/Colors";
 import { toast } from "react-custom-alert";
+import LogoHeader from '../components/components/LogoHeader'
 
 export default function Checkout() {
   const dispatch = useDispatch();
@@ -39,7 +40,7 @@ export default function Checkout() {
     coordinates: { lat: params.get("lat"), lng: params.get("lng") },
     date: params.get("date"),
     hours: parseInt(params.get("hours")),
-    customer: "65769bb6f664dbb6722e90ba",
+    customer: params.get('customer'),
     taxPrice: params.get("taxPrice"),
     itemsPrice: params.get("itemsPrice"),
     totalPrice: params.get("totalPrice"),
@@ -54,7 +55,6 @@ export default function Checkout() {
 
   const submit = () => {
     dispatch(createBooking(data));
-    // navigate("/searchingRider")
   };
 
   const Details = ({ heading, data, isTop, isBottom, subHeading, showTax }) => (
@@ -111,6 +111,7 @@ export default function Checkout() {
           style={{ padding: "25px 13px 13px 13px" }}
         >
           <div>
+            <LogoHeader showLogo={false} />
             <div style={{ width: "90%" }}>
               <img src={Maps} style={{ width: "110%" }} alt="" />
             </div>
@@ -179,6 +180,7 @@ export default function Checkout() {
               type="radio"
               id="paymentMode"
               value={paymentMode}
+              readOnly
               checked={paymentMode === "Pay using cash"}
             />
             <label style={{fontSize: 18, marginLeft: 7}} htmlFor="paymentMode">{paymentMode}</label>

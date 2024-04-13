@@ -18,6 +18,7 @@ import { AiOutlineLogin } from "react-icons/ai";
 import "../styles/ComponentStyles.css";
 import LoaderComponent from "../components/Loader";
 import { toast } from "react-custom-alert";
+import { CLEAR_ERRORS } from "../constants/UserConstants";
 
 export default function UserDetails() {
   const dispatch = useDispatch();
@@ -41,6 +42,7 @@ export default function UserDetails() {
 
     if (isAuthenticated) {
       setOtpLoading(false);
+      dispatch({type: CLEAR_ERRORS})
       navigate({
         pathname: "/checkout",
         search: createSearchParams({
@@ -107,7 +109,7 @@ export default function UserDetails() {
         <div className="container">
           <div className="subContainer" style={{ height: "100%" }}>
             <div>
-              <LogoHeader />
+              <LogoHeader showLogo={true} />
               <div
                 style={{
                   fontSize: 22,

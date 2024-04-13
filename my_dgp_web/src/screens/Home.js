@@ -31,7 +31,7 @@ export default function Home() {
   const [selectedHours, setSelectedHours] = useState(1);
   const [selectedMinutes, setselectedMinutes] = useState({
     hours: "00",
-    minutes: "00",
+    minutes: "0",
   });
   const [isMinutesSheetOpen, setIsMinutesSheetOpen] = useState(false);
   const [address, setAddress] = useState("");
@@ -90,12 +90,12 @@ export default function Home() {
     }
   }, [dispatch, error]);
 
-  useEffect(() => {
-    // setSelectedService(services[0]?._id);
-    // setServiceName(services[0]?.name);
-    // selectSubService(Service[0]?.subServices[0]);
-    // setSelectedServiceIndex(0);
-  }, [services]);
+  // useEffect(() => {
+  // setSelectedService(services[0]?._id);
+  // setServiceName(services[0]?.name);
+  // selectSubService(Service[0]?.subServices[0]);
+  // setSelectedServiceIndex(0);
+  // }, [services]);
 
   const handleLocationChange = (newLocation) => setLocation(newLocation);
 
@@ -408,8 +408,7 @@ export default function Home() {
                     Select service duration
                   </div>
                   <div style={{ color: Colors.GRAY }}>
-                    You can book a service for the timing as per your need
-                    (minnimum 1 minute to maximum time as you wish)
+                    minimum 1 minute to maximum time as you wish
                   </div>
                 </div>
               </div>
@@ -417,7 +416,7 @@ export default function Home() {
               {/* Date Selection */}
               <div
                 style={{
-                  width: "50%",
+                  width: "30%",
                   padding: 4,
                   borderRadius: 7,
                   boxShadow: `1px 1px 4px ${Colors.GRAY}`,
@@ -444,11 +443,11 @@ export default function Home() {
                       Now
                     </>
                   ) : (
-                    <>
+                    <div style={{ fontSize: 13 }}>
                       {date.date.slice(0, 6)}
                       <br />
                       {date.hour}:{date.quaters} {date.ampm}
-                    </>
+                    </div>
                   )}
                 </div>
               </div>
@@ -503,7 +502,10 @@ export default function Home() {
                     -
                   </div>
                   <div onClick={() => setIsMinutesSheetOpen(true)}>
-                    {selectedMinutes.hours}:{selectedMinutes.minutes}
+                    {selectedMinutes.hours}:
+                    {selectedMinutes.minutes <= 9
+                      ? `0${selectedMinutes.minutes}`
+                      : selectedMinutes.minutes}
                   </div>
                   <div
                     style={{ marginLeft: 2, fontSize: 22 }}
@@ -548,7 +550,21 @@ export default function Home() {
           </div>
 
           {/* Next Button */}
-          <Btn title="Proceed" onClick={submit} firstScreen={true} />
+          <button
+            onClick={submit}
+            style={{
+              width: "100%",
+              height: 40,
+              backgroundColor: Colors.PRIMARY,
+              color: Colors.WHITE,
+              borderRadius: 0,
+              border: 0,
+              marginTop: 25,
+              fontSize: 20,
+            }}
+          >
+            Proceed
+          </button>
         </>
       )}
 
@@ -591,8 +607,16 @@ export default function Home() {
                 justifyContent: "space-evenly",
               }}
             >
-              <Btn title="Save" onClick={() => setIsBottomSheetOpen(false)} />
-              <Btn title="Refresh" onClick={() => setDate(currentTime())} />
+              <Btn
+                smallButton={true}
+                title="Save"
+                onClick={() => setIsBottomSheetOpen(false)}
+              />
+              <Btn
+                smallButton={true}
+                title="Refresh"
+                onClick={() => setDate(currentTime())}
+              />
             </div>
           </Sheet.Content>
         </Sheet.Container>
@@ -624,6 +648,24 @@ export default function Home() {
                 onClick={() => setIsMinutesSheetOpen(false)}
               />
             </div>
+            <div
+              style={{
+                marginTop: 16,
+                display: "flex",
+                flexDirection: "row",
+                justifyContent: "space-evenly",
+                alignItems: "center",
+                paddingRight: 7,
+                paddingLeft: 16,
+              }}
+            >
+              <div style={{ width: "50%", textAlign: "center", fontSize: 19 }}>
+                Hours
+              </div>
+              <div style={{ width: "50%", textAlign: "center", fontSize: 19 }}>
+                Minutes
+              </div>
+            </div>
             <Picker
               optionGroups={minutesGroup}
               valueGroups={selectedMinutes}
@@ -638,8 +680,13 @@ export default function Home() {
                 justifyContent: "space-evenly",
               }}
             >
-              <Btn title="Save" onClick={() => setIsMinutesSheetOpen(false)} />
               <Btn
+                smallButton={true}
+                title="Save"
+                onClick={() => setIsMinutesSheetOpen(false)}
+              />
+              <Btn
+                smallButton={true}
                 title="Refresh"
                 onClick={() => {
                   setselectedMinutes({ hours: "00", minutes: "00" });

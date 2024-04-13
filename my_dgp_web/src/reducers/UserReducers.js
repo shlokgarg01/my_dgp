@@ -68,6 +68,7 @@ export const UserReducer = (state = { user: {} }, action) => {
     case CLEAR_ERRORS:
       return {
         ...state,
+        isAuthenticated: false,
         error: null,
       };
     default:
