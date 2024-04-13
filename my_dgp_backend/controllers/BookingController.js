@@ -96,7 +96,7 @@ exports.updateBookingStatus = catchAsyncErrors(async (req, res, next) => {
   let booking = await Booking.findOne({
       _id: req.params.id,
       serviceProvider: req.user._id,
-    }),
+    }).select("+otp"),
     newStatus = req.body.status,
     otp = req.body.otp;
 
@@ -116,7 +116,6 @@ exports.updateBookingStatus = catchAsyncErrors(async (req, res, next) => {
   }
 
   // Update the booking
-  console.log(typeof booking.otp, booking.otp, typeof otp, otp, booking.otp === otp)
   if (
     (currentStatus === Enums.BOOKING_STATUS.ACCEPTED &&
       newStatus === Enums.BOOKING_STATUS.ONGOING) ||
