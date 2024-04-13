@@ -1,36 +1,36 @@
 const mongoose = require("mongoose");
-const Enums = require('../utils/Enums')
+const Enums = require("../utils/Enums");
 
 const bookingModel = new mongoose.Schema(
   {
     customer: {
       type: mongoose.Schema.ObjectId,
       ref: "User",
-      required: true
+      required: true,
     },
     serviceProvider: {
       type: mongoose.Schema.ObjectId,
       ref: "User",
-      required: false
+      required: false,
     },
     service: {
       type: mongoose.Schema.ObjectId,
       ref: "Service",
-      required: false
+      required: false,
     },
     date: {
       type: Date,
-      required: [true, "Booking Date is required"]
+      required: [true, "Booking Date is required"],
     },
     hours: {
       type: Number,
       required: false,
-      default: 1
+      default: 1,
     },
     address: {
       type: mongoose.Schema.ObjectId,
-      ref: 'Address',
-      required: true
+      ref: "Address",
+      required: true,
     },
     paymentInfo: {
       id: {
@@ -40,7 +40,7 @@ const bookingModel = new mongoose.Schema(
       status: {
         type: String,
         required: true,
-        default: Enums.PAYMENT_STATUS.NOT_PAID
+        default: Enums.PAYMENT_STATUS.NOT_PAID,
       },
     },
     paidAt: {
@@ -49,16 +49,16 @@ const bookingModel = new mongoose.Schema(
     },
     coupon: {
       type: String,
-      default: ""
+      default: "",
     },
     couponDiscount: {
       type: Number,
-      default: 0
+      default: 0,
     },
     itemsPrice: {
       type: Number,
       requierd: true,
-      default: 0
+      default: 0,
     },
     taxPrice: {
       type: Number,
@@ -70,11 +70,16 @@ const bookingModel = new mongoose.Schema(
       requierd: true,
       default: 0,
     },
+    otp: {
+      type: Number,
+      required: false,
+      select: false // this will not get the otp whenever we make query to db
+    },
     status: {
       type: String,
       required: true,
       default: Enums.BOOKING_STATUS.PLACED,
-    }
+    },
   },
   {
     timestamps: {

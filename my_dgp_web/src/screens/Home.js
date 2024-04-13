@@ -19,12 +19,13 @@ import {
   MdOutlineVideocam,
   MdOutlineVideoCameraFront,
 } from "react-icons/md";
+import Banner from "../images/desktop_banner.jpg";
 
 export default function Home() {
-  const [selectedServiceIndex, setSelectedServiceIndex] = useState(0);
-  const [selectedPackageIndex, setSelectedPackageIndex] = useState(0);
+  const [selectedServiceIndex, setSelectedServiceIndex] = useState();
   const [selectedService, setSelectedService] = useState(null);
   const [serviceName, setServiceName] = useState("");
+  const [selectedPackageIndex, setSelectedPackageIndex] = useState(0);
   const [subService, selectSubService] = useState("");
   const [selectedSubServiceIndex, setSelectedSubServiceIndex] = useState();
   const [selectedHours, setSelectedHours] = useState(1);
@@ -90,10 +91,10 @@ export default function Home() {
   }, [dispatch, error]);
 
   useEffect(() => {
-    setSelectedService(services[0]?._id);
-    setServiceName(services[0]?.name);
-    selectSubService(Service[0]?.subServices[0]);
-    setSelectedServiceIndex(0);
+    // setSelectedService(services[0]?._id);
+    // setServiceName(services[0]?.name);
+    // selectSubService(Service[0]?.subServices[0]);
+    // setSelectedServiceIndex(0);
   }, [services]);
 
   const handleLocationChange = (newLocation) => setLocation(newLocation);
@@ -285,99 +286,108 @@ export default function Home() {
     });
   };
 
-  return (
-    <div>
-      {loading ? (
-        <LoaderComponent />
-      ) : (
-        <div style={{ backgroundColor: Colors.WHITE }}>
-          <div
-            style={{
-              height: "250px",
-              display: "flex",
-              flexDirection: "column",
-              alignItems: "center",
-            }}
-          >
-            <MapComponent
-              style={{ height: 200, width: 200 }}
-              onSearchChange={(e) => setAddress(e.target.value)}
-              handleLocationChange={handleLocationChange}
-              initialLocation={location}
-              searchValue={address}
-            />
-          </div>
+  return loading ? (
+    <LoaderComponent />
+  ) : (
+    <div style={{ backgroundColor: Colors.WHITE, minHeight: "100%" }}>
+      <div
+        style={{
+          height: "250px",
+          display: "flex",
+          flexDirection: "column",
+          alignItems: "center",
+        }}
+      >
+        <MapComponent
+          style={{ height: 200, width: 200 }}
+          onSearchChange={setAddress}
+          handleLocationChange={handleLocationChange}
+          initialLocation={location}
+          searchValue={address}
+        />
+      </div>
 
-          {/* Banner */}
-          <div
-            style={{
-              textAlign: "center",
-              backgroundColor: Colors.PRIMARY,
-              color: Colors.WHITE,
-              paddingTop: 7,
-              paddingBottom: 7,
-              fontSize: 14,
-            }}
-          >
-            Book photographer & videographers instantly.
-          </div>
+      {/* Tag line */}
+      <div
+        style={{
+          textAlign: "center",
+          backgroundColor: Colors.PRIMARY,
+          color: Colors.WHITE,
+          paddingTop: 7,
+          paddingBottom: 7,
+          fontSize: 14,
+        }}
+      >
+        Book photographer & videographers instantly.
+      </div>
 
-          {/* Services Slider */}
-          <div style={{ ...styles.serviceSliderContainer }}>
-            {Service.map((service, index) => (
-              <ServiceSlider
-                key={index}
-                title={service.name}
-                index={service.index}
-                icon={
-                  index === 0 ? (
-                    <MdOutlineAddAPhoto
-                      size={25}
-                      color={
-                        selectedServiceIndex === service.index
-                          ? Colors.PRIMARY
-                          : Colors.GRAY
-                      }
-                    />
-                  ) : index === 1 ? (
-                    <MdOutlineVideocam
-                      size={25}
-                      color={
-                        selectedServiceIndex === service.index
-                          ? Colors.PRIMARY
-                          : Colors.GRAY
-                      }
-                    />
-                  ) : (
-                    <MdOutlineVideoCameraFront
-                      size={25}
-                      color={
-                        selectedServiceIndex === service.index
-                          ? Colors.PRIMARY
-                          : Colors.GRAY
-                      }
-                    />
-                  )
-                }
-              />
-            ))}
-          </div>
+      {/* Services Slider */}
+      <div style={{ ...styles.serviceSliderContainer }}>
+        {Service.map((service, index) => (
+          <ServiceSlider
+            key={index}
+            title={service.name}
+            index={service.index}
+            icon={
+              index === 0 ? (
+                <MdOutlineAddAPhoto
+                  size={25}
+                  color={
+                    selectedServiceIndex === service.index
+                      ? Colors.PRIMARY
+                      : Colors.GRAY
+                  }
+                />
+              ) : index === 1 ? (
+                <MdOutlineVideocam
+                  size={25}
+                  color={
+                    selectedServiceIndex === service.index
+                      ? Colors.PRIMARY
+                      : Colors.GRAY
+                  }
+                />
+              ) : (
+                <MdOutlineVideoCameraFront
+                  size={25}
+                  color={
+                    selectedServiceIndex === service.index
+                      ? Colors.PRIMARY
+                      : Colors.GRAY
+                  }
+                />
+              )
+            }
+          />
+        ))}
+      </div>
 
-          {/* Sub Service Slider */}
-          <div
-            style={{
-              ...styles.serviceSliderContainer,
-              paddingLeft: 16,
-              paddingRight: 16,
-            }}
-          >
-            {Service.find(
-              (x) => x.name === serviceName?.split(" ")[0]
-            )?.subServices.map((subService, index) => (
-              <SubServiceSlider key={index} title={subService} index={index} />
-            ))}
-          </div>
+      {/* Sub Service Slider */}
+      {selectedService && (
+        <div
+          style={{
+            ...styles.serviceSliderContainer,
+            paddingLeft: 16,
+            paddingRight: 16,
+          }}
+        >
+          {Service.find(
+            (x) => x.name === serviceName?.split(" ")[0]
+          )?.subServices.map((subService, index) => (
+            <SubServiceSlider key={index} title={subService} index={index} />
+          ))}
+        </div>
+      )}
 
+      {/* Banner */}
+      {(!selectedService || !subService) && (
+        <div style={{ margin: 10 }}>
+          <img src={Banner} style={{ width: "100%", borderRadius: 10 }} />
+        </div>
+      )}
+
+      {selectedService && subService && (
+        <>
           {/* Duration Selection */}
           <div
             style={{
@@ -539,113 +549,107 @@ export default function Home() {
 
           {/* Next Button */}
           <Btn title="Proceed" onClick={submit} firstScreen={true} />
-
-          <Sheet
-            isOpen={isBottomSheetOpen}
-            onClose={() => setIsBottomSheetOpen(false)}
-            detent="content-height"
-            disableDrag={true}
-          >
-            <Sheet.Container>
-              <Sheet.Header />
-              <Sheet.Content>
-                <div
-                  style={{
-                    display: "flex",
-                    flexDirection: "row",
-                    justifyContent: "space-between",
-                    marginLeft: 16,
-                    marginRight: 16,
-                    alignItems: "center",
-                  }}
-                >
-                  <h3>Schedule a service</h3>
-                  <IoMdClose
-                    size={28}
-                    onClick={() => setIsBottomSheetOpen(false)}
-                  />
-                </div>
-                <div>
-                  <Picker
-                    optionGroups={dateGroup}
-                    valueGroups={date}
-                    onChange={(name, val) => setDate({ ...date, [name]: val })}
-                  />
-                </div>
-                <div
-                  style={{
-                    display: "flex",
-                    flexDirection: "row",
-                    justifyContent: "space-evenly",
-                  }}
-                >
-                  <Btn
-                    title="Save"
-                    onClick={() => setIsBottomSheetOpen(false)}
-                  />
-                  <Btn title="Refresh" onClick={() => setDate(currentTime())} />
-                </div>
-              </Sheet.Content>
-            </Sheet.Container>
-            <Sheet.Backdrop />
-          </Sheet>
-
-          <Sheet
-            isOpen={isMinutesSheetOpen}
-            onClose={() => setIsBottomSheetOpen(false)}
-            detent="content-height"
-            disableDrag={true}
-          >
-            <Sheet.Container>
-              <Sheet.Header />
-              <Sheet.Content>
-                <div
-                  style={{
-                    display: "flex",
-                    flexDirection: "row",
-                    justifyContent: "space-between",
-                    marginLeft: 16,
-                    marginRight: 16,
-                    alignItems: "center",
-                  }}
-                >
-                  <h3>Selected Duration</h3>
-                  <IoMdClose
-                    size={28}
-                    onClick={() => setIsMinutesSheetOpen(false)}
-                  />
-                </div>
-                <Picker
-                  optionGroups={minutesGroup}
-                  valueGroups={selectedMinutes}
-                  onChange={(name, val) =>
-                    setselectedMinutes({ ...selectedMinutes, [name]: val })
-                  }
-                />
-                <div
-                  style={{
-                    display: "flex",
-                    flexDirection: "row",
-                    justifyContent: "space-evenly",
-                  }}
-                >
-                  <Btn
-                    title="Save"
-                    onClick={() => setIsMinutesSheetOpen(false)}
-                  />
-                  <Btn
-                    title="Refresh"
-                    onClick={() => {
-                      setselectedMinutes({ hours: "00", minutes: "00" });
-                    }}
-                  />
-                </div>
-              </Sheet.Content>
-            </Sheet.Container>
-            <Sheet.Backdrop />
-          </Sheet>
-        </div>
+        </>
       )}
+
+      <Sheet
+        isOpen={isBottomSheetOpen}
+        onClose={() => setIsBottomSheetOpen(false)}
+        detent="content-height"
+        disableDrag={true}
+      >
+        <Sheet.Container>
+          <Sheet.Header />
+          <Sheet.Content>
+            <div
+              style={{
+                display: "flex",
+                flexDirection: "row",
+                justifyContent: "space-between",
+                marginLeft: 16,
+                marginRight: 16,
+                alignItems: "center",
+              }}
+            >
+              <h3>Schedule a service</h3>
+              <IoMdClose
+                size={28}
+                onClick={() => setIsBottomSheetOpen(false)}
+              />
+            </div>
+            <div>
+              <Picker
+                optionGroups={dateGroup}
+                valueGroups={date}
+                onChange={(name, val) => setDate({ ...date, [name]: val })}
+              />
+            </div>
+            <div
+              style={{
+                display: "flex",
+                flexDirection: "row",
+                justifyContent: "space-evenly",
+              }}
+            >
+              <Btn title="Save" onClick={() => setIsBottomSheetOpen(false)} />
+              <Btn title="Refresh" onClick={() => setDate(currentTime())} />
+            </div>
+          </Sheet.Content>
+        </Sheet.Container>
+        <Sheet.Backdrop />
+      </Sheet>
+
+      <Sheet
+        isOpen={isMinutesSheetOpen}
+        onClose={() => setIsBottomSheetOpen(false)}
+        detent="content-height"
+        disableDrag={true}
+      >
+        <Sheet.Container>
+          <Sheet.Header />
+          <Sheet.Content>
+            <div
+              style={{
+                display: "flex",
+                flexDirection: "row",
+                justifyContent: "space-between",
+                marginLeft: 16,
+                marginRight: 16,
+                alignItems: "center",
+              }}
+            >
+              <h3>Selected Duration</h3>
+              <IoMdClose
+                size={28}
+                onClick={() => setIsMinutesSheetOpen(false)}
+              />
+            </div>
+            <Picker
+              optionGroups={minutesGroup}
+              valueGroups={selectedMinutes}
+              onChange={(name, val) =>
+                setselectedMinutes({ ...selectedMinutes, [name]: val })
+              }
+            />
+            <div
+              style={{
+                display: "flex",
+                flexDirection: "row",
+                justifyContent: "space-evenly",
+              }}
+            >
+              <Btn title="Save" onClick={() => setIsMinutesSheetOpen(false)} />
+              <Btn
+                title="Refresh"
+                onClick={() => {
+                  setselectedMinutes({ hours: "00", minutes: "00" });
+                }}
+              />
+            </div>
+          </Sheet.Content>
+        </Sheet.Container>
+        <Sheet.Backdrop />
+      </Sheet>
     </div>
   );
 }

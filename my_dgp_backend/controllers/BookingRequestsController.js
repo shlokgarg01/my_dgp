@@ -3,6 +3,8 @@ const Booking = require("../models/BookingModel");
 const catchAsyncErrors = require("../middleware/CatchAsyncErrors");
 const ErrorHandler = require("../utils/errorHandler");
 const Enums = require("../utils/Enums");
+const { generateOTP } = require("../helpers/UserHelpers");
+const { sendEmail } = require("../helpers/Notifications");
 
 // get all booking requests
 exports.getAllBookingRequests = catchAsyncErrors(async (req, res, next) => {
@@ -48,9 +50,11 @@ exports.updateStatusOfBookingRequest = catchAsyncErrors(
     if (status === Enums.BOOKING_REQUEST_STATUS.ACCEPTED) {
       booking = await Booking.findByIdAndUpdate(
         bookingRequest.booking,
-        { status, serviceProviders: service_provider_id },
+        { status, serviceProvider: service_provider_id, otp: generateOTP() },
         { new: true, runValidators: true, useFindAndModify: false }
       );
+      // TODO - send otp to email here
+      // sendEmail()
       await bookingRequest.deleteOne();
     } else if (status === Enums.BOOKING_REQUEST_STATUS.REJECTED) {
       booking = await Booking.findById(bookingRequest.booking);

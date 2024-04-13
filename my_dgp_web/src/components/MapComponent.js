@@ -1,10 +1,11 @@
 import React, { useEffect, useMemo, useRef, useState } from "react";
 import { MapContainer, TileLayer, Marker } from "react-leaflet";
 import L from "leaflet";
-import InputGroup from "./components/InputGroup";
-import { FaSearch } from "react-icons/fa";
 import Colors from "../utils/Colors";
 import BikeIcon from "../images/Bike.png";
+import Autocomplete from "react-google-autocomplete";
+import { geocodeByAddress, getLatLng } from "react-google-places-autocomplete";
+import { MAP_API_KEY } from "../config/Config";
 
 delete L.Icon.Default.prototype._getIconUrl;
 
@@ -23,7 +24,6 @@ const MapComponent = ({
   handleLocationChange,
   initialLocation,
   onSearchChange,
-  searchValue,
 }) => {
   const [position, setPosition] = useState(initialLocation);
   const [bikeLocations, setBikeLocations] = useState([]);
@@ -69,7 +69,13 @@ const MapComponent = ({
       randomCoordinates.push({ lat: newLatitude, lng: newLongitude });
     }
     return randomCoordinates;
-  }
+  };
+
+  let updateCorodinatesAndBikeCoordinates = (coordinates) => {
+    let bikeCordinates = generateRandomCoordinates(coordinates);
+    setBikeLocations(bikeCordinates);
+    handleLocationChange(coordinates);
+  };
 
   const eventHandlers = useMemo(
     () => ({
@@ -78,9 +84,7 @@ const MapComponent = ({
         if (marker != null) {
           setPosition(marker.getLatLng());
           let coordinates = [marker.getLatLng().lat, marker.getLatLng().lng];
-          let bikeCordinates = generateRandomCoordinates(coordinates);
-          setBikeLocations(bikeCordinates);
-          handleLocationChange(coordinates);
+          updateCorodinatesAndBikeCoordinates(coordinates);
         }
       },
     }),
@@ -88,15 +92,26 @@ const MapComponent = ({
   );
 
   useEffect(() => {
-    let cordinates = generateRandomCoordinates(initialLocation)
-    setBikeLocations(cordinates)
-  }, [])
+    let cordinates = generateRandomCoordinates(initialLocation);
+    setBikeLocations(cordinates);
+  }, []);
 
   const bikeIcon = L.icon({
     iconUrl: BikeIcon,
     iconSize: [40, 40],
     iconAnchor: [16, 32],
   });
+
+  const updateAddress = (place) => {
+    let add = place.formatted_address;
+    onSearchChange(add);
+    geocodeByAddress(add)
+      .then((results) => getLatLng(results[0]))
+      .then(({ lat, lng }) => {
+        setPosition([lat, lng]);
+        updateCorodinatesAndBikeCoordinates([lat, lng]);
+      });
+  };
 
   return (
     <MapContainer
@@ -125,6 +140,7 @@ const MapComponent = ({
 
       <div
         style={{
+          top: 10,
           position: "absolute",
           left: "15%",
           borderRadius: 100,
@@ -133,14 +149,20 @@ const MapComponent = ({
           boxShadow: `0px 2px 4px ${Colors.LIGHT_GRAY}`,
         }}
       >
-        <InputGroup
-          placeholder="Search"
-          onChange={onSearchChange}
-          value={searchValue}
-          type="text"
-          icon={<FaSearch color={Colors.GRAY} />}
-          bgColor={Colors.WHITE}
-          roundedBorder={true}
+        <Autocomplete
+          apiKey={MAP_API_KEY}
+          onPlaceSelected={updateAddress}
+          style={{
+            color: Colors.BLACK,
+            backgroundColor: Colors.WHITE,
+            width: "100%",
+            borderWidth: 0,
+            paddingLeft: 10,
+            height: 34,
+            outline: "none",
+            borderRadius: 7,
+            borderColor: Colors.GRAY,
+          }}
         />
       </div>
     </MapContainer>

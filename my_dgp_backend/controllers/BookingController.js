@@ -97,7 +97,8 @@ exports.updateBookingStatus = catchAsyncErrors(async (req, res, next) => {
       _id: req.params.id,
       serviceProvider: req.user._id,
     }),
-    newStatus = req.body.status;
+    newStatus = req.body.status,
+    otp = req.body.otp;
 
   if (!booking) {
     return next(new ErrorHandler("No such booking exists!", 404));
@@ -121,6 +122,16 @@ exports.updateBookingStatus = catchAsyncErrors(async (req, res, next) => {
     (currentStatus === Enums.BOOKING_STATUS.ONGOING &&
       newStatus === Enums.BOOKING_STATUS.CLOSED)
   ) {
+    if (newStatus === Enums.BOOKING_STATUS.ONGOING) {
+      if (!otp) {
+        return next(
+          new ErrorHandler("OTP is required to start the booking", 400)
+        );
+      } else if (booking.otp !== otp) {
+        return next(new ErrorHandler("Invalid OTP", 400)); // verify that the OTP is matching
+      }
+    }
+
     booking = await Booking.findByIdAndUpdate(
       req.params.id,
       { status: newStatus },
@@ -171,6 +182,7 @@ exports.getCompletedBookingsOfAUser = catchAsyncErrors(
     res.status(200).json({
       success: true,
       bookings,
+      bookingsCount: bookings.length
     });
   }
 );
@@ -194,6 +206,7 @@ exports.getCurrentBookingsOfAUser = catchAsyncErrors(async (req, res, next) => {
   res.status(200).json({
     success: true,
     bookings,
+    bookingsCount: bookings.length
   });
 });
 
@@ -211,6 +224,7 @@ exports.getFutureBookingsOfAUser = catchAsyncErrors(async (req, res, next) => {
   res.status(200).json({
     success: true,
     bookings,
+    bookingsCount: bookings.length
   });
 });
 

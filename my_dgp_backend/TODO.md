@@ -1,4 +1,5 @@
 # TODO-I
+- [ ] Today booking, future booking API not giving correct response
 - [x] Complete Address Controllers - backend
 - [x] Create a booking - backend
 - [x] While creating booking, make an entry to requests table - backend
@@ -31,12 +32,12 @@
 
 - Web App
 - [ ] Apply Coupon
-- [ ] Map functionality
-- [ ] Make a booking
+- [x] Map functionality
+- [x] Make a booking
 - [ ] Integrate Payment Gateway
 - [ ] Book for someone else
 - [ ] Legal and compliance pages - Static Page
-- [ ] 2 Factor Auth while creating booking
+- [x] 2 Factor Auth while creating booking
 
 - Admin (decide at last)
 - [ ] CRUD for coupon
