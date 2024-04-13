@@ -116,6 +116,7 @@ exports.updateBookingStatus = catchAsyncErrors(async (req, res, next) => {
   }
 
   // Update the booking
+  console.log(typeof booking.otp, booking.otp, typeof otp, otp, booking.otp === otp)
   if (
     (currentStatus === Enums.BOOKING_STATUS.ACCEPTED &&
       newStatus === Enums.BOOKING_STATUS.ONGOING) ||
