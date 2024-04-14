@@ -31,7 +31,7 @@ export default function Home() {
   const [selectedHours, setSelectedHours] = useState(1);
   const [selectedMinutes, setselectedMinutes] = useState({
     hours: "00",
-    minutes: "0",
+    minutes: "00",
   });
   const [isMinutesSheetOpen, setIsMinutesSheetOpen] = useState(false);
   const [address, setAddress] = useState("");
@@ -45,7 +45,9 @@ export default function Home() {
     return {
       date: new Date().toString().slice(4, 15),
       hour:
-        new Date().getHours() % 12 <= 9
+        new Date().getHours() % 12 === 0 // if hour is 12, then it should set 12 not 00
+          ? `12`
+          : new Date().getHours() % 12 <= 9
           ? `0${new Date().getHours() % 12}`
           : `${new Date().getHours() % 12}`,
       ampm: new Date()
@@ -55,15 +57,19 @@ export default function Home() {
     };
   };
   const [date, setDate] = useState(currentTime());
+  const [currentAMPM] = useState(currentTime().ampm);
 
   const getDates = () => {
     let dates = [];
 
     for (let i = 0; i < 7; ++i) {
       let date = new Date(Date.now() + 3600 * 1000 * 24 * i);
+      let label = date.toString().slice(4, 10).split(" ");
+      label = label[1] + " " + label[0];
+
       dates.push({
         value: date.toString().slice(4, 15),
-        label: date.toString().slice(4, 10),
+        label,
       });
     }
     return dates;
@@ -382,7 +388,11 @@ export default function Home() {
       {/* Banner */}
       {(!selectedService || !subService) && (
         <div style={{ margin: 10 }}>
-          <img src={Banner} style={{ width: "100%", borderRadius: 10 }} />
+          <img
+            alt="Banner Image"
+            src={Banner}
+            style={{ width: "100%", borderRadius: 10 }}
+          />
         </div>
       )}
 
@@ -433,11 +443,12 @@ export default function Home() {
                   onClick={() => setIsBottomSheetOpen(true)}
                 >
                   {new Date(`${date.year}-${date.month}-${date.date}`).setHours(
-                    0,
+                    date.hour,
                     0,
                     0,
                     0
-                  ) === new Date().setHours(0, 0, 0, 0) ? (
+                  ) === new Date().setHours(new Date().getHours() % 12, 0, 0, 0) &&
+                  currentAMPM === date.ampm ? (
                     <>
                       <IoMdAlarm color={Colors.BLACK} size={25} />
                       Now
@@ -503,7 +514,7 @@ export default function Home() {
                   </div>
                   <div onClick={() => setIsMinutesSheetOpen(true)}>
                     {selectedMinutes.hours}:
-                    {selectedMinutes.minutes <= 9
+                    {selectedMinutes.minutes === "00" ? selectedMinutes.minutes : selectedMinutes.minutes <= 9
                       ? `0${selectedMinutes.minutes}`
                       : selectedMinutes.minutes}
                   </div>

@@ -8,6 +8,7 @@ export default function Btn({ title, onClick, loading, smallButton }) {
     <button
       onClick={onClick}
       style={{
+        alignSelf: 'center',
         width: smallButton ? "40%" : "90%",
         height: 40,
         backgroundColor: Colors.PRIMARY,
