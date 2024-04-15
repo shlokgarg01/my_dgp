@@ -238,7 +238,7 @@ exports.getFutureBookingsOfAUser = catchAsyncErrors(async (req, res, next) => {
 
 // Called from search rider screen to get booking status. If booking is accepted, then get service provider details as well.
 exports.confirmBookingStatus = catchAsyncErrors(async (req, res, next) => {
-  let booking = await Booking.findOne({ _id: req.params.id });
+  let booking = await Booking.findOne({ _id: req.params.id }).select("+otp");
   if (!booking) {
     return next(new ErrorHandler("No such booking found", 400));
   }

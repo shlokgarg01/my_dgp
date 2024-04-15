@@ -14,7 +14,7 @@ export default function SearchingRider() {
   const dispatch = useDispatch();
   const location = useLocation();
   const [loadingPercentage, setLoadingPercentage] = useState(10);
-  const { status, service_provider } = useSelector(
+  const { status, service_provider, booking } = useSelector(
     (state) => state.confirmedBooking
   );
 
@@ -62,9 +62,48 @@ export default function SearchingRider() {
 
       {service_provider ? (
         <>
-          <div style={{ fontSize: 19, padding: 16 }}>
+          <div style={{ fontSize: 16, padding: 16 }}>
             <div>
-              Thank you for trusting MyDGP ❤️ Your booking has been confirmed.
+             Your booking has been confirmed.
+            </div>
+            <div
+              style={{
+                display: "flex",
+                flexDirection: "row",
+                alignItems: "center",
+                justifyContent: "space-between",
+              }}
+            >
+              <div style={{ fontSize: 14, marginTop: 10, marginBottom:10 }}>Start your Service with PIN</div>
+              <div
+                style={{
+                  display: "flex",
+                  flexDirection: "row",
+                  alignItems: "center",
+                  justifyContent: "space-between",
+                }}
+              >
+                {booking.otp
+                  .toString()
+                  .split("")
+                  .map((digit, index) => (
+                    <div
+                      key={index}
+                      style={{
+                        display: "flex",
+                        alignItems: "center",
+                        justifyContent: "center",
+                        backgroundColor: Colors.WHITE,
+                        marginRight: 3,
+                        borderRadius: 4,
+                        height: 20,
+                        width: 20,
+                      }}
+                    >
+                      {digit}
+                    </div>
+                  ))}
+              </div>
             </div>
             <div>
               Your service provider is <b>{service_provider?.name}. </b>You will
