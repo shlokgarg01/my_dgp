@@ -8,7 +8,6 @@ import GooglePlacesAutocomplete, {
   getLatLng,
 } from "react-google-places-autocomplete";
 import { MAP_API_KEY } from "../config/Config";
-// import , {geocodeByAddress } from 'react-google-places-autocomplete';
 
 delete L.Icon.Default.prototype._getIconUrl;
 
@@ -122,54 +121,61 @@ const MapComponent = ({
   };
 
   return (
-    <MapContainer
-      style={{
-        height: "100vh",
-        width: "100%",
-      }}
-      center={initialLocation}
-      zoom={10}
-      maxZoom={20}
-    >
-      <TileLayer
-        attribution="Google Maps"
-        url="https://www.google.cn/maps/vt?lyrs=m@189&gl=cn&x={x}&y={y}&z={z}"
-      />
-      <Marker
-        draggable={isEditable}
-        eventHandlers={eventHandlers}
-        position={position}
-        ref={markerRef}
-      />
-
-      {isEditable &&
-        bikeLocations.map((bike, index) => (
-          <Marker key={index} position={bike} icon={bikeIcon} />
-        ))}
-
+    <>
       {isEditable && (
         <div
           style={{
             top: 10,
             position: "absolute",
+            zIndex: 500000,
             left: "15%",
             borderRadius: 100,
             zIndex: 1000,
             width: "75%",
             boxShadow: `0px 2px 4px ${Colors.LIGHT_GRAY}`,
+            pointerEvents: "auto",
           }}
         >
           <GooglePlacesAutocomplete
+            zIndex={100}
             apiKey={MAP_API_KEY}
+            onMouseDown={updateAddress}
             apiOptions={{ region: "in" }}
             selectProps={{
               onChange: updateAddress,
-              // value: searchValue,
+            }}
+            inputProps={{
+              style: { pointerEvents: "auto" },
             }}
           />
         </div>
       )}
-    </MapContainer>
+      <MapContainer
+        style={{
+          height: "100vh",
+          width: "100%",
+        }}
+        center={initialLocation}
+        zoom={10}
+        maxZoom={20}
+      >
+        <TileLayer
+          attribution="Google Maps"
+          url="https://www.google.cn/maps/vt?lyrs=m@189&gl=cn&x={x}&y={y}&z={z}"
+        />
+        <Marker
+          draggable={isEditable}
+          eventHandlers={eventHandlers}
+          position={position}
+          ref={markerRef}
+        />
+
+        {isEditable &&
+          bikeLocations.map((bike, index) => (
+            <Marker key={index} position={bike} icon={bikeIcon} />
+          ))}
+      </MapContainer>
+    </>
   );
 };
 
