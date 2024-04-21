@@ -10,12 +10,13 @@ import "../styles/ComponentStyles.css";
 import Maps from "../images/google_maps.png";
 import Colors from "../utils/Colors";
 import { toast } from "react-custom-alert";
-import LogoHeader from '../components/components/LogoHeader'
+import LogoHeader from "../components/components/LogoHeader";
+import MapComponent from "../components/MapComponent";
 
 export default function Checkout() {
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const [paymentMode, setPaymentMode] = useState("Pay using cash");
+  const [paymentMode] = useState("Pay using cash");
   const { error, loading, success, booking } = useSelector(
     (state) => state.booking
   );
@@ -27,7 +28,7 @@ export default function Checkout() {
     }
 
     if (success) {
-      navigate("/searchingRider", { state: { bookingId: booking._id } });
+      navigate("/searchingRider", { state: { bookingId: booking._id, coordinates: { lat: params.get("lat"), lng: params.get("lng") } } });
     }
     // eslint-disable-next-line
   }, [dispatch, error, success]);
@@ -40,7 +41,7 @@ export default function Checkout() {
     coordinates: { lat: params.get("lat"), lng: params.get("lng") },
     date: params.get("date"),
     hours: parseInt(params.get("hours")),
-    customer: params.get('customer'),
+    customer: params.get("customer"),
     taxPrice: params.get("taxPrice"),
     itemsPrice: params.get("itemsPrice"),
     totalPrice: params.get("totalPrice"),
@@ -101,6 +102,41 @@ export default function Checkout() {
     </div>
   );
 
+  const Header1 = ({ data }) => (
+    <div
+      style={{
+        marginTop: 13,
+        textAlign: "center",
+        borderRadius: 100,
+        border: `1px solid ${Colors.MEDIUM_GRAY}`,
+        color: Colors.MEDIUM_GRAY,
+        fontSize: 19,
+        paddingTop: 5,
+        paddingBottom: 5,
+      }}
+    >
+      {data}
+    </div>
+  );
+
+  const SubHeading = ({ heading, data }) => (
+    <div
+      style={{
+        display: "flex",
+        flexDirection: "row",
+        alignItems: "center",
+        justifyContent: "space-between",
+        paddingLeft: 10,
+        paddingRight: 10,
+        marginTop: 4,
+        fontSize: 18,
+      }}
+    >
+      <div style={{ color: Colors.GRAY, fontWeight: 500 }}>{heading}</div>
+      <div style={{ fontWeight: "bold" }}>{data}</div>
+    </div>
+  );
+
   return (
     <div className="container" style={{ padding: 0 }}>
       {loading ? (
@@ -112,11 +148,98 @@ export default function Checkout() {
         >
           <div>
             <LogoHeader showLogo={false} />
-            <div style={{ width: "90%" }}>
-              <img src={Maps} style={{ width: "110%" }} alt="" />
+
+            {/* <div
+              style={{
+                height: "250px",
+                display: "flex",
+                flexDirection: "column",
+                alignItems: "center",
+              }}
+            >
+              <MapComponent
+                initialLocation={{
+                  lat: params.get("lat"),
+                  lng: params.get("lng"),
+                }}
+                isEditable={false}
+                style={{ height: 200, width: 200 }}
+              />
+            </div> */}
+
+            <div
+              style={{
+                backgroundColor: Colors.WHITE,
+                borderRadius: 16,
+                padding: 10,
+                boxShadow: "0px 0px 16px lightgray",
+              }}
+            >
+              <div
+                style={{
+                  display: "flex",
+                  flexDirection: "row",
+                  alignItems: "center",
+                  justifyContent: "space-between",
+                  paddingLeft: 10,
+                  paddingRight: 10,
+                }}
+              >
+                <div style={{ fontWeight: 500, marginBottom: 4, fontSize: 17 }}>
+                  <div>{data.name}</div>
+                  <div style={{ color: Colors.GRAY }}>{data.contactNumber}</div>
+                </div>
+                <div style={{ fontWeight: 700, fontSize: 22 }}>
+                  ₹
+                  {parseInt(params.get("taxPrice")) +
+                    parseInt(params.get("itemsPrice"))}
+                </div>
+              </div>
+
+              <Header1 data={data.serviceName} />
+              <Header1 data={data.date.slice(0, 10)} />
             </div>
 
-            <div id="checkoutDetailsParentContainer">
+            <div
+              style={{
+                backgroundColor: Colors.WHITE,
+                borderRadius: 16,
+                padding: 10,
+                boxShadow: "0px 0px 16px lightgray",
+                marginTop: 16,
+                textAlign: "center",
+                fontSize: 17,
+                paddingLeft: 10,
+                paddingRight: 10,
+              }}
+            >
+              {data.address}
+            </div>
+
+            <div
+              style={{
+                backgroundColor: Colors.WHITE,
+                borderRadius: 16,
+                padding: 10,
+                boxShadow: "0px 0px 16px lightgray",
+                marginTop: 16,
+              }}
+            >
+              <SubHeading data={data.hours} heading="Total Hours" />
+              <SubHeading data={`₹ ${data.itemsPrice}`} heading="Sub Total" />
+              <SubHeading data={`₹ ${data.taxPrice}`} heading="Tax" />
+              <SubHeading data={`₹ ${data.totalPrice}`} heading="Total Price" />
+              <SubHeading data={data.hours} heading="Total Hours" />
+            </div>
+            <div
+              id="checkoutDetailsSubHeading"
+              style={{ paddingLeft: 10, paddingRight: 10, marginTop: 4 }}
+            >
+              <b>Note - </b>We will provide you all the raw photos & videos
+              within 24 hrs.
+            </div>
+
+            {/* <div id="checkoutDetailsParentContainer">
               <Details
                 isTop={true}
                 heading="Service"
@@ -145,10 +268,6 @@ export default function Checkout() {
                 data={params.get("address")}
               />
               <Details
-                heading="Customer"
-                data={`${data.name}, ${data.contactNumber}`}
-              />
-              <Details
                 isBottom={true}
                 heading="Fare"
                 data={`₹ ${data.itemsPrice}`}
@@ -162,7 +281,7 @@ export default function Checkout() {
             >
               <b>Note - </b>We will provide you all the raw photos & videos
               within 24 hrs.
-            </div>
+            </div> */}
           </div>
 
           {/* Payment Mode Radio Button */}
@@ -172,18 +291,23 @@ export default function Checkout() {
               flexDirection: "row",
               alignItems: "center",
               marginLeft: 16,
-              marginTop: 10
+              marginTop: 10,
             }}
           >
             <input
-            style={{accentColor: Colors.PRIMARY}}
+              style={{ accentColor: Colors.PRIMARY }}
               type="radio"
               id="paymentMode"
               value={paymentMode}
               readOnly
               checked={paymentMode === "Pay using cash"}
             />
-            <label style={{fontSize: 18, marginLeft: 7}} htmlFor="paymentMode">{paymentMode}</label>
+            <label
+              style={{ fontSize: 18, marginLeft: 7 }}
+              htmlFor="paymentMode"
+            >
+              {paymentMode}
+            </label>
           </div>
           <Btn onClick={submit} title="Submit & Proceed" />
         </div>

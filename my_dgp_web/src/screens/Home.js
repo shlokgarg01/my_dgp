@@ -39,7 +39,7 @@ export default function Home() {
   const [location, setLocation] = useState([
     28.570679971663644, 77.16227241314306,
   ]);
-  let TAX = 70;
+  let TAX = 99;
 
   const currentTime = () => {
     return {
@@ -310,6 +310,7 @@ export default function Home() {
           handleLocationChange={handleLocationChange}
           initialLocation={location}
           searchValue={address}
+          isEditable={true}
         />
       </div>
 

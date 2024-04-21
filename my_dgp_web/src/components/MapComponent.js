@@ -3,9 +3,12 @@ import { MapContainer, TileLayer, Marker } from "react-leaflet";
 import L from "leaflet";
 import Colors from "../utils/Colors";
 import BikeIcon from "../images/Bike.png";
-import Autocomplete from "react-google-autocomplete";
-import { geocodeByAddress, getLatLng } from "react-google-places-autocomplete";
+import GooglePlacesAutocomplete, {
+  geocodeByAddress,
+  getLatLng,
+} from "react-google-places-autocomplete";
 import { MAP_API_KEY } from "../config/Config";
+// import , {geocodeByAddress } from 'react-google-places-autocomplete';
 
 delete L.Icon.Default.prototype._getIconUrl;
 
@@ -24,6 +27,8 @@ const MapComponent = ({
   handleLocationChange,
   initialLocation,
   onSearchChange,
+  searchValue,
+  isEditable,
 }) => {
   const [position, setPosition] = useState(initialLocation);
   const [bikeLocations, setBikeLocations] = useState([]);
@@ -102,8 +107,11 @@ const MapComponent = ({
     iconAnchor: [16, 32],
   });
 
-  const updateAddress = (place) => {
-    let add = place.formatted_address;
+  const updateAddress = async (place) => {
+    let add = place.label;
+    let results = await geocodeByAddress(add);
+    add = results[0].formatted_address;
+
     onSearchChange(add);
     geocodeByAddress(add)
       .then((results) => getLatLng(results[0]))
@@ -128,43 +136,39 @@ const MapComponent = ({
         url="https://www.google.cn/maps/vt?lyrs=m@189&gl=cn&x={x}&y={y}&z={z}"
       />
       <Marker
-        draggable={true}
+        draggable={isEditable}
         eventHandlers={eventHandlers}
         position={position}
         ref={markerRef}
       />
 
-      {bikeLocations.map((bike, index) => (
-        <Marker key={index} position={bike} icon={bikeIcon} />
-      ))}
+      {isEditable &&
+        bikeLocations.map((bike, index) => (
+          <Marker key={index} position={bike} icon={bikeIcon} />
+        ))}
 
-      <div
-        style={{
-          top: 10,
-          position: "absolute",
-          left: "15%",
-          borderRadius: 100,
-          zIndex: 1000,
-          width: "75%",
-          boxShadow: `0px 2px 4px ${Colors.LIGHT_GRAY}`,
-        }}
-      >
-        <Autocomplete
-          apiKey={MAP_API_KEY}
-          onPlaceSelected={updateAddress}
+      {isEditable && (
+        <div
           style={{
-            color: Colors.BLACK,
-            backgroundColor: Colors.WHITE,
-            width: "100%",
-            borderWidth: 0,
-            paddingLeft: 10,
-            height: 34,
-            outline: "none",
-            borderRadius: 7,
-            borderColor: Colors.GRAY,
+            top: 10,
+            position: "absolute",
+            left: "15%",
+            borderRadius: 100,
+            zIndex: 1000,
+            width: "75%",
+            boxShadow: `0px 2px 4px ${Colors.LIGHT_GRAY}`,
           }}
-        />
-      </div>
+        >
+          <GooglePlacesAutocomplete
+            apiKey={MAP_API_KEY}
+            apiOptions={{ region: "in" }}
+            selectProps={{
+              onChange: updateAddress,
+              // value: searchValue,
+            }}
+          />
+        </div>
+      )}
     </MapContainer>
   );
 };

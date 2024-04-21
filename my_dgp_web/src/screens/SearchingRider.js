@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
-import Maps from "../images/google_maps.png";
 import Colors from "../utils/Colors";
 import SearchRider from "../images/search_rider.png";
 import { useDispatch, useSelector } from "react-redux";
@@ -8,6 +7,9 @@ import { confirmBookingStatus } from "../actions/BookingActions";
 import Enums from "../utils/Enums";
 import { toast } from "react-custom-alert";
 import Btn from "../components/components/Btn";
+import MapComponent from "../components/MapComponent";
+import { IoMdCall } from "react-icons/io";
+import { FaShieldAlt } from "react-icons/fa";
 
 export default function SearchingRider() {
   const navigate = useNavigate();
@@ -56,16 +58,58 @@ export default function SearchingRider() {
 
   return (
     <div style={{ height: "100%", textAlign: "center" }}>
-      <div style={{ width: "100%", height: "55%" }}>
-        <img src={Maps} style={{ width: "100%", height: "100%" }} alt="" />
+      <div
+        style={{
+          height: "300px",
+          display: "flex",
+          flexDirection: "column",
+          alignItems: "center",
+        }}
+      >
+        <MapComponent
+          initialLocation={{
+            lat: location.state.coordinates.lat,
+            lng: location.state.coordinates.lng,
+          }}
+          isEditable={false}
+        />
+      </div>
+
+      <div
+        style={{
+          backgroundColor: Colors.WHITE,
+          borderRadius: 100,
+          padding: '4px 10px',
+          marginLeft: 'auto',
+          width: 100,
+          boxShadow: "0px 0px 16px lightgray",
+          fontWeight: 600,
+          marginTop: 16,
+          marginRight: 10
+        }}
+      >
+        <a
+          href="tel:+918595703734"
+          style={{
+            fontSize: 17,
+            marginLeft: 7,
+            textDecoration: "none",
+            color: Colors.RED,
+            display: "flex",
+            flexDirection: "row",
+            alignItems: "center",
+            justifyContent: 'space-evenly'
+          }}
+        >
+          SOS
+          <FaShieldAlt color={Colors.RED} size={20} />
+        </a>
       </div>
 
       {service_provider ? (
         <>
           <div style={{ fontSize: 16, padding: 16 }}>
-            <div>
-             Your booking has been confirmed.
-            </div>
+            <div style={{ color: Colors.DARK_GREEN, fontWeight: 700, fontSize: 17 }}>Your booking has been confirmed.</div>
             <div
               style={{
                 display: "flex",
@@ -74,7 +118,9 @@ export default function SearchingRider() {
                 justifyContent: "space-between",
               }}
             >
-              <div style={{ fontSize: 14, marginTop: 10, marginBottom:10 }}>Start your Service with PIN</div>
+              <div style={{ fontSize: 16, marginTop: 10, marginBottom: 10 }}>
+                Start your Service with PIN
+              </div>
               <div
                 style={{
                   display: "flex",
@@ -98,6 +144,7 @@ export default function SearchingRider() {
                         borderRadius: 4,
                         height: 20,
                         width: 20,
+                        fontSize: 16,
                       }}
                     >
                       {digit}
@@ -105,9 +152,44 @@ export default function SearchingRider() {
                   ))}
               </div>
             </div>
-            <div>
-              Your service provider is <b>{service_provider?.name}. </b>You will
-              receive other details over your email shortly
+
+            <div
+              style={{
+                backgroundColor: Colors.WHITE,
+                borderRadius: 16,
+                padding: 10,
+                boxShadow: "0px 0px 16px lightgray",
+                marginTop: 16,
+              }}
+            >
+              <div
+                style={{
+                  display: "flex",
+                  flexDirection: "row",
+                  alignItems: "center",
+                  justifyContent: "space-between",
+                  paddingLeft: 10,
+                  paddingRight: 10,
+                  fontSize: 16,
+                }}
+              >
+                <div>{service_provider?.name}</div>
+                <a
+                  href={`tel:+91${service_provider?.contactNumber}`}
+                  style={{
+                    height: 40,
+                    width: 40,
+                    borderRadius: 100,
+                    border: `1px solid ${Colors.MEDIUM_GRAY}`,
+                    alignItems: "center",
+                    justifyContent: "center",
+                    display: "flex",
+                    textDecoration: "none",
+                  }}
+                >
+                  <IoMdCall color={Colors.GRAY} size={25} />
+                </a>
+              </div>
             </div>
           </div>
           <Btn title="Go Back" onClick={() => navigate("/")} />

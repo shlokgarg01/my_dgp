@@ -1,8 +1,8 @@
 - [ ] Move all styles to css files
 - [ ] Keyboard not closing on clicking the -> button on keyboard in phone.
 - [ ] Update the logo
-- [ ] going back not working on phone
 
+- [x] going back not working on phone
 - [x] STEP - 1: While creating customer for booking, varify using OTP, once that's done send name, email & contact to backend. Backend will check if this contact exist then return else create entry in user model.
 - [x] Remove horizontal scrollbar from time on homepage
 - [x] Loading screen
@@ -26,3 +26,14 @@
 
 
 - [ ] bottom sheet not detecting current time. - not possible to detect exact time bcz minutes hm bs 00/15/30/45 le rahe hain.
+
+
+
+- [x] TAX = 99
+- [x] MYDGP, name change
+- [x] Addrress not coming in auto complete
+- [x] checkout page revamp
+- [x] remove customer word, user word user
+- [x] on final screen - actual map + SOS option (8595703734) + rider call 
+- [ ] fix map issue
+- [ ] channel name in notifications
