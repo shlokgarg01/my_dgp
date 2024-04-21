@@ -229,7 +229,6 @@ export default function Checkout() {
               <SubHeading data={`₹ ${data.itemsPrice}`} heading="Sub Total" />
               <SubHeading data={`₹ ${data.taxPrice}`} heading="Tax" />
               <SubHeading data={`₹ ${data.totalPrice}`} heading="Total Price" />
-              <SubHeading data={data.hours} heading="Total Hours" />
             </div>
             <div
               id="checkoutDetailsSubHeading"
