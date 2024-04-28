@@ -1,4 +1,5 @@
 const Service = require('../models/ServiceModel')
+const SubService = require('../models/SubServiceModel')
 const catchAsyncErrors = require("../middleware/CatchAsyncErrors");
 const ErrorHandler = require('../utils/errorHandler');
 
@@ -71,8 +72,16 @@ exports.getAllServices = catchAsyncErrors(async (req, res, next) => {
     value: service._id
   }));
 
+  // adding sub services to service
+  const servicesArray = [];
+  for (const service of services) {
+    let subServices = await SubService.find({ service: service._id })
+    const newObj = {...service, subServices}
+    servicesArray.push(newObj);
+  }
+
   res.status(200).json({
     success: true,
-    services
+    services: servicesArray
   })
 })

@@ -1,7 +1,11 @@
 const express = require("express");
 const router = express.Router();
 const { isAuthenticatedUser, authorizeRoles } = require("../middleware/Auth");
-const { createPrice, editPrice, getPrices } = require("../controllers/PriceController");
+const {
+  createPrice,
+  editPrice,
+  getPrices,
+} = require("../controllers/PriceController");
 
 router
   .route("/price/new")
@@ -9,8 +13,6 @@ router
 router
   .route("/price/edit/:id")
   .put(isAuthenticatedUser, authorizeRoles("admin"), editPrice);
-router
-  .route("/prices")
-  .get(isAuthenticatedUser, authorizeRoles("admin"), getPrices);
+router.route("/prices").get(getPrices);
 
 module.exports = router;

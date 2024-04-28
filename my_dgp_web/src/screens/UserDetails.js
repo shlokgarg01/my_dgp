@@ -48,6 +48,10 @@ export default function UserDetails() {
         search: createSearchParams({
           service: params.get("service"),
           serviceName: params.get("serviceName"),
+          subService: params.get("subService"),
+          subServiceName: params.get("subServiceName"),
+          servicePackage: params.get("servicePackage"),
+          packageName: params.get("packageName"),
           address: params.get("address"),
           lat: params.get("lat"),
           lng: params.get("lng"),

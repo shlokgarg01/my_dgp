@@ -13,8 +13,6 @@ router
 router
   .route("/package/edit/:id")
   .put(isAuthenticatedUser, authorizeRoles("admin"), editPackage);
-router
-  .route("/packages")
-  .get(isAuthenticatedUser, authorizeRoles("admin"), getPackages);
+router.route("/packages").get(getPackages);
 
 module.exports = router;

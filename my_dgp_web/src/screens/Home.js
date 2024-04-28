@@ -3,12 +3,13 @@ import { GiStopwatch } from "react-icons/gi";
 import Colors from "../utils/Colors";
 import { useDispatch, useSelector } from "react-redux";
 import { clearErrors, getAllServices } from "../actions/ServiceActions";
+import { getAllPackages } from "../actions/PackageActions";
+import { getAllPrices } from "../actions/PriceActions";
 import LoaderComponent from "../components/Loader";
 import { createSearchParams, useNavigate } from "react-router-dom";
 import MapComponent from "../components/MapComponent";
 import Btn from "../components/components/Btn";
 import "../styles/ComponentStyles.css";
-import { Service } from "../utils/Data/Service";
 import Sheet from "react-modal-sheet";
 import Picker from "react-scrollable-picker";
 import { Hours, AmPm, Minutes, Months, Quaters } from "../utils/Data/Date";
@@ -22,12 +23,12 @@ import {
 import Banner from "../images/desktop_banner.jpg";
 
 export default function Home() {
-  const [selectedServiceIndex, setSelectedServiceIndex] = useState();
   const [selectedService, setSelectedService] = useState(null);
   const [serviceName, setServiceName] = useState("");
-  const [selectedPackageIndex, setSelectedPackageIndex] = useState(0);
-  const [subService, selectSubService] = useState("");
-  const [selectedSubServiceIndex, setSelectedSubServiceIndex] = useState();
+  const [subService, setSubService] = useState(null);
+  const [subServiceName, setSubServiceName] = useState("");
+  const [servicePackage, setPackage] = useState(null);
+  const [packageName, setPackageName] = useState("");
   const [selectedHours, setSelectedHours] = useState(1);
   const [selectedMinutes, setselectedMinutes] = useState({
     hours: "00",
@@ -86,22 +87,27 @@ export default function Home() {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const { services, error, loading } = useSelector((state) => state.services);
+  const {
+    prices,
+    error: priceError,
+    loading: priceLoading,
+  } = useSelector((state) => state.prices);
+  const {
+    packages,
+    error: packageError,
+    loading: packageLoading,
+  } = useSelector((state) => state.packages);
 
   useEffect(() => {
     dispatch(getAllServices());
+    dispatch(getAllPackages());
+    dispatch(getAllPrices());
 
     if (error) {
       toast.error(error);
       dispatch(clearErrors());
     }
-  }, [dispatch, error]);
-
-  // useEffect(() => {
-  // setSelectedService(services[0]?._id);
-  // setServiceName(services[0]?.name);
-  // selectSubService(Service[0]?.subServices[0]);
-  // setSelectedServiceIndex(0);
-  // }, [services]);
+  }, [dispatch, error, packageError, priceError]);
 
   const handleLocationChange = (newLocation) => setLocation(newLocation);
 
@@ -128,35 +134,26 @@ export default function Home() {
     </div>
   );
 
-  const ServiceSlider = ({ title, index, icon }) => (
+  const ServiceSlider = ({ service, index, icon }) => (
     <div
       onClick={() => {
-        setSelectedServiceIndex(index);
-
-        let package_name = selectedPackageIndex === 0 ? "Regular" : "Premium";
-        let a = services.find(
-          (service) => service.name === `${Service[index].name} ${package_name}`
-        );
-        setSelectedService(a._id);
-        setServiceName(a.name);
+        setServiceName(service.name)
+        setSelectedService(service._id)
       }}
       style={styles.serviceSliderImageContainer}
     >
       {icon}
       <div
         style={{
-          color: selectedServiceIndex === index ? Colors.PRIMARY : Colors.GRAY,
+          color: service.name === serviceName ? Colors.PRIMARY : Colors.GRAY,
           fontWeight: "bold",
         }}
       >
-        {title}
+        {service.name}
       </div>
       <div
         style={{
-          border:
-            selectedServiceIndex === index
-              ? `1px solid ${Colors.PRIMARY}`
-              : null,
+          border: service.name === serviceName ? `1px solid ${Colors.PRIMARY}` : null,
           width: "50%",
           marginLeft: "25%",
           borderRadius: 100,
@@ -165,11 +162,11 @@ export default function Home() {
     </div>
   );
 
-  const SubServiceSlider = ({ title, index }) => (
+  const SubServiceSlider = ({ subService }) => (
     <div
       onClick={() => {
-        setSelectedSubServiceIndex(index);
-        selectSubService(title);
+        setSubServiceName(subService.name);
+        setSubService(subService._id);
       }}
       style={{
         ...styles.serviceSliderImageContainer,
@@ -180,7 +177,7 @@ export default function Home() {
       <div
         style={{
           color:
-            selectedSubServiceIndex === index ? Colors.PRIMARY : Colors.GRAY,
+            subService.name === subServiceName ? Colors.PRIMARY : Colors.GRAY,
           fontWeight: "bold",
           overflow: "hidden",
           fontSize: 14,
@@ -190,12 +187,12 @@ export default function Home() {
           width: "auto",
         }}
       >
-        {title}
+        {subService.name}
       </div>
       <div
         style={{
           border:
-            selectedSubServiceIndex === index
+            subService.name === subServiceName
               ? `1px solid ${Colors.PRIMARY}`
               : null,
           width: "50%",
@@ -206,7 +203,7 @@ export default function Home() {
     </div>
   );
 
-  const PricesContent = ({ title, index }) => (
+  const PricesContent = ({ p, index }) => (
     <div
       style={{
         display: "flex",
@@ -217,30 +214,20 @@ export default function Home() {
         fontSize: 16,
         borderRadius: 7,
         boxShadow:
-          selectedPackageIndex === index
-            ? `1px 1px 4px ${Colors.LIGHT_GRAY}`
-            : null,
-        border:
-          selectedPackageIndex === index ? `1px solid ${Colors.GRAY}` : null,
+          p.name === packageName ? `1px 1px 4px ${Colors.LIGHT_GRAY}` : null,
+        border: p.name === packageName ? `1px solid ${Colors.GRAY}` : null,
       }}
       onClick={() => {
-        let a = services.find(
-          (service) =>
-            service.name === `${Service[selectedServiceIndex].name} ${title}`
-        );
-
-        setSelectedPackageIndex(index);
-        setSelectedService(a._id);
-        setServiceName(a.name);
+        setPackageName(p.name);
+        setPackage(p._id);
       }}
     >
-      <div>{title}</div>
+      <div>{p.name}</div>
       {loading === false ? (
         <div>
           ₹{" "}
-          {services.find(
-            (x) => x.name === `${Service[selectedServiceIndex].name} ${title}`
-          ).charges *
+          {prices.find((price) => price.name === `${serviceName} ${p.name}`)
+            .charges *
             (selectedMinutes.hours === "00" && selectedMinutes.minutes === "00"
               ? selectedHours * 60
               : parseInt(selectedMinutes.hours) * 60 +
@@ -251,7 +238,7 @@ export default function Home() {
   );
 
   const getItemPrice = () => {
-    let charges = services.find((x) => x._id === selectedService)?.charges;
+    let charges = prices.find((price) => price.name === `${serviceName} ${packageName}`)?.charges;
     let time = 0;
     if (charges) {
       time =
@@ -268,8 +255,11 @@ export default function Home() {
       toast.error("Please enter valid address");
       return;
     } else if (!selectedService) {
-      toast.error("Plese select a service");
+      toast.error("Please select a service");
       return;
+    } else if (!packageName) {
+      toast.error("Please select a package")
+      return
     }
 
     let finalDate = `${date.date.slice(7, 11)}-${
@@ -279,7 +269,11 @@ export default function Home() {
       pathname: "/details",
       search: createSearchParams({
         service: selectedService,
+        subService,
+        servicePackage,
+        packageName,
         serviceName,
+        subServiceName,
         date: finalDate,
         hours: selectedHours,
         address,
@@ -292,10 +286,11 @@ export default function Home() {
     });
   };
 
-  return loading ? (
+  return loading || packageLoading || priceLoading ? (
     <LoaderComponent />
   ) : (
     <div style={{ backgroundColor: Colors.WHITE, minHeight: "100%" }}>
+      {/* Map */}
       <div
         style={{
           height: "250px",
@@ -330,37 +325,31 @@ export default function Home() {
 
       {/* Services Slider */}
       <div style={{ ...styles.serviceSliderContainer }}>
-        {Service.map((service, index) => (
+        {services.map((service, index) => (
           <ServiceSlider
             key={index}
-            title={service.name}
-            index={service.index}
+            service={service}
+            index={index}
             icon={
-              index === 0 ? (
+              service.name === "Photography" ? (
                 <MdOutlineAddAPhoto
                   size={25}
                   color={
-                    selectedServiceIndex === service.index
-                      ? Colors.PRIMARY
-                      : Colors.GRAY
+                    serviceName === service.name ? Colors.PRIMARY : Colors.GRAY
                   }
                 />
-              ) : index === 1 ? (
+              ) : service.name === "Videography" ? (
                 <MdOutlineVideocam
                   size={25}
                   color={
-                    selectedServiceIndex === service.index
-                      ? Colors.PRIMARY
-                      : Colors.GRAY
+                    serviceName === service.name ? Colors.PRIMARY : Colors.GRAY
                   }
                 />
               ) : (
                 <MdOutlineVideoCameraFront
                   size={25}
                   color={
-                    selectedServiceIndex === service.index
-                      ? Colors.PRIMARY
-                      : Colors.GRAY
+                    serviceName === service.name ? Colors.PRIMARY : Colors.GRAY
                   }
                 />
               )
@@ -370,7 +359,7 @@ export default function Home() {
       </div>
 
       {/* Sub Service Slider */}
-      {selectedService && (
+      {serviceName && (
         <div
           style={{
             ...styles.serviceSliderContainer,
@@ -378,16 +367,16 @@ export default function Home() {
             paddingRight: 16,
           }}
         >
-          {Service.find(
-            (x) => x.name === serviceName?.split(" ")[0]
-          )?.subServices.map((subService, index) => (
-            <SubServiceSlider key={index} title={subService} index={index} />
-          ))}
+          {services
+            .find((service) => service.name === serviceName)
+            ?.subServices.map((subService) => (
+              <SubServiceSlider key={subService._id} subService={subService} />
+            ))}
         </div>
       )}
 
       {/* Banner */}
-      {(!selectedService || !subService) && (
+      {(!serviceName || !subService) && (
         <div style={{ margin: 10 }}>
           <img
             alt="Banner Image"
@@ -397,7 +386,7 @@ export default function Home() {
         </div>
       )}
 
-      {selectedService && subService && (
+      {serviceName && subServiceName && (
         <>
           {/* Duration Selection */}
           <div
@@ -448,7 +437,8 @@ export default function Home() {
                     0,
                     0,
                     0
-                  ) === new Date().setHours(new Date().getHours() % 12, 0, 0, 0) &&
+                  ) ===
+                    new Date().setHours(new Date().getHours() % 12, 0, 0, 0) &&
                   currentAMPM === date.ampm ? (
                     <>
                       <IoMdAlarm color={Colors.BLACK} size={25} />
@@ -515,7 +505,9 @@ export default function Home() {
                   </div>
                   <div onClick={() => setIsMinutesSheetOpen(true)}>
                     {selectedMinutes.hours}:
-                    {selectedMinutes.minutes === "00" ? selectedMinutes.minutes : selectedMinutes.minutes <= 9
+                    {selectedMinutes.minutes === "00"
+                      ? selectedMinutes.minutes
+                      : selectedMinutes.minutes <= 9
                       ? `0${selectedMinutes.minutes}`
                       : selectedMinutes.minutes}
                   </div>
@@ -550,15 +542,15 @@ export default function Home() {
               <font style={{ fontWeight: "bold", marginLeft: 10 }}>
                 {`Select Service (${
                   serviceName && serviceName.split(" ")[0]
-                } - ${subService})`}
+                } - ${subServiceName})`}
               </font>
             </div>
 
-            <div>
-              <PricesContent title="Regular" index={0} />
-              <PricesContent title="Standard" index={1} />
-              <PricesContent title="Premium" index={2} />
-            </div>
+            {packages.map((p, index) => (
+              <div>
+                <PricesContent p={p} index={index} />
+              </div>
+            ))}
           </div>
 
           {/* Next Button */}

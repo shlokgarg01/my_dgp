@@ -7,11 +7,11 @@ import LoaderComponent from "../components/Loader";
 import Btn from "../components/components/Btn";
 import "../styles/CheckoutStyles.css";
 import "../styles/ComponentStyles.css";
-import Maps from "../images/google_maps.png";
+// import Maps from "../images/google_maps.png";
 import Colors from "../utils/Colors";
 import { toast } from "react-custom-alert";
 import LogoHeader from "../components/components/LogoHeader";
-import MapComponent from "../components/MapComponent";
+// import MapComponent from "../components/MapComponent";
 
 export default function Checkout() {
   const dispatch = useDispatch();
@@ -36,7 +36,11 @@ export default function Checkout() {
   let [params] = useSearchParams();
   const data = {
     service: params.get("service"),
+    subService: params.get("subService"),
+    package: params.get("servicePackage"),
     serviceName: params.get("serviceName"),
+    subServiceName: params.get("subServiceName"),
+    packageName: params.get("packageName"),
     address: params.get("address"),
     coordinates: { lat: params.get("lat"), lng: params.get("lng") },
     date: params.get("date"),
@@ -58,49 +62,49 @@ export default function Checkout() {
     dispatch(createBooking(data));
   };
 
-  const Details = ({ heading, data, isTop, isBottom, subHeading, showTax }) => (
-    <div
-      className="checkoutDetailsContainer"
-      style={{
-        borderTopRightRadius: isTop ? 7 : 0,
-        borderTopLeftRadius: isTop ? 7 : 0,
-        borderBottomLeftRadius: isBottom ? 7 : 0,
-        borderBottomRightRadius: isBottom ? 7 : 0,
-      }}
-    >
-      <div className="checkoutDetailsHeading">{heading}</div>
-      {subHeading ? (
-        <div>
-          <div className="checkoutDetails">
-            {data}
-            {showTax ? (
-              <>
-                <div>₹ {params.get("taxPrice")}</div>
-                <div
-                  style={{
-                    backgroundColor: Colors.BLACK,
-                    height: 1,
-                    marginTop: 4,
-                    marginBottom: 4,
-                  }}
-                />
-                <div>
-                  ₹{" "}
-                  {parseInt(params.get("taxPrice")) +
-                    parseInt(params.get("itemsPrice"))}
-                </div>
-              </>
-            ) : null}
-          </div>
-          <div id="checkoutDetailsSubHeading">{subHeading}</div>
-        </div>
-      ) : (
-        <div className="checkoutDetails">
-          <div>{data}</div>
-        </div>
-      )}
-    </div>
-  );
+  // const Details = ({ heading, data, isTop, isBottom, subHeading, showTax }) => (
+  //   <div
+  //     className="checkoutDetailsContainer"
+  //     style={{
+  //       borderTopRightRadius: isTop ? 7 : 0,
+  //       borderTopLeftRadius: isTop ? 7 : 0,
+  //       borderBottomLeftRadius: isBottom ? 7 : 0,
+  //       borderBottomRightRadius: isBottom ? 7 : 0,
+  //     }}
+  //   >
+  //     <div className="checkoutDetailsHeading">{heading}</div>
+  //     {subHeading ? (
+  //       <div>
+  //         <div className="checkoutDetails">
+  //           {data}
+  //           {showTax ? (
+  //             <>
+  //               <div>₹ {params.get("taxPrice")}</div>
+  //               <div
+  //                 style={{
+  //                   backgroundColor: Colors.BLACK,
+  //                   height: 1,
+  //                   marginTop: 4,
+  //                   marginBottom: 4,
+  //                 }}
+  //               />
+  //               <div>
+  //                 ₹{" "}
+  //                 {parseInt(params.get("taxPrice")) +
+  //                   parseInt(params.get("itemsPrice"))}
+  //               </div>
+  //             </>
+  //           ) : null}
+  //         </div>
+  //         <div id="checkoutDetailsSubHeading">{subHeading}</div>
+  //       </div>
+  //     ) : (
+  //       <div className="checkoutDetails">
+  //         <div>{data}</div>
+  //       </div>
+  //     )}
+  //   </div>
+  // );
 
   const Header1 = ({ data }) => (
     <div
@@ -196,7 +200,7 @@ export default function Checkout() {
                 </div>
               </div>
 
-              <Header1 data={data.serviceName} />
+              <Header1 data={`${data.serviceName} ${data.packageName}`} />
               <Header1 data={data.date.slice(0, 10)} />
             </div>
 

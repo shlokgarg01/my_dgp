@@ -4,10 +4,10 @@ const ErrorHandler = require("../utils/errorHandler");
 
 // create a sub service
 exports.createSubService = catchAsyncErrors(async (req, res, next) => {
-  const { name, category } = req.body;
+  const { name, service } = req.body;
   const subService = await SubService.create({
     name,
-    category,
+    service,
   });
 
   res.status(200).json({
