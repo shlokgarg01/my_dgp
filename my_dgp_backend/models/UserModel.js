@@ -82,6 +82,10 @@ const userSchema = new mongoose.Schema(
       required: false,
       default: 0,
     },
+    isProfileUpdated: {
+      type: Boolean,
+      default: false
+    },
     resetPasswordToken: String,
     resetPasswordExpire: Date,
   },
