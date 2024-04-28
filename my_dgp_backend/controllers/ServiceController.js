@@ -4,10 +4,9 @@ const ErrorHandler = require('../utils/errorHandler');
 
 // create a service
 exports.createService = catchAsyncErrors(async (req, res, next) => {
-  const { name, charges } = req.body;
+  const { name } = req.body;
   const service = await Service.create({
-    name,
-    charges
+    name
   });
 
   res.status(200).json({

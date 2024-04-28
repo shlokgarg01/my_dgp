@@ -116,13 +116,7 @@ exports.getUserDetails = catchAsyncErrors(async (req, res, next) => {
 
 // update profile
 exports.updateProfile = catchAsyncErrors(async (req, res, next) => {
-  const newUserData = {
-    name: req.body.name,
-    email: req.body.email,
-    contactNumber: req.body.contactNumber,
-  };
-
-  const user = await User.findByIdAndUpdate(req.user.id, newUserData, {
+  const user = await User.findByIdAndUpdate(req.user.id, req.body, {
     new: true,
     runValidators: true,
     useFindAndModify: false,

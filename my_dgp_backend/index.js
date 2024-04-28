@@ -15,8 +15,11 @@ const BookingRoutes = require("./routes/BookingRoutes")
 const ServiceRoutes = require("./routes/ServiceRoutes")
 const BookingRequestRoutes = require('./routes/BookingRequestRoutes')
 const LeaveRoutes = require('./routes/LeaveRoutes.js')
-const redeemRoutes = require('./routes/RedeemRoutes.js')
-const redeemRequestRoutes = require('./routes/RedeemRequestRoutes.js')
+const RedeemRoutes = require('./routes/RedeemRoutes.js')
+const RedeemRequestRoutes = require('./routes/RedeemRequestRoutes.js')
+const SubServiceRoutes = require('./routes/SubServiceRoutes.js')
+const PackageRoutes = require('./routes/PackageRoutes.js')
+const PriceRoutes = require('./routes/PriceRoutes.js')
 
 app.use(morgan("combined"));
 
@@ -71,8 +74,11 @@ app.use("/api/v1", BookingRoutes)
 app.use('/api/v1', ServiceRoutes)
 app.use('/api/v1', BookingRequestRoutes)
 app.use('/api/v1', LeaveRoutes)
-app.use('/api/v1', redeemRoutes)
-app.use('/api/v1', redeemRequestRoutes)
+app.use('/api/v1', RedeemRoutes)
+app.use('/api/v1', RedeemRequestRoutes)
+app.use('/api/v1', PackageRoutes)
+app.use('/api/v1', SubServiceRoutes)
+app.use('/api/v1', PriceRoutes)
 
 // This is the static frontend file. Whenever any change in frontend is made, u need to generate build file & then run server again.
 // IMPORTANT - make sure that this static frontend route is after all the backend routes otherwise all API calls will fail.

@@ -49,7 +49,7 @@ const userSchema = new mongoose.Schema(
     },
     fcm_token: {
       type: String,
-      default: ""
+      default: "",
     },
     role: {
       type: String,
@@ -60,6 +60,20 @@ const userSchema = new mongoose.Schema(
       ref: "Service",
       required: false,
     },
+    subServices: [
+      {
+        type: mongoose.Schema.ObjectId,
+        ref: "SubService",
+        required: false,
+      },
+    ],
+    packages: [
+      {
+        type: mongoose.Schema.ObjectId,
+        ref: "Package",
+        required: false,
+      },
+    ],
     status: {
       type: String,
     },

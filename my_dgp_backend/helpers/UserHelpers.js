@@ -2,10 +2,12 @@ const User = require("../models/UserModel");
 const Leave = require("../models/LeaveModel");
 const Enums = require("../utils/Enums");
 
-const getAvailableServiceProviders = async (date, service) => {
+const getAvailableServiceProviders = async (date, service, subService, package) => {
   const service_providers = await User.find({
     role: Enums.USER_ROLES.SERVICE_PROVIDER,
     service,
+    packages: { $elemMatch: { $eq: package } },
+    subServices: {$elemMatch: { $eq: subService }},
     status: Enums.SERVICE_PROVIDER_STATUS.ACTIVE,
   }).sort("createdAt");
 

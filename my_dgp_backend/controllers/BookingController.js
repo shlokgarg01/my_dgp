@@ -8,8 +8,15 @@ const catchAsyncErrors = require("../middleware/CatchAsyncErrors");
 const { getAvailableServiceProviders } = require("../helpers/UserHelpers");
 const Enums = require("../utils/Enums");
 const ErrorHandler = require("../utils/errorHandler");
-const { sendRiderPushNotifications, sendEmail } = require("../helpers/Notifications");
-const {BOOKING_START, BOOKING_COMPLETE, NEW_RIDER_BOOKING} = require("../Data/Messages");
+const {
+  sendRiderPushNotifications,
+  sendEmail,
+} = require("../helpers/Notifications");
+const {
+  BOOKING_START,
+  BOOKING_COMPLETE,
+  NEW_RIDER_BOOKING,
+} = require("../Data/Messages");
 
 // create a booking
 exports.createBooking = catchAsyncErrors(async (req, res, next) => {
@@ -21,6 +28,8 @@ exports.createBooking = catchAsyncErrors(async (req, res, next) => {
     coupon,
     couponDiscount,
     service,
+    subService,
+    package,
     hours,
     date,
     itemsPrice,
@@ -29,7 +38,12 @@ exports.createBooking = catchAsyncErrors(async (req, res, next) => {
   } = req.body;
 
   // get all available Service Providers
-  let allServiceProviders = await getAvailableServiceProviders(date, service);
+  let allServiceProviders = await getAvailableServiceProviders(
+    date,
+    service,
+    subService,
+    package
+  );
   if (allServiceProviders.length === 0) {
     return next(
       new ErrorHandler(
@@ -58,6 +72,8 @@ exports.createBooking = catchAsyncErrors(async (req, res, next) => {
     taxPrice,
     hours,
     service,
+    subService,
+    package,
     date,
     totalPrice,
     coupon,
@@ -66,8 +82,7 @@ exports.createBooking = catchAsyncErrors(async (req, res, next) => {
   });
 
   const service_providers = await User.find({
-    service,
-    role: Enums.USER_ROLES.SERVICE_PROVIDER,
+    _id: allServiceProviders,
   }).select("_id fcm_token");
 
   // create a request in BookingRequest table
@@ -136,13 +151,17 @@ exports.updateBookingStatus = catchAsyncErrors(async (req, res, next) => {
       req.params.id,
       { status: newStatus },
       { new: true, runValidators: true, useFindAndModify: false }
-    ).populate("customer")
+    ).populate("customer");
 
     // triggering email
-    if (newStatus === Enums.BOOKING_STATUS.ONGOING)  {
-      sendEmail([booking.customer.email], "Booking Started", BOOKING_START)
+    if (newStatus === Enums.BOOKING_STATUS.ONGOING) {
+      sendEmail([booking.customer.email], "Booking Started", BOOKING_START);
     } else if (newStatus === Enums.BOOKING_STATUS.CLOSED) {
-      sendEmail([booking.customer.email], "Booking Completed", BOOKING_COMPLETE)
+      sendEmail(
+        [booking.customer.email],
+        "Booking Completed",
+        BOOKING_COMPLETE
+      );
     }
 
     // updating rider amount for redemption
@@ -156,7 +175,7 @@ exports.updateBookingStatus = catchAsyncErrors(async (req, res, next) => {
       );
 
       // updating the amount in Redeem model
-      let redeem = await Redeem.findOneAndUpdate(
+      await Redeem.findOneAndUpdate(
         { serviceProvider: req.user._id },
         { $inc: { amountToBeRedeemed: 10 } },
         { new: true }
@@ -190,7 +209,7 @@ exports.getCompletedBookingsOfAUser = catchAsyncErrors(
     res.status(200).json({
       success: true,
       bookings,
-      bookingsCount: bookings.length
+      bookingsCount: bookings.length,
     });
   }
 );
@@ -214,7 +233,7 @@ exports.getCurrentBookingsOfAUser = catchAsyncErrors(async (req, res, next) => {
   res.status(200).json({
     success: true,
     bookings,
-    bookingsCount: bookings.length
+    bookingsCount: bookings.length,
   });
 });
 
@@ -232,7 +251,7 @@ exports.getFutureBookingsOfAUser = catchAsyncErrors(async (req, res, next) => {
   res.status(200).json({
     success: true,
     bookings,
-    bookingsCount: bookings.length
+    bookingsCount: bookings.length,
   });
 });
 

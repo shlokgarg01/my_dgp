@@ -1,5 +1,5 @@
 # TODO-I
-- [ ] Today booking, future booking API not giving correct response
+- [x] Today booking, future booking API not giving correct response
 - [x] Complete Address Controllers - backend
 - [x] Create a booking - backend
 - [x] While creating booking, make an entry to requests table - backend
@@ -16,7 +16,7 @@
 - [x] in get current bookings API, the date is not correct as it checks for time as well
 
 # TODO-II
-- [ ] UI for current, future & completed bookings
+- [x] UI for current, future & completed bookings
 - [x] Sort future & completed bookings based on date
 - [x] Accept/Reject Booking
 - [x] Assign the booking to the correct user for the first time & once it is rejected as well (check for leaves, booking date & service as well. Format serviceProviders in a way so that they are always in same way.)
@@ -54,3 +54,16 @@
 
 - Backend
 - [ ] Ratings/Reviews
+
+
+
+
+
+
+
+
+
+
+
+
+- [ ] Store time correctly in Booking Model. I mean, insead of hours, store minutes as well.

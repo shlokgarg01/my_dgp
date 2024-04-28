@@ -35,5 +35,5 @@
 - [x] checkout page revamp
 - [x] remove customer word, user word user
 - [x] on final screen - actual map + SOS option (8595703734) + rider call 
-- [ ] fix map issue
+- [x] fix map issue
 - [ ] channel name in notifications

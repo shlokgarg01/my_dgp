@@ -1,10 +1,14 @@
 const mongoose = require("mongoose");
 
-const serviceSchema = new mongoose.Schema(
+const priceSchema = new mongoose.Schema(
   {
     name: {
       type: String,
       required: true,
+    },
+    charges: { // per minute
+      type: Number,
+      required: true
     }
   },
   {
@@ -15,4 +19,4 @@ const serviceSchema = new mongoose.Schema(
   }
 );
 
-module.exports = mongoose.model("Service", serviceSchema);
+module.exports = mongoose.model("Prices", priceSchema);

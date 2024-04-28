@@ -18,6 +18,16 @@ const bookingModel = new mongoose.Schema(
       ref: "Service",
       required: false,
     },
+    subService: {
+      type: mongoose.Schema.ObjectId,
+      ref: "SubService",
+      required: false,
+    },
+    package: {
+      type: mongoose.Schema.ObjectId,
+      ref: "Package",
+      required: false,
+    },
     date: {
       type: Date,
       required: [true, "Booking Date is required"],

@@ -1,10 +1,15 @@
 const mongoose = require("mongoose");
 
-const serviceSchema = new mongoose.Schema(
+const packageSchema = new mongoose.Schema(
   {
     name: {
       type: String,
       required: true,
+    },
+    priority: {
+      type: Number,
+      required: true,
+      default: 0
     }
   },
   {
@@ -15,4 +20,4 @@ const serviceSchema = new mongoose.Schema(
   }
 );
 
-module.exports = mongoose.model("Service", serviceSchema);
+module.exports = mongoose.model("Package", packageSchema);
