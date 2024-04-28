@@ -1,6 +1,7 @@
 const ErrorHandler = require("../utils/errorHandler");
 const catchAsyncErrors = require("../middleware/CatchAsyncErrors");
 const User = require("../models/UserModel");
+const Package = require("../models/PackageModel");
 const Redeem = require("../models/RedeemModel");
 const Booking = require("../models/BookingModel");
 const sendToken = require("../utils/JwtToken");
@@ -44,12 +45,17 @@ exports.registerUserViaOTP = catchAsyncErrors(async (req, res, next) => {
   const { name, email, contactNumber, service } = req.body;
   let role = req.body.role || Enums.USER_ROLES.USER; // in case of service provider, we send role from front_end
 
+  // adding all packages as default
+  let package_ids = await Package.find().select("_id")
+  package_ids = package_ids.map(id => id._id.toString())
+
   const user = await User.create({
     name,
     email,
     contactNumber,
     role,
     service,
+    packages: package_ids
   });
 
   await Redeem.create({
