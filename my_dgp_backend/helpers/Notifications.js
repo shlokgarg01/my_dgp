@@ -1,62 +1,80 @@
-const FCM = require("fcm-node");
-const nodemailer = require("nodemailer")
+const https = require("https");
+const nodemailer = require("nodemailer");
 
 const sendRiderPushNotifications = async (fcm_tokens, message) => {
   try {
     const SERVER_KEY = process.env.FCM_SERVER_KEY;
-    var fcm = new FCM(SERVER_KEY);
 
-    var push_notification = {
-      registration_ids: fcm_tokens,
-      content_available: true,
-      mutable_content: true,
-      notification: {
-        title: "You have a new booking request.",
-        body: message,
-      },
-    };
+    for (index in fcm_tokens) {
+      const body = JSON.stringify({
+        to: x[index],
+        notification: {
+          title: "You have a new test booking request.",
+          body: message,
+          sound: "gio_resotone.mp3",
+          android_channel_id: "callNotificationChannel",
+        },
+        content_available: true,
+        priority: "high",
+      });
+  
+      const options = {
+        hostname: "fcm.googleapis.com",
+        path: "/fcm/send",
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": `key=${SERVER_KEY}`,
+        },
+      };
+  
+      const api = https.request(options, (response) => {
+        response.on('end', () => {
+          console.log("Push Notification Sent", response);
+        });
+      });
+  
+      api.on('error', (error) => {
+        console.error("Error while sending push notification to rider", error)
+      });
+  
+      api.write(body);
+      api.end()
+    }
 
-    fcm.send(push_notification, (error, response) => {
-      if (error) {
-        console.error("Error while sending push notification to rider", error);
-      } else {
-        console.log("Push Notification Sent", response);
-      }
-    });
   } catch (error) {
     console.error("Could not send push notification to rider", error);
   }
 };
 
 const transporter = nodemailer.createTransport({
-  service: 'gmail',
+  service: "gmail",
   host: "smtp.gmail.com",
   port: 587,
   secure: false, // true if port = 465
   auth: {
     user: process.env.NODEMAILER_EMAIL,
-    pass: process.env.NODEMAILER_APP_PASSWORD
-  }
-})
+    pass: process.env.NODEMAILER_APP_PASSWORD,
+  },
+});
 
 const sendEmail = async (email_ids, subject, message, html) => {
   try {
-    const mail_options= {
+    const mail_options = {
       from: {
-        name:"My DGP",
-        address: process.env.NODEMAILER_EMAIL
+        name: "My DGP",
+        address: process.env.NODEMAILER_EMAIL,
       },
       to: email_ids.join(","),
       subject,
       text: message,
-      html: html
-    }
-    let mail_sent = await transporter.sendMail(mail_options)
-    console.log("Email sent.", mail_sent.envelope)
+      html: html,
+    };
+    let mail_sent = await transporter.sendMail(mail_options);
+    console.log("Email sent.", mail_sent.envelope);
   } catch (error) {
-    console.log("Cannot send email.", error, "Params - ", email_ids, subject)
+    console.log("Cannot send email.", error, "Params - ", email_ids, subject);
   }
-
 };
 
 module.exports = { sendRiderPushNotifications, sendEmail };

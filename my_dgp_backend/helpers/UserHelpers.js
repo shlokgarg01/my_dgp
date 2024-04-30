@@ -27,7 +27,7 @@ const getAvailableServiceProviders = async (date, service, subService, package) 
   return service_provider_ids.filter((item) => !leaves.includes(item)) || [];
 };
 
-const generateOTP = () => Math.floor(100000 + Math.random() * 900000);
+const generateOTP = () => Math.floor(1000 + Math.random() * 9000);
 
 module.exports = {
   getAvailableServiceProviders,
