@@ -25,7 +25,8 @@ export default function LogoHeader({ showLogo }) {
         <img
           src={Logo}
           style={{
-            margin: "0 auto",
+            marginRight: '44%',
+            // margin: "0 auto",
             height: 40,
             width: 40,
             borderRadius: 100,

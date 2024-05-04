@@ -110,7 +110,7 @@ export default function UserDetails() {
       {otpLoading ? (
         <LoaderComponent />
       ) : (
-        <div className="container">
+        <div className="custom-container">
           <div className="subContainer" style={{ height: "100%" }}>
             <div>
               <LogoHeader showLogo={true} />

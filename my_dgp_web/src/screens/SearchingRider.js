@@ -10,6 +10,7 @@ import Btn from "../components/components/Btn";
 import MapComponent from "../components/MapComponent";
 import { IoMdCall } from "react-icons/io";
 import { FaShieldAlt } from "react-icons/fa";
+import { IoLogoWhatsapp } from "react-icons/io";
 
 export default function SearchingRider() {
   const navigate = useNavigate();
@@ -56,8 +57,47 @@ export default function SearchingRider() {
     };
   }, [dispatch, location.state.bookingId, status]);
 
+  const SOS = ({ Icon, color, text, link, width }) => (
+    <div
+      style={{
+        backgroundColor: Colors.WHITE,
+        borderRadius: 100,
+        padding: "4px 10px",
+        // marginLeft: "auto",
+        width,
+        boxShadow: "0px 0px 16px lightgray",
+        fontWeight: 600,
+        marginTop: 16,
+        marginRight: 10,
+      }}
+    >
+      <a
+        href={link}
+        style={{
+          fontSize: 17,
+          marginLeft: 7,
+          textDecoration: "none",
+          color,
+          display: "flex",
+          flexDirection: "row",
+          alignItems: "center",
+          justifyContent: "space-evenly",
+        }}
+      >
+        {text}
+        <Icon color={color} size={20} />
+      </a>
+    </div>
+  );
+
+  const cancelBooking = () => {
+    console.log("CANCEL TRIGGERED");
+    // TODO - call redux to cancel booking
+  };
+
   return (
     <div style={{ height: "100%", textAlign: "center" }}>
+      {/* Map Component */}
       <div
         style={{
           height: "300px",
@@ -75,41 +115,43 @@ export default function SearchingRider() {
         />
       </div>
 
+      {/* SOS Buttons */}
       <div
         style={{
-          backgroundColor: Colors.WHITE,
-          borderRadius: 100,
-          padding: '4px 10px',
-          marginLeft: 'auto',
-          width: 100,
-          boxShadow: "0px 0px 16px lightgray",
-          fontWeight: 600,
-          marginTop: 16,
-          marginRight: 10
+          display: "flex",
+          flexDirection: "row",
+          alignItems: "center",
+          justifyContent: "flex-end",
         }}
       >
-        <a
-          href="tel:+918595703734"
-          style={{
-            fontSize: 17,
-            marginLeft: 7,
-            textDecoration: "none",
-            color: Colors.RED,
-            display: "flex",
-            flexDirection: "row",
-            alignItems: "center",
-            justifyContent: 'space-evenly'
-          }}
-        >
-          SOS
-          <FaShieldAlt color={Colors.RED} size={20} />
-        </a>
+        <SOS
+          text="WhatsApp"
+          color={Colors.DARK_GREEN}
+          link="https://api.whatsapp.com/send?phone=8595703734"
+          Icon={IoLogoWhatsapp}
+          width={160}
+        />
+        <SOS
+          text="SOS"
+          color={Colors.RED}
+          link="tel:+918595703734"
+          Icon={FaShieldAlt}
+          width={100}
+        />
       </div>
 
       {service_provider ? (
         <>
           <div style={{ fontSize: 16, padding: 16 }}>
-            <div style={{ color: Colors.DARK_GREEN, fontWeight: 700, fontSize: 17 }}>Your booking has been confirmed.</div>
+            <div
+              style={{
+                color: Colors.DARK_GREEN,
+                fontWeight: 700,
+                fontSize: 17,
+              }}
+            >
+              Your booking has been confirmed.
+            </div>
             <div
               style={{
                 display: "flex",
@@ -229,8 +271,16 @@ export default function SearchingRider() {
               height: 200,
               width: 200,
               borderRadius: 100,
+              marginBottom: 25
             }}
             alt=""
+          />
+
+          {/* Cancel Button */}
+          <Btn
+            bgColor={Colors.RED}
+            onClick={cancelBooking}
+            title="CANCEL BOOKING"
           />
         </>
       )}

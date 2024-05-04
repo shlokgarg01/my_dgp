@@ -3,7 +3,7 @@ import Colors from "../../utils/Colors";
 import "../../styles/ComponentStyles.css";
 import { ReactComponent as Loader } from "./Spinner.svg";
 
-export default function Btn({ title, onClick, loading, smallButton }) {
+export default function Btn({ title, onClick, loading, smallButton, bgColor }) {
   return (
     <button
       onClick={onClick}
@@ -11,7 +11,7 @@ export default function Btn({ title, onClick, loading, smallButton }) {
         alignSelf: 'center',
         width: smallButton ? "40%" : "90%",
         height: 40,
-        backgroundColor: Colors.PRIMARY,
+        backgroundColor: bgColor || Colors.PRIMARY,
         color: Colors.WHITE,
         borderRadius: 10,
         border: 0,

@@ -128,10 +128,10 @@ const MapComponent = ({
             top: 10,
             position: "absolute",
             zIndex: 500000,
-            left: "15%",
+            // left: "15%",
             borderRadius: 100,
             zIndex: 1000,
-            width: "75%",
+            width: "95%",
             boxShadow: `0px 2px 4px ${Colors.LIGHT_GRAY}`,
             pointerEvents: "auto",
           }}
@@ -143,10 +143,12 @@ const MapComponent = ({
             apiOptions={{ region: "in" }}
             selectProps={{
               onChange: updateAddress,
+              placeholder: "Search your address"
             }}
             inputProps={{
               style: { pointerEvents: "auto" },
             }}
+            // textInputProps={{  }}
           />
         </div>
       )}
@@ -155,8 +157,9 @@ const MapComponent = ({
           height: "100vh",
           width: "100%",
         }}
+        zoomControl={false} // hides the + - button for zoom
         center={initialLocation}
-        zoom={10}
+        zoom={15} // increases the default zoom level of the map
         maxZoom={20}
       >
         <TileLayer

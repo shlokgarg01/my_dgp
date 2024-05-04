@@ -98,6 +98,47 @@ export default function Home() {
     loading: packageLoading,
   } = useSelector((state) => state.packages);
 
+  const fetchLiveLocation = (pos) => {
+    var crd = pos.coords;
+    if (crd) setLocation([crd.latitude, crd.longitude]);
+  };
+
+  const locationFetchingError = (err) => {
+    console.warn(`ERROR(${err.code}): ${err.message}`);
+  };
+
+  // fetching User's Live Location
+  useEffect(() => {
+    if (navigator.geolocation) {
+      navigator.permissions
+        .query({ name: "geolocation" })
+        .then(function (result) {
+          var options = {
+            enableHighAccuracy: true,
+            timeout: 5000,
+            maximumAge: 0,
+          };
+
+          if (result.state === "granted") {
+            navigator.geolocation.getCurrentPosition(
+              fetchLiveLocation,
+              locationFetchingError,
+              options
+            );
+          } else if (result.state === "prompt") {
+            navigator.geolocation.getCurrentPosition(
+              fetchLiveLocation,
+              locationFetchingError,
+              options
+            );
+          } else if (result.state === "denied") {
+          }
+        });
+    } else {
+      console.log("Geolocation is not supported by this browser.");
+    }
+  }, []);
+
   useEffect(() => {
     dispatch(getAllServices());
     dispatch(getAllPackages());
@@ -137,8 +178,8 @@ export default function Home() {
   const ServiceSlider = ({ service, index, icon }) => (
     <div
       onClick={() => {
-        setServiceName(service.name)
-        setSelectedService(service._id)
+        setServiceName(service.name);
+        setSelectedService(service._id);
       }}
       style={styles.serviceSliderImageContainer}
     >
@@ -153,7 +194,8 @@ export default function Home() {
       </div>
       <div
         style={{
-          border: service.name === serviceName ? `1px solid ${Colors.PRIMARY}` : null,
+          border:
+            service.name === serviceName ? `1px solid ${Colors.PRIMARY}` : null,
           width: "50%",
           marginLeft: "25%",
           borderRadius: 100,
@@ -238,7 +280,9 @@ export default function Home() {
   );
 
   const getItemPrice = () => {
-    let charges = prices.find((price) => price.name === `${serviceName} ${packageName}`)?.charges;
+    let charges = prices.find(
+      (price) => price.name === `${serviceName} ${packageName}`
+    )?.charges;
     let time = 0;
     if (charges) {
       time =
@@ -258,8 +302,8 @@ export default function Home() {
       toast.error("Please select a service");
       return;
     } else if (!packageName) {
-      toast.error("Please select a package")
-      return
+      toast.error("Please select a package");
+      return;
     }
 
     let finalDate = `${date.date.slice(7, 11)}-${

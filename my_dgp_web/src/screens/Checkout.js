@@ -200,7 +200,7 @@ export default function Checkout() {
                 </div>
               </div>
 
-              <Header1 data={`${data.serviceName} ${data.packageName}`} />
+              <Header1 data={`${data.serviceName} ${data.packageName}, ${data.subServiceName}`} />
               <Header1 data={data.date.slice(0, 10)} />
             </div>
 
