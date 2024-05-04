@@ -96,7 +96,7 @@ export default function SearchingRider() {
   };
 
   return (
-    <div style={{ height: "100%", textAlign: "center" }}>
+    <div style={{ height: "10vh", textAlign: "center" }}>
       {/* Map Component */}
       <div
         style={{
@@ -127,7 +127,7 @@ export default function SearchingRider() {
         <SOS
           text="WhatsApp"
           color={Colors.DARK_GREEN}
-          link="https://api.whatsapp.com/send?phone=8595703734"
+          link="https://wa.me/+918595703734"
           Icon={IoLogoWhatsapp}
           width={160}
         />
@@ -271,7 +271,7 @@ export default function SearchingRider() {
               height: 200,
               width: 200,
               borderRadius: 100,
-              marginBottom: 25
+              // marginBottom: 25
             }}
             alt=""
           />

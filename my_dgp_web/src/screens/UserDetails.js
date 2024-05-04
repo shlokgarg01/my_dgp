@@ -42,7 +42,7 @@ export default function UserDetails() {
 
     if (isAuthenticated) {
       setOtpLoading(false);
-      dispatch({type: CLEAR_ERRORS})
+      dispatch({ type: CLEAR_ERRORS });
       navigate({
         pathname: "/checkout",
         search: createSearchParams({
@@ -82,7 +82,7 @@ export default function UserDetails() {
       return;
     }
 
-    setLoading(true)
+    setLoading(true);
     const recaptcha = new RecaptchaVerifier(auth, "captcha-container", {
       size: "invisible",
     });
@@ -91,7 +91,7 @@ export default function UserDetails() {
       `+91${contactNumber}`,
       recaptcha
     );
-    setLoading(false)
+    setLoading(false);
     setFirebaseConfirmation(confirmation);
   };
 
@@ -138,7 +138,7 @@ export default function UserDetails() {
                 communications.
               </div>
 
-              <form onSubmit={(e) => e.preventDefault()}>
+              <form onSubmit={(e) => e.preventDefault()} style={{ textAlign: 'center' }}>
                 <InputGroup
                   icon={
                     <MdDriveFileRenameOutline
@@ -179,13 +179,13 @@ export default function UserDetails() {
                 ) : null}
 
                 <div id="captcha-container"></div>
+                <Btn
+                  onClick={firebaseConfirmation ? submit : sendOTP}
+                  title={firebaseConfirmation ? "Submit" : "Send OTP"}
+                  loading={loading}
+                />
               </form>
             </div>
-            <Btn
-              onClick={firebaseConfirmation ? submit : sendOTP}
-              title={firebaseConfirmation ? "Submit" : "Send OTP"}
-              loading={loading}
-            />
           </div>
         </div>
       )}

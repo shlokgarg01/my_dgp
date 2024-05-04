@@ -1,11 +1,11 @@
 .custom-container {
   padding: 25px 13px 13px 13px;
-  height: 100%;
+  height: 100vh;
   background-color: var(--secondary-color);
 }
 
 .subContainer {
-  /* height: 100%; */
+  height: 100vh;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
