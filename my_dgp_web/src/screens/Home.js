@@ -320,6 +320,7 @@ export default function Home() {
         subServiceName,
         date: finalDate,
         hours: selectedHours,
+        minutes: selectedMinutes.minutes,
         address,
         lat: location[0],
         lng: location[1],
@@ -364,7 +365,7 @@ export default function Home() {
           fontSize: 14,
         }}
       >
-        Book photographer & videographers instantly.
+        Book a photographer & videographer instantly.
       </div>
 
       {/* Services Slider */}

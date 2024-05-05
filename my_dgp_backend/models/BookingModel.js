@@ -37,6 +37,11 @@ const bookingModel = new mongoose.Schema(
       required: false,
       default: 1,
     },
+    minutes: {
+      type: Number,
+      required: false,
+      default: 0,
+    },
     address: {
       type: mongoose.Schema.ObjectId,
       ref: "Address",

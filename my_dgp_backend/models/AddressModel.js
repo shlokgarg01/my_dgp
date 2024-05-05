@@ -50,6 +50,10 @@ const addressSchema = new mongoose.Schema(
         message: "Provided Contact Number is invalid.",
       },
     },
+    email: {
+      type: String,
+      required: false
+    },
     coordinates: {
       lat: {
         type: String,

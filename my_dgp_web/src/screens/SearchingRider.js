@@ -3,7 +3,11 @@ import { useLocation, useNavigate } from "react-router-dom";
 import Colors from "../utils/Colors";
 import SearchRider from "../images/search_rider.png";
 import { useDispatch, useSelector } from "react-redux";
-import { confirmBookingStatus } from "../actions/BookingActions";
+import {
+  cancelBooking,
+  clearErrors,
+  confirmBookingStatus,
+} from "../actions/BookingActions";
 import Enums from "../utils/Enums";
 import { toast } from "react-custom-alert";
 import Btn from "../components/components/Btn";
@@ -11,6 +15,7 @@ import MapComponent from "../components/MapComponent";
 import { IoMdCall } from "react-icons/io";
 import { FaShieldAlt } from "react-icons/fa";
 import { IoLogoWhatsapp } from "react-icons/io";
+import Loader from "../components/Loader";
 
 export default function SearchingRider() {
   const navigate = useNavigate();
@@ -20,8 +25,16 @@ export default function SearchingRider() {
   const { status, service_provider, booking } = useSelector(
     (state) => state.confirmedBooking
   );
+  const { loading, isCancelled, error } = useSelector(
+    (state) => state.cancelledBooking
+  );
 
   useEffect(() => {
+    if (error) {
+      toast.error(error);
+      dispatch(clearErrors());
+    }
+
     let fetchDataTimeout;
     const fetchData = async () => {
       try {
@@ -33,10 +46,7 @@ export default function SearchingRider() {
 
         if (status === Enums.BOOKING_STATUS.ACCEPTED) {
           clearTimeout(fetchDataTimeout);
-          // setTimeout(() => {
           toast.success("Booking Confirmed");
-          //   navigate("/");
-          // }, 2000);
         }
       } catch (error) {
         console.error("Error fetching data:", error);
@@ -51,11 +61,18 @@ export default function SearchingRider() {
       });
     }, 25);
 
+    if (isCancelled) {
+      toast.success("Booking Cancelled");
+      clearInterval(interval);
+      clearTimeout(fetchDataTimeout);
+      navigate("/");
+    }
+
     return () => {
       clearInterval(interval);
       clearTimeout(fetchDataTimeout);
     };
-  }, [dispatch, location.state.bookingId, status]);
+  }, [dispatch, location.state.bookingId, status, error, isCancelled]);
 
   const SOS = ({ Icon, color, text, link, width }) => (
     <div
@@ -90,9 +107,9 @@ export default function SearchingRider() {
     </div>
   );
 
-  const cancelBooking = () => {
+  const cancelTheBooking = () => {
     console.log("CANCEL TRIGGERED");
-    // TODO - call redux to cancel booking
+    dispatch(cancelBooking(location.state.bookingId));
   };
 
   return (
@@ -236,6 +253,8 @@ export default function SearchingRider() {
           </div>
           <Btn title="Go Back" onClick={() => navigate("/")} />
         </>
+      ) : loading ? (
+        <Loader />
       ) : (
         <>
           <div
@@ -279,7 +298,7 @@ export default function SearchingRider() {
           {/* Cancel Button */}
           <Btn
             bgColor={Colors.RED}
-            onClick={cancelBooking}
+            onClick={cancelTheBooking}
             title="CANCEL BOOKING"
           />
         </>

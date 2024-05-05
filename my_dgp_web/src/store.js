@@ -2,7 +2,7 @@ import { applyMiddleware, createStore, combineReducers } from "redux";
 import { thunk } from "redux-thunk";
 import { UserReducer } from "./reducers/UserReducers";
 import { ServiceReducer } from "./reducers/ServiceReducer";
-import { BookingReducer, ConfirmBookingReducer } from "./reducers/BookingReducer";
+import { BookingReducer, CancelBookingReducer, ConfirmBookingReducer } from "./reducers/BookingReducer";
 import { PackageReducer } from "./reducers/PackageReducer";
 import { PriceReducer } from './reducers/PriceReducer'
 
@@ -15,7 +15,8 @@ const reducer = combineReducers({
   prices: PriceReducer,
 
   booking: BookingReducer,
-  confirmedBooking: ConfirmBookingReducer
+  confirmedBooking: ConfirmBookingReducer,
+  cancelledBooking: CancelBookingReducer
 });
 
 const initialState = {};

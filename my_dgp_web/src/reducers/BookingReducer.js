@@ -1,4 +1,7 @@
 import {
+  CANCEL_BOOKING_FAIL,
+  CANCEL_BOOKING_REQUEST,
+  CANCEL_BOOKING_SUCCESS,
   CLEAR_ERRORS,
   CONFIRM_BOOKING_STATUS_FAIL,
   CONFIRM_BOOKING_STATUS_REQUEST,
@@ -68,6 +71,41 @@ export const ConfirmBookingReducer = (
       return {
         ...state,
         error: null,
+      };
+    default:
+      return state;
+  }
+};
+
+export const CancelBookingReducer = (
+  state = { cancelledBooking: {} },
+  action
+) => {
+  switch (action.type) {
+    case CANCEL_BOOKING_REQUEST:
+      return {
+        loading: true
+      };
+    case CANCEL_BOOKING_SUCCESS:
+      return {
+        ...state,
+        success: true,
+        loading: false,
+        isCancelled: true
+      };
+    case CANCEL_BOOKING_FAIL:
+      return {
+        ...state,
+        loading: false,
+        success: false,
+        isCancelled: false,
+        error: action.payload,
+      };
+    case CLEAR_ERRORS:
+      return {
+        ...state,
+        error: null,
+        isCancelled: false
       };
     default:
       return state;

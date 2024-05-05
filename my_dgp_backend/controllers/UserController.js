@@ -7,6 +7,7 @@ const Booking = require("../models/BookingModel");
 const sendToken = require("../utils/JwtToken");
 const Enums = require("../utils/Enums");
 const { getDaysFromCreatedAt } = require("../utils/orderUtils");
+const { uploadFile } = require("../services/googleAPI");
 
 // Logout User
 exports.logout = catchAsyncErrors(async (req, res, next) => {
@@ -46,8 +47,8 @@ exports.registerUserViaOTP = catchAsyncErrors(async (req, res, next) => {
   let role = req.body.role || Enums.USER_ROLES.USER; // in case of service provider, we send role from front_end
 
   // adding all packages as default
-  let package_ids = await Package.find().select("_id")
-  package_ids = package_ids.map(id => id._id.toString())
+  let package_ids = await Package.find().select("_id");
+  package_ids = package_ids.map((id) => id._id.toString());
 
   const user = await User.create({
     name,
@@ -55,7 +56,7 @@ exports.registerUserViaOTP = catchAsyncErrors(async (req, res, next) => {
     contactNumber,
     role,
     service,
-    packages: package_ids
+    packages: package_ids,
   });
 
   await Redeem.create({
@@ -92,8 +93,8 @@ exports.authenticateUserViaOTPForLogin = catchAsyncErrors(
     if (!user) {
       return next(
         new ErrorHandler("No user found for the given Contact Number.", 404)
-        );
-      }
+      );
+    }
 
     sendToken(user, 201, res);
   }
@@ -134,20 +135,45 @@ exports.updateProfile = catchAsyncErrors(async (req, res, next) => {
   });
 });
 
-// update fcm token
-exports.updateFCMTokem = catchAsyncErrors(async (req, res, next) => {
-  const {fcm_token} = req.body
+// update profile picture
+exports.updateProfilePicture = catchAsyncErrors(async (req, res, next) => {
+  const { files } = req;
+  const id = req.user.id;
 
-  const user = await User.findByIdAndUpdate(req.user.id, {fcm_token}, {
-    new: true,
-    runValidators: true,
-    useFindAndModify: false,
-  });
+  if (files.length === 0) {
+    return next(new ErrorHandler("Please upload a photo.", 400));
+  }
+
+  let { fileUrl } = await uploadFile(
+    files[0],
+    process.env.GOOGLE_DRIVE_FOLDER_ID
+  );
+  let user = await User.findByIdAndUpdate(id, { avatar: fileUrl });
 
   res.status(200).json({
     success: true,
     user,
-    message: "FCM token updated successfully"
+  });
+});
+
+// update fcm token
+exports.updateFCMTokem = catchAsyncErrors(async (req, res, next) => {
+  const { fcm_token } = req.body;
+
+  const user = await User.findByIdAndUpdate(
+    req.user.id,
+    { fcm_token },
+    {
+      new: true,
+      runValidators: true,
+      useFindAndModify: false,
+    }
+  );
+
+  res.status(200).json({
+    success: true,
+    user,
+    message: "FCM token updated successfully",
   });
 });
 

@@ -45,6 +45,7 @@ export default function Checkout() {
     coordinates: { lat: params.get("lat"), lng: params.get("lng") },
     date: params.get("date"),
     hours: parseInt(params.get("hours")),
+    minutes: parseInt(params.get("minutes")),
     customer: params.get("customer"),
     taxPrice: params.get("taxPrice"),
     itemsPrice: params.get("itemsPrice"),
@@ -53,7 +54,7 @@ export default function Checkout() {
     email: params.get("email"),
     contactNumber: params.get("contactNumber"),
     paymentInfo: {
-      id: "234345634klmlkml",
+      id: `MYDGP_${Date.now()}`,
       status: Enums.PAYMENT_STATUS.PAID,
     },
   };

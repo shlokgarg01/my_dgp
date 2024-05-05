@@ -58,7 +58,7 @@ exports.updateStatusOfBookingRequest = catchAsyncErrors(
         .populate("customer address serviceProvider service");
 
       sendEmail(
-        [booking.customer.email],
+        [booking.address.email || booking.customer.email],
         "Booking Confirmation",
         null,
         `
@@ -66,14 +66,16 @@ exports.updateStatusOfBookingRequest = catchAsyncErrors(
           <h3>Booking Details</h3>
           <b>Booking Date</b>: ${new Date(booking.date).toDateString()}<br />
           <b>Name</b>: ${booking.customer.name}<br />
-          <b>Address</b>: ${booking.address.address}, ${booking.address.country}<br />
+          <b>Address</b>: ${booking.address.address}, ${
+          booking.address.country
+        }<br />
           <b>Amount</b>: ₹ ${booking.totalPrice}<br />
           <b>Service</b>: ${booking.service.name}<br />
           <b>Service Provider</b>: ${booking.serviceProvider.name}<br />
         `
       );
       sendEmail(
-        [booking.customer.email],
+        [booking.address.email || booking.customer.email],
         "Booking OTP",
         BOOKING_OTP + booking.otp
       );
@@ -95,3 +97,29 @@ exports.updateStatusOfBookingRequest = catchAsyncErrors(
     });
   }
 );
+
+// cancel booking request from searching rider page
+exports.cancelBookingRequest = catchAsyncErrors(async (req, res, next) => {
+  let booking_id = req.params.id;
+  let booking_request = await BookingRequest.findOne({ booking: booking_id });
+  if (!booking_request) {
+    return next(new ErrorHandler("Booking already accepted", 400));
+  }
+
+  let booking = await Booking.findByIdAndUpdate(
+    booking_id,
+    { status: Enums.BOOKING_STATUS.CANCELLED },
+    {
+      new: true,
+      runValidators: true,
+      useFindAndModify: false,
+    }
+  );
+  await booking_request.deleteOne();
+
+  return res.status(200).json({
+    success: true,
+    message: "Booking Deleted!",
+    booking,
+  });
+});

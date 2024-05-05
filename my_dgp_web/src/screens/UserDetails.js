@@ -57,6 +57,7 @@ export default function UserDetails() {
           lng: params.get("lng"),
           date: params.get("date"),
           hours: params.get("hours"),
+          minutes: params.get("minutes"),
           customer: user._id,
           taxPrice: params.get("taxPrice"),
           itemsPrice: params.get("itemsPrice"),

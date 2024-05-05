@@ -7,7 +7,7 @@ const sendRiderPushNotifications = async (fcm_tokens, message) => {
 
     for (index in fcm_tokens) {
       const body = JSON.stringify({
-        to: x[index],
+        to: fcm_tokens[index],
         notification: {
           title: "You have a new test booking request.",
           body: message,

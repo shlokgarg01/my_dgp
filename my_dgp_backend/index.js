@@ -6,7 +6,6 @@ const app = express();
 require('dotenv').config()
 const errorMiddleware = require("./middleware/error");
 const connectDatabase = require("./config/database.js")
-const cloudinary = require('cloudinary')
 const path = require("path");
 
 const UserRoutes = require('./routes/UserRoutes')
@@ -38,12 +37,6 @@ const server = app.listen(process.env.PORT, ()=>{
   console.log(`Server is running on PORT ${process.env.PORT}`)
 })
 connectDatabase()
-
-cloudinary.config({
-  cloud_name: process.env.CLOUDINARY_NAME,
-  api_key: process.env.CLOUDINARY_API_KEY,
-  api_secret: process.env.CLOUDINARY_API_SECRET
-})
 
 // Handling Uncaught Exception
 process.on("uncaughtException", err => {
@@ -82,12 +75,12 @@ app.use('/api/v1', PriceRoutes)
 
 // This is the static frontend file. Whenever any change in frontend is made, u need to generate build file & then run server again.
 // IMPORTANT - make sure that this static frontend route is after all the backend routes otherwise all API calls will fail.
-app.use(express.static(path.join(__dirname, "../my_dgp_web/build")));
-app.get("*", (req, res) => {
-  res.sendFile(
-    path.resolve(__dirname, "../my_dgp_web/build/index.html")
-  );
-});
+// app.use(express.static(path.join(__dirname, "../my_dgp_web/build")));
+// app.get("*", (req, res) => {
+//   res.sendFile(
+//     path.resolve(__dirname, "../my_dgp_web/build/index.html")
+//   );
+// });
 
 // middleware for errors
 app.use(errorMiddleware);

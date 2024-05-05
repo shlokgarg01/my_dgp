@@ -17,14 +17,6 @@ const userSchema = new mongoose.Schema(
       unique: true,
       validate: [validator.isEmail, "Please enter a valid email"],
     },
-    avatar: {
-      public_id: {
-        type: String,
-      },
-      url: {
-        type: String,
-      },
-    },
     contactNumber: {
       type: String,
       required: [true, "Please enter your Contact Number."],
@@ -38,14 +30,7 @@ const userSchema = new mongoose.Schema(
       },
     },
     avatar: {
-      public_id: {
-        type: String,
-        // required: true,
-      },
-      url: {
-        type: String,
-        // required: true,
-      },
+      type: String
     },
     fcm_token: {
       type: String,
@@ -74,6 +59,10 @@ const userSchema = new mongoose.Schema(
         required: false,
       },
     ],
+    minutesServiced: {
+      type: Number,
+      default: 0,
+    },
     status: {
       type: String,
     },

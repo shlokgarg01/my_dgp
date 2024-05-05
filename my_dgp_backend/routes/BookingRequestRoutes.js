@@ -4,6 +4,7 @@ const { isAuthenticatedUser, authorizeRoles } = require("../middleware/Auth");
 const {
   getAllBookingRequests,
   updateStatusOfBookingRequest,
+  cancelBookingRequest,
 } = require("../controllers/BookingRequestsController");
 const router = express.Router();
 
@@ -17,5 +18,6 @@ router
 router
   .route("/bookingrequests/updateStatus/:id")
   .post(isAuthenticatedUser, updateStatusOfBookingRequest);
+router.route("/bookingrequest/cancel/:id").post(cancelBookingRequest)
 
 module.exports = router;

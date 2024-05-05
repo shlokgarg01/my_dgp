@@ -35,6 +35,8 @@ exports.createBooking = catchAsyncErrors(async (req, res, next) => {
     itemsPrice,
     taxPrice,
     totalPrice,
+    email,
+    minutes,
   } = req.body;
 
   // get all available Service Providers
@@ -61,6 +63,7 @@ exports.createBooking = catchAsyncErrors(async (req, res, next) => {
     name: req.user.name,
     contactNumber: req.user.contactNumber,
     user: req.user,
+    email,
   });
 
   // create a booking
@@ -71,6 +74,7 @@ exports.createBooking = catchAsyncErrors(async (req, res, next) => {
     itemsPrice,
     taxPrice,
     hours,
+    minutes,
     service,
     subService,
     package,
@@ -157,6 +161,17 @@ exports.updateBookingStatus = catchAsyncErrors(async (req, res, next) => {
     if (newStatus === Enums.BOOKING_STATUS.ONGOING) {
       sendEmail([booking.customer.email], "Booking Started", BOOKING_START);
     } else if (newStatus === Enums.BOOKING_STATUS.CLOSED) {
+      // updating the minutesServiced in service providers record
+      await User.findByIdAndUpdate(
+        booking.serviceProvider,
+        {
+          minutesServiced: {
+            $inc: { minutesServiced: booking.hours * 60 + booking.minutes },
+          },
+        }
+      );
+
+      // sending booking completion email
       sendEmail(
         [booking.customer.email],
         "Booking Completed",
@@ -227,7 +242,7 @@ exports.getCurrentBookingsOfAUser = catchAsyncErrors(async (req, res, next) => {
       $gte: currentDate,
       $lt: nextDay,
     },
-    status: { $ne: Enums.BOOKING_STATUS.CLOSED },
+    status: { $nin: [Enums.BOOKING_STATUS.CLOSED, Enums.BOOKING_STATUS.CANCELLED] },
   }).populate("customer address");
 
   res.status(200).json({
@@ -243,7 +258,7 @@ exports.getFutureBookingsOfAUser = catchAsyncErrors(async (req, res, next) => {
   let bookings = await Booking.find({
     serviceProvider: req.user._id,
     date: { $gte: today },
-    status: { $ne: Enums.BOOKING_STATUS.CLOSED },
+    status: { $nin: [Enums.BOOKING_STATUS.CLOSED, Enums.BOOKING_STATUS.CANCELLED] },
   })
     .sort("date")
     .populate("customer address");

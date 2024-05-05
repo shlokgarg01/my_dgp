@@ -66,4 +66,6 @@
 
 
 
-- [ ] Store time correctly in Booking Model. I mean, insead of hours, store minutes as well.
+- [x] Store time correctly in Booking Model. I mean, instead of hours, store minutes as well.
+- [ ] Update Logic to set redeem amount. Currently it's default Rs 10.
+- [ ] Store exact time of the booking, not only date
