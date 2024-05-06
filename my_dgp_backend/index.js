@@ -75,12 +75,12 @@ app.use('/api/v1', PriceRoutes)
 
 // This is the static frontend file. Whenever any change in frontend is made, u need to generate build file & then run server again.
 // IMPORTANT - make sure that this static frontend route is after all the backend routes otherwise all API calls will fail.
-// app.use(express.static(path.join(__dirname, "../my_dgp_web/build")));
-// app.get("*", (req, res) => {
-//   res.sendFile(
-//     path.resolve(__dirname, "../my_dgp_web/build/index.html")
-//   );
-// });
+app.use(express.static(path.join(__dirname, "../my_dgp_web/build")));
+app.get("*", (req, res) => {
+  res.sendFile(
+    path.resolve(__dirname, "../my_dgp_web/build/index.html")
+  );
+});
 
 // middleware for errors
 app.use(errorMiddleware);
