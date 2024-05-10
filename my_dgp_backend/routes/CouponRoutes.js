@@ -1,5 +1,5 @@
 const express = require("express");
-const { isAuthenticatedUser, authorizeRoles } = require("../middleware/auth");
+const { isAuthenticatedUser, authorizeRoles } = require("../middleware/Auth");
 const {
   getAllCoupons,
   createCoupon,
