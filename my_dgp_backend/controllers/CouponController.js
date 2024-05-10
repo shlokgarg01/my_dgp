@@ -1,6 +1,6 @@
 const Coupon = require("../models/CouponModel");
+const catchAsyncErrors = require("../middleware/CatchAsyncErrors");
 const ErrorHandler = require("../utils/errorHandler");
-const catchAsyncErrors = require("../middleware/catchAsyncErrors");
 const Enums = require("../utils/Enums")
 
 // create coupon -- Admin
