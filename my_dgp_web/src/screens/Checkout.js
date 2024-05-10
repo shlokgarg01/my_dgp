@@ -11,15 +11,34 @@ import "../styles/ComponentStyles.css";
 import Colors from "../utils/Colors";
 import { toast } from "react-custom-alert";
 import LogoHeader from "../components/components/LogoHeader";
+import InputGroup from "../components/components/InputGroup";
+import { applyCouponToBooking } from "../actions/CouponActions";
 // import MapComponent from "../components/MapComponent";
 
 export default function Checkout() {
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const [paymentMode] = useState("Pay using cash");
+  let [params] = useSearchParams();
   const { error, loading, success, booking } = useSelector(
     (state) => state.booking
   );
+
+  const {
+    finalPrice,
+    discount,
+    error: couponError,
+    success: couponSuccess,
+  } = useSelector((state) => state.coupon);
+
+  const [paymentMode] = useState("Pay using cash");
+  const [couponCode, setCouponCode] = useState("");
+  const [couponDiscount, setCouponDiscount] = useState(0);
+  const [totalPrice, setTotalPrice] = useState(params.get("totalPrice"));
+
+  const updatePrices = () => {
+    setTotalPrice(finalPrice);
+    setCouponDiscount(discount);
+  };
 
   useEffect(() => {
     if (error) {
@@ -27,13 +46,28 @@ export default function Checkout() {
       dispatch(clearErrors());
     }
 
+    if (couponError) {
+      toast.error(couponError);
+      setCouponCode("");
+      dispatch(clearErrors());
+    }
+
+    if (couponSuccess) {
+      toast.success("Coupon Applied");
+      updatePrices();
+    }
+
     if (success) {
-      navigate("/searchingRider", { state: { bookingId: booking._id, coordinates: { lat: params.get("lat"), lng: params.get("lng") } } });
+      navigate("/searchingRider", {
+        state: {
+          bookingId: booking._id,
+          coordinates: { lat: params.get("lat"), lng: params.get("lng") },
+        },
+      });
     }
     // eslint-disable-next-line
-  }, [dispatch, error, success]);
+  }, [dispatch, error, success, couponError, couponSuccess]);
 
-  let [params] = useSearchParams();
   const data = {
     service: params.get("service"),
     subService: params.get("subService"),
@@ -47,9 +81,11 @@ export default function Checkout() {
     hours: parseInt(params.get("hours")),
     minutes: parseInt(params.get("minutes")),
     customer: params.get("customer"),
+    coupon: couponCode,
+    couponDiscount,
     taxPrice: params.get("taxPrice"),
     itemsPrice: params.get("itemsPrice"),
-    totalPrice: params.get("totalPrice"),
+    totalPrice: totalPrice,
     name: params.get("name"),
     email: params.get("email"),
     contactNumber: params.get("contactNumber"),
@@ -61,6 +97,10 @@ export default function Checkout() {
 
   const submit = () => {
     dispatch(createBooking(data));
+  };
+
+  const applyCoupon = () => {
+    dispatch(applyCouponToBooking(couponCode, params.get("totalPrice")));
   };
 
   // const Details = ({ heading, data, isTop, isBottom, subHeading, showTax }) => (
@@ -196,12 +236,13 @@ export default function Checkout() {
                 </div>
                 <div style={{ fontWeight: 700, fontSize: 22 }}>
                   ₹
-                  {parseInt(params.get("taxPrice")) +
-                    parseInt(params.get("itemsPrice"))}
+                  {totalPrice}
                 </div>
               </div>
 
-              <Header1 data={`${data.serviceName} ${data.packageName}, ${data.subServiceName}`} />
+              <Header1
+                data={`${data.serviceName} ${data.packageName}, ${data.subServiceName}`}
+              />
               <Header1 data={data.date.slice(0, 10)} />
             </div>
 
@@ -232,9 +273,59 @@ export default function Checkout() {
             >
               <SubHeading data={data.hours} heading="Total Hours" />
               <SubHeading data={`₹ ${data.itemsPrice}`} heading="Sub Total" />
-              <SubHeading data={`₹ ${data.taxPrice}`} heading="Service Charge" />
-              <SubHeading data={`₹ ${data.totalPrice}`} heading="Total Price" />
+              <SubHeading
+                data={`₹ ${data.taxPrice}`}
+                heading="Service Charge"
+              />
+              <SubHeading
+                data={`₹ ${parseInt(data.totalPrice) + couponDiscount}`}
+                heading="Total Price"
+              />
+              {couponDiscount > 0 ? (
+                <>
+                  <SubHeading
+                    data={`₹ ${discount}`}
+                    heading="Coupon Discount"
+                  />
+                  <SubHeading data={`₹ ${totalPrice}`} heading="Final Price" />
+                </>
+              ) : null}
             </div>
+
+            <div
+              style={{
+                backgroundColor: Colors.WHITE,
+                borderRadius: 16,
+                padding: 10,
+                boxShadow: "0px 0px 16px lightgray",
+                marginTop: 16,
+                textAlign: "center",
+                fontSize: 17,
+                paddingLeft: 10,
+                paddingRight: 10,
+                display: "flex",
+                flexDirection: "row",
+                alignItems: "center",
+                justifyContent: "center",
+              }}
+            >
+              <InputGroup
+                placeholder="Coupon Code"
+                value={couponCode}
+                onChange={(e) => setCouponCode(e.target.value)}
+                bgColor={Colors.LIGHT_GRAY}
+                noMargin
+              />
+              <Btn
+                smallButton
+                onClick={applyCoupon}
+                title="Apply"
+                btnHeight={34}
+                noMargin
+                leftMargin
+              />
+            </div>
+
             <div
               id="checkoutDetailsSubHeading"
               style={{ paddingLeft: 10, paddingRight: 10, marginTop: 4 }}

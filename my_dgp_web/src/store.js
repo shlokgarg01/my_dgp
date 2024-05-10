@@ -5,6 +5,7 @@ import { ServiceReducer } from "./reducers/ServiceReducer";
 import { BookingReducer, CancelBookingReducer, ConfirmBookingReducer } from "./reducers/BookingReducer";
 import { PackageReducer } from "./reducers/PackageReducer";
 import { PriceReducer } from './reducers/PriceReducer'
+import { ApplyCouponReducer } from "./reducers/CouponReducer";
 
 const reducer = combineReducers({
   user: UserReducer,
@@ -16,7 +17,9 @@ const reducer = combineReducers({
 
   booking: BookingReducer,
   confirmedBooking: ConfirmBookingReducer,
-  cancelledBooking: CancelBookingReducer
+  cancelledBooking: CancelBookingReducer,
+
+  coupon: ApplyCouponReducer
 });
 
 const initialState = {};

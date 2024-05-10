@@ -108,7 +108,6 @@ export default function SearchingRider() {
   );
 
   const cancelTheBooking = () => {
-    console.log("CANCEL TRIGGERED");
     dispatch(cancelBooking(location.state.bookingId));
   };
 

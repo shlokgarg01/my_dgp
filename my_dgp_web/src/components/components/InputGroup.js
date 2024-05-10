@@ -10,6 +10,7 @@ export default function InputGroup({
   bgColor,
   disabled,
   roundedBorder,
+  noMargin
 }) {
   return (
     <div
@@ -19,7 +20,7 @@ export default function InputGroup({
         flexDirection: "row",
         borderRadius: roundedBorder ? 100 : 7,
         alignItems: "center",
-        marginTop: 16,
+        marginTop: noMargin ? 0 : 16,
         paddingLeft: 10,
       }}
     >

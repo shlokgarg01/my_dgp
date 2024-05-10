@@ -19,6 +19,7 @@ const RedeemRequestRoutes = require('./routes/RedeemRequestRoutes.js')
 const SubServiceRoutes = require('./routes/SubServiceRoutes.js')
 const PackageRoutes = require('./routes/PackageRoutes.js')
 const PriceRoutes = require('./routes/PriceRoutes.js')
+const CouponRoutes = require('./routes/CouponRoutes')
 
 app.use(morgan("combined"));
 
@@ -72,6 +73,7 @@ app.use('/api/v1', RedeemRequestRoutes)
 app.use('/api/v1', PackageRoutes)
 app.use('/api/v1', SubServiceRoutes)
 app.use('/api/v1', PriceRoutes)
+app.use('/api/v1', CouponRoutes)
 
 // This is the static frontend file. Whenever any change in frontend is made, u need to generate build file & then run server again.
 // IMPORTANT - make sure that this static frontend route is after all the backend routes otherwise all API calls will fail.

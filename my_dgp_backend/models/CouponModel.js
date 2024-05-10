@@ -22,7 +22,7 @@ const couponSchema = new mongoose.Schema(
     },
     expires: {
       type: Date,
-      default: Date.now() + 10 * 24 * 60 * 60 * 1000, // default expiry is 10 days from now (in milliseconds)
+      default: Date.now() + 100 * 24 * 60 * 60 * 1000, // default expiry is 100 days from now (in milliseconds)
     },
     user: {
       type: mongoose.Schema.ObjectId,
@@ -54,6 +54,21 @@ couponSchema.pre("save", function (next) {
     error = new Error("Invalid percentage value");
     next(error);
   }
+  next();
+});
+
+couponSchema.pre("findOneAndUpdate", async function (next) {
+  const docToUpdate = await this.model.findOne(this.getQuery());
+  const newValues = this?._update;
+  if (newValues.type) newValues.type = newValues.type.toUpperCase();
+
+  const type = newValues.type || docToUpdate.type;
+  const value = newValues.value || docToUpdate.value;
+  if (type === Enums.COUPON_TYPE.PERCENTAGE && !(value >= 0 && value <= 100)) {
+    error = new Error("Invalid percentage value");
+    next(error);
+  }
+
   next();
 });
 
