@@ -72,17 +72,21 @@ const bookingModel = new mongoose.Schema(
     },
     itemsPrice: {
       type: Number,
-      requierd: true,
+      required: true,
       default: 0,
     },
     taxPrice: {
       type: Number,
-      requierd: true,
+      required: true,
       default: 0,
     },
     totalPrice: {
       type: Number,
-      requierd: true,
+      required: true,
+      default: 0,
+    },
+    overtimePrice: {
+      type: Number,
       default: 0,
     },
     otp: {
@@ -95,6 +99,12 @@ const bookingModel = new mongoose.Schema(
       required: true,
       default: Enums.BOOKING_STATUS.PLACED,
     },
+    startTime: {
+      type: Date
+    },
+    endTime: {
+      type: Date
+    }
   },
   {
     timestamps: {

@@ -319,7 +319,10 @@ export default function Home() {
         serviceName,
         subServiceName,
         date: finalDate,
-        hours: selectedHours,
+        hours:
+          selectedMinutes.hours === "00"
+            ? selectedHours
+            : selectedMinutes.hours,
         minutes: selectedMinutes.minutes,
         address,
         lat: location[0],

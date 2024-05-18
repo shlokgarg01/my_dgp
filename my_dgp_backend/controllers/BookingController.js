@@ -3,6 +3,7 @@ const BookingRequest = require("../models/BookingRequestsModel");
 const User = require("../models/UserModel");
 const Redeem = require("../models/RedeemModel");
 const Address = require("../models/AddressModel");
+const Price = require("../models/PriceModel");
 
 const catchAsyncErrors = require("../middleware/CatchAsyncErrors");
 const { getAvailableServiceProviders } = require("../helpers/UserHelpers");
@@ -141,6 +142,7 @@ exports.updateBookingStatus = catchAsyncErrors(async (req, res, next) => {
     (currentStatus === Enums.BOOKING_STATUS.ONGOING &&
       newStatus === Enums.BOOKING_STATUS.CLOSED)
   ) {
+    // Validations
     if (newStatus === Enums.BOOKING_STATUS.ONGOING) {
       if (!otp) {
         return next(
@@ -151,25 +153,29 @@ exports.updateBookingStatus = catchAsyncErrors(async (req, res, next) => {
       }
     }
 
-    booking = await Booking.findByIdAndUpdate(
-      req.params.id,
-      { status: newStatus },
-      { new: true, runValidators: true, useFindAndModify: false }
-    ).populate("customer");
+    // updating the booking with the startTime & endTime
+    if (newStatus === Enums.BOOKING_STATUS.ONGOING) {
+      booking = await Booking.findByIdAndUpdate(
+        req.params.id,
+        { status: newStatus, startTime: Date.now() },
+        { new: true, runValidators: true, useFindAndModify: false }
+      ).populate("customer");
+    } else if (newStatus === Enums.BOOKING_STATUS.CLOSED) {
+      booking = await Booking.findByIdAndUpdate(
+        req.params.id,
+        { status: newStatus, endTime: Date.now() },
+        { new: true, runValidators: true, useFindAndModify: false }
+      ).populate("customer");
+    }
 
     // triggering email
     if (newStatus === Enums.BOOKING_STATUS.ONGOING) {
       sendEmail([booking.customer.email], "Booking Started", BOOKING_START);
     } else if (newStatus === Enums.BOOKING_STATUS.CLOSED) {
       // updating the minutesServiced in service providers record
-      await User.findByIdAndUpdate(
-        booking.serviceProvider,
-        {
-          minutesServiced: {
-            $inc: { minutesServiced: booking.hours * 60 + booking.minutes },
-          },
-        }
-      );
+      await User.findByIdAndUpdate(booking.serviceProvider, {
+        $inc: { minutesServiced: booking.hours * 60 + booking.minutes },
+      });
 
       // sending booking completion email
       sendEmail(
@@ -242,7 +248,9 @@ exports.getCurrentBookingsOfAUser = catchAsyncErrors(async (req, res, next) => {
       $gte: currentDate,
       $lt: nextDay,
     },
-    status: { $nin: [Enums.BOOKING_STATUS.CLOSED, Enums.BOOKING_STATUS.CANCELLED] },
+    status: {
+      $nin: [Enums.BOOKING_STATUS.CLOSED, Enums.BOOKING_STATUS.CANCELLED],
+    },
   }).populate("customer address");
 
   res.status(200).json({
@@ -258,7 +266,9 @@ exports.getFutureBookingsOfAUser = catchAsyncErrors(async (req, res, next) => {
   let bookings = await Booking.find({
     serviceProvider: req.user._id,
     date: { $gte: today },
-    status: { $nin: [Enums.BOOKING_STATUS.CLOSED, Enums.BOOKING_STATUS.CANCELLED] },
+    status: {
+      $nin: [Enums.BOOKING_STATUS.CLOSED, Enums.BOOKING_STATUS.CANCELLED],
+    },
   })
     .sort("date")
     .populate("customer address");
@@ -289,5 +299,58 @@ exports.confirmBookingStatus = catchAsyncErrors(async (req, res, next) => {
     status,
     booking,
     service_provider,
+  });
+});
+
+/* 
+  Get pending amount of the booking after the booking is closed.
+  This API will return the amount based on the extra time taken 
+*/
+exports.getPendingBookingAmount = catchAsyncErrors(async (req, res, next) => {
+  let booking = await Booking.findOne({ _id: req.params.id }).populate(
+    "package service"
+  );
+  if (!booking) {
+    return next(new ErrorHandler("No such booking found", 400));
+  } else if (booking.status === Enums.BOOKING_STATUS.COMPLETED) {
+    return res.status(200).json({
+      success: true,
+      message: "Booking already Completed",
+      booking,
+    });
+  } else if (booking.status !== Enums.BOOKING_STATUS.CLOSED) {
+    return next(new ErrorHandler("Booking not closed yet.", 400));
+  }
+
+  let timeTakenInMinutes = Math.ceil(
+    (booking.endTime - booking.startTime) / 60000
+  );
+  let expectedTimeInMinutes = booking.hours * 60 + booking.minutes;
+  let charges = 0;
+
+  if (timeTakenInMinutes <= expectedTimeInMinutes) {
+    booking = await Booking.findByIdAndUpdate(
+      req.params.id,
+      { status: Enums.BOOKING_STATUS.COMPLETED },
+      { new: true, runValidators: true, useFindAndModify: false }
+    ).populate("customer");
+  } else {
+    let price = await Price.findOne({
+      name: `${booking.service.name} ${booking.package.name}`,
+    });
+    charges =
+      Math.abs(timeTakenInMinutes - expectedTimeInMinutes) * price.charges;
+
+    // updating the charges on the booking
+    booking = await Booking.findByIdAndUpdate(
+      req.params.id,
+      { overtimePrice: charges },
+      { new: true, runValidators: true, useFindAndModify: false }
+    );
+  }
+
+  return res.status(200).json({
+    success: true,
+    charges,
   });
 });

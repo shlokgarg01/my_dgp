@@ -11,7 +11,12 @@ const { BOOKING_OTP, BOOKING_ACCEPTANCE } = require("../Data/Messages");
 exports.getAllBookingRequests = catchAsyncErrors(async (req, res, next) => {
   let bookingRequests = await BookingRequest.find({
     serviceProviders: { $elemMatch: { $eq: req.user._id } },
-  }).populate("booking customer serviceProviders service address");
+  }).populate("booking customer serviceProviders service address").populate({
+    path: 'booking',
+    populate: {
+      path: "subService package"
+    }
+  })
 
   res.status(201).json({
     success: true,

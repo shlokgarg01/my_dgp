@@ -4,6 +4,7 @@ module.exports = {
     ACCEPTED: "ACCEPTED",
     ONGOING: "ONGOING",
     CLOSED: "CLOSED",
+    COMPLETED: "COMPLETED",
     CANCELLED: "CANCELLED",
   },
   PAYMENT_STATUS: {
