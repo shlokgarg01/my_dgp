@@ -587,8 +587,8 @@ export default function Home() {
             <div style={styles.packagePriceSubContainer}>
               <GiStopwatch color={Colors.BLACK} size={25} />
               <font style={{ fontWeight: "bold", marginLeft: 10 }}>
-                {`Select Service (${serviceName && serviceName.split(" ")[0]
-                  } - ${subServiceName})`}
+                {`Select Service (${selectedHours} hr ${serviceName && serviceName.split(" ")[0]
+                  } for ${subServiceName})`}
               </font>
             </div>
 
