@@ -130,7 +130,8 @@ exports.updateBookingStatus = catchAsyncErrors(async (req, res, next) => {
     return next(new ErrorHandler(`Booking Already Closed!`, 400));
   } else if (
     newStatus !== Enums.BOOKING_STATUS.ONGOING &&
-    newStatus !== Enums.BOOKING_STATUS.CLOSED
+    newStatus !== Enums.BOOKING_STATUS.CLOSED &&
+    newStatus !== Enums.BOOKING_STATUS.COMPLETED
   ) {
     return next(new ErrorHandler("Invalid Status!", 400));
   }
@@ -140,7 +141,9 @@ exports.updateBookingStatus = catchAsyncErrors(async (req, res, next) => {
     (currentStatus === Enums.BOOKING_STATUS.ACCEPTED &&
       newStatus === Enums.BOOKING_STATUS.ONGOING) ||
     (currentStatus === Enums.BOOKING_STATUS.ONGOING &&
-      newStatus === Enums.BOOKING_STATUS.CLOSED)
+      newStatus === Enums.BOOKING_STATUS.CLOSED) ||
+    (currentStatus === Enums.BOOKING_STATUS.CLOSED &&
+      newStatus === Enums.BOOKING_STATUS.COMPLETED)
   ) {
     // Validations
     if (newStatus === Enums.BOOKING_STATUS.ONGOING) {
@@ -166,6 +169,12 @@ exports.updateBookingStatus = catchAsyncErrors(async (req, res, next) => {
         { status: newStatus, endTime: Date.now() },
         { new: true, runValidators: true, useFindAndModify: false }
       ).populate("customer");
+    } else if (newStatus === Enums.BOOKING_STATUS.COMPLETED) {
+      booking = await Booking.findByIdAndUpdate(
+        req.params.id,
+        { status: newStatus },
+        { new: true, runValidators: true, useFindAndModify: false }
+      ).populate("customer subService service serviceProvider package address");
     }
 
     // triggering email
