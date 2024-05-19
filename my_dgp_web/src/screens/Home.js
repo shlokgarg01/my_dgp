@@ -49,8 +49,8 @@ export default function Home() {
         new Date().getHours() % 12 === 0 // if hour is 12, then it should set 12 not 00
           ? `12`
           : new Date().getHours() % 12 <= 9
-          ? `0${new Date().getHours() % 12}`
-          : `${new Date().getHours() % 12}`,
+            ? `0${new Date().getHours() % 12}`
+            : `${new Date().getHours() % 12}`,
       ampm: new Date()
         .toLocaleString("en-US", { timeZone: "Asia/Kolkata" })
         .slice(-2),
@@ -273,7 +273,7 @@ export default function Home() {
             (selectedMinutes.hours === "00" && selectedMinutes.minutes === "00"
               ? selectedHours * 60
               : parseInt(selectedMinutes.hours) * 60 +
-                parseInt(selectedMinutes.minutes))}
+              parseInt(selectedMinutes.minutes))}
         </div>
       ) : null}
     </div>
@@ -289,7 +289,7 @@ export default function Home() {
         selectedMinutes.hours === "00" && selectedMinutes.minutes === "00"
           ? selectedHours * 60
           : parseInt(selectedMinutes.hours) * 60 +
-            parseInt(selectedMinutes.minutes);
+          parseInt(selectedMinutes.minutes);
     }
     return charges * time; // selected time is in hours & charges need to be calculated based on minutes
   };
@@ -306,9 +306,8 @@ export default function Home() {
       return;
     }
 
-    let finalDate = `${date.date.slice(7, 11)}-${
-      Months.find((month) => month.abr === date.date.slice(0, 3)).value
-    }-${date.date.slice(4, 6)}`;
+    let finalDate = `${date.date.slice(7, 11)}-${Months.find((month) => month.abr === date.date.slice(0, 3)).value
+      }-${date.date.slice(4, 6)}`;
     navigate({
       pathname: "/details",
       search: createSearchParams({
@@ -487,7 +486,7 @@ export default function Home() {
                     0
                   ) ===
                     new Date().setHours(new Date().getHours() % 12, 0, 0, 0) &&
-                  currentAMPM === date.ampm ? (
+                    currentAMPM === date.ampm ? (
                     <>
                       <IoMdAlarm color={Colors.BLACK} size={25} />
                       Now
@@ -543,9 +542,9 @@ export default function Home() {
                     onClick={() =>
                       parseInt(selectedMinutes.minutes) > 0
                         ? setselectedMinutes({
-                            hours: selectedMinutes.hours,
-                            minutes: parseInt(selectedMinutes.minutes) - 1,
-                          })
+                          hours: selectedMinutes.hours,
+                          minutes: parseInt(selectedMinutes.minutes) - 1,
+                        })
                         : null
                     }
                   >
@@ -556,17 +555,17 @@ export default function Home() {
                     {selectedMinutes.minutes === "00"
                       ? selectedMinutes.minutes
                       : selectedMinutes.minutes <= 9
-                      ? `0${selectedMinutes.minutes}`
-                      : selectedMinutes.minutes}
+                        ? `0${selectedMinutes.minutes}`
+                        : selectedMinutes.minutes}
                   </div>
                   <div
                     style={{ marginLeft: 2, fontSize: 22 }}
                     onClick={() =>
                       parseInt(selectedMinutes.minutes) < 59
                         ? setselectedMinutes({
-                            hours: selectedMinutes.hours,
-                            minutes: parseInt(selectedMinutes.minutes) + 1,
-                          })
+                          hours: selectedMinutes.hours,
+                          minutes: parseInt(selectedMinutes.minutes) + 1,
+                        })
                         : null
                     }
                   >
@@ -588,9 +587,8 @@ export default function Home() {
             <div style={styles.packagePriceSubContainer}>
               <GiStopwatch color={Colors.BLACK} size={25} />
               <font style={{ fontWeight: "bold", marginLeft: 10 }}>
-                {`Select Service (${
-                  serviceName && serviceName.split(" ")[0]
-                } - ${subServiceName})`}
+                {`Select Service (${serviceName && serviceName.split(" ")[0]
+                  } - ${subServiceName})`}
               </font>
             </div>
 
@@ -651,6 +649,9 @@ export default function Home() {
                 valueGroups={date}
                 onChange={(name, val) => setDate({ ...date, [name]: val })}
               />
+            </div>
+            <div style={{ position: 'absolute', bottom: 173, left: '50%', fontSize: 16, fontWeight: 'bold' }}>
+              :
             </div>
             <div
               style={{
@@ -725,6 +726,9 @@ export default function Home() {
                 setselectedMinutes({ ...selectedMinutes, [name]: val })
               }
             />
+            <div style={{ position: 'absolute', bottom: 173, left: '50%', fontSize: 16, fontWeight: 'bold' }}>
+              :
+            </div>
             <div
               style={{
                 display: "flex",
