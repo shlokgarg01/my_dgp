@@ -31,17 +31,17 @@
 - [x] Apply for Holidays
 
 - Web App
-- [ ] Apply Coupon
+- [x] Apply Coupon
 - [x] Map functionality
 - [x] Make a booking
-- [ ] Integrate Payment Gateway
+- [x] Integrate Payment Gateway
 - [ ] Book for someone else
 - [ ] Legal and compliance pages - Static Page
 - [x] 2 Factor Auth while creating booking
 
 - Admin (decide at last)
-- [ ] CRUD for coupon
-- [ ] Refund handling
+- [x] CRUD for coupon
+- [x] Refund handling
 - [ ] leaves approval/rejection
 - [ ] orders
 - [ ] customers

@@ -29,7 +29,7 @@ export default function Home() {
   const [subServiceName, setSubServiceName] = useState("");
   const [servicePackage, setPackage] = useState(null);
   const [packageName, setPackageName] = useState("");
-  const [selectedHours, setSelectedHours] = useState(1);
+  const [selectedHours, setSelectedHours] = useState(0);
   const [selectedMinutes, setselectedMinutes] = useState({
     hours: "00",
     minutes: "00",
@@ -308,6 +308,7 @@ export default function Home() {
 
     let finalDate = `${date.date.slice(7, 11)}-${Months.find((month) => month.abr === date.date.slice(0, 3)).value
       }-${date.date.slice(4, 6)}`;
+    console.log(selectedMinutes, selectedHours)
     navigate({
       pathname: "/details",
       search: createSearchParams({

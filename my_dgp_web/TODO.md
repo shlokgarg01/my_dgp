@@ -1,9 +1,9 @@
 - [ ] Move all styles to css files
 - [ ] Keyboard not closing on clicking the -> button on keyboard in phone.
-- [ ] Update the logo
+- [x] Update the logo
 
 - [x] going back not working on phone
-- [x] STEP - 1: While creating customer for booking, varify using OTP, once that's done send name, email & contact to backend. Backend will check if this contact exist then return else create entry in user model.
+- [x] STEP - 1: While creating customer for booking, verify using OTP, once that's done send name, email & contact to backend. Backend will check if this contact exist then return else create entry in user model.
 - [x] Remove horizontal scrollbar from time on homepage
 - [x] Loading screen
 - [x] modify all alert popups
@@ -11,7 +11,7 @@
 
 
 
-- [ ] refresh button instead of close on bottom sheet
+- [x] refresh button instead of close on bottom sheet
 - [x] rates not updating on changing minutes
 - [x] service name - "both"
 - [x] Next -> proceed
@@ -25,7 +25,7 @@
 
 
 
-- [ ] bottom sheet not detecting current time. - not possible to detect exact time bcz minutes hm bs 00/15/30/45 le rahe hain.
+- [x] bottom sheet not detecting current time. - not possible to detect exact time bcz minutes hm bs 00/15/30/45 le rahe hain.
 
 
 
@@ -36,4 +36,4 @@
 - [x] remove customer word, user word user
 - [x] on final screen - actual map + SOS option (8595703734) + rider call 
 - [x] fix map issue
-- [ ] channel name in notifications
+- [x] channel name in notifications

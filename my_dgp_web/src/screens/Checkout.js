@@ -14,6 +14,7 @@ import InputGroup from "../components/components/InputGroup";
 import { applyCouponToBooking } from "../actions/CouponActions";
 import axios from "axios";
 import { BASE_URL } from "../config/Axios";
+import { RAZORPAY_KEY_ID } from "../config/Config";
 
 export default function Checkout() {
   const dispatch = useDispatch();
@@ -33,10 +34,6 @@ export default function Checkout() {
   const [paymentMode, setPaymentMode] = useState(Enums.PAYMENT_MODES.ONLINE);
   const [couponCode, setCouponCode] = useState("");
   const [couponDiscount, setCouponDiscount] = useState(0);
-  // const [rzpPaymentId, setRzpPaymentId] = useState(`MYDGP_${Date.now()}`);
-  // const [paymentStatus, setPaymentStatus] = useState(
-  //   Enums.PAYMENT_STATUS.NOT_PAID
-  // );
   const [totalPrice, setTotalPrice] = useState(params.get("totalPrice"));
 
   const updatePrices = () => {
@@ -62,6 +59,7 @@ export default function Checkout() {
     }
 
     if (success) {
+      console.log("---------", booking);
       navigate("/searchingRider", {
         state: {
           bookingId: booking._id,
@@ -123,19 +121,18 @@ export default function Checkout() {
     }
 
     // creating a new order
-    const result = await axios.post(
-      `${BASE_URL}/api/v1/bookings/createOrder`,
-      {
+    let result;
+    try {
+      result = await axios.post(`${BASE_URL}/api/v1/bookings/createOrder`, {
         amount: data().totalPrice,
         service: data().service,
         subService: data().subService,
         package: data().package,
         date: data().date,
-      }
-    );
-
-    if (!result) {
-      alert("Server error. Are you online?");
+      });
+    } catch (e) {
+      console.error("Error in Create Order API - ", e.response.data)
+      toast.error(e.response.data.message);
       return;
     }
 
@@ -143,7 +140,7 @@ export default function Checkout() {
     const { amount, id: order_id, currency } = result.data.order;
 
     const options = {
-      key: "rzp_test_FE577sCI98o3Rg", // Enter the Key ID generated from the Dashboard
+      key: RAZORPAY_KEY_ID,
       amount: amount.toString(),
       currency: currency,
       name: data().name,
@@ -157,13 +154,21 @@ export default function Checkout() {
           razorpaySignature: response.razorpay_signature,
         };
 
-        const result = await axios.post(
-          `${BASE_URL}/api/v1/bookings/payment/success`,
-          res
-        );
-
-        if (result.data.success) {
-          dispatch(createBooking(data(response.razorpay_payment_id, Enums.PAYMENT_STATUS.PAID)));
+        let paymentResponse;
+        try {
+          paymentResponse = await axios.post(
+            `${BASE_URL}/api/v1/bookings/payment/success`,
+            res
+          );
+          if (paymentResponse.data.success)
+            dispatch(
+              createBooking(
+                data(response.razorpay_payment_id, Enums.PAYMENT_STATUS.PAID)
+              )
+            );
+        } catch (error) {
+          console.error('Error in payment success API - ', error.response.data)
+          toast.error(error.response.data.message);
         }
       },
       prefill: {
@@ -186,7 +191,11 @@ export default function Checkout() {
   const submit = () => {
     paymentMode === Enums.PAYMENT_MODES.ONLINE
       ? displayRazorpay()
-      : dispatch(createBooking(data(`MYDGP_${Date.now()}`, Enums.PAYMENT_STATUS.NOT_PAID)));
+      : dispatch(
+          createBooking(
+            data(`MYDGP_${Date.now()}`, Enums.PAYMENT_STATUS.NOT_PAID)
+          )
+        );
   };
 
   const applyCoupon = () => {
@@ -259,7 +268,9 @@ export default function Checkout() {
               >
                 <div style={{ fontWeight: 500, marginBottom: 4, fontSize: 17 }}>
                   <div>{data().name}</div>
-                  <div style={{ color: Colors.GRAY }}>{data().contactNumber}</div>
+                  <div style={{ color: Colors.GRAY }}>
+                    {data().contactNumber}
+                  </div>
                 </div>
                 <div style={{ fontWeight: 700, fontSize: 22 }}>
                   ₹{totalPrice}
@@ -267,7 +278,9 @@ export default function Checkout() {
               </div>
 
               <Header1
-                data={`${data().serviceName} ${data().packageName}, ${data().subServiceName}`}
+                data={`${data().serviceName} ${data().packageName}, ${
+                  data().subServiceName
+                }`}
               />
               <Header1 data={data().date.slice(0, 10)} />
             </div>

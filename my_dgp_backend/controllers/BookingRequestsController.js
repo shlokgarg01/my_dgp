@@ -33,7 +33,7 @@ exports.updateStatusOfBookingRequest = catchAsyncErrors(
   async (req, res, next) => {
     /*
       -------------------- LOGIC --------------------
-      1. Update the logic to fetch servie providers - params - date on booking, leaves, service & sorting
+      1. Update the logic to fetch service providers - params - date on booking, leaves, service & sorting
       2. Fetch all service providers and find the current service provider by id from the list
       3. update the service provider id on the booking request to the next id from the list
       4. If this was the last id in the list, update it to the first id.
@@ -138,7 +138,7 @@ exports.cancelBookingRequest = catchAsyncErrors(async (req, res, next) => {
       amount,
     });
     console.log(
-      `Razorpay refund response for booking id ${booking.id} is ${razorpayResponse}`
+      `Razorpay refund response for booking id ${booking_id} is ${razorpayResponse}`
     );
   }
 

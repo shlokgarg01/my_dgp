@@ -20,7 +20,7 @@ const bookingRequestsSchema = new mongoose.Schema(
       required: true,
     },
     booking: {
-      type: mongoose.Schema.ObjectId,
+      type: String,
       ref: "Booking",
       required: true,
     },

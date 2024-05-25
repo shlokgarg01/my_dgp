@@ -72,7 +72,14 @@ export default function SearchingRider() {
       clearInterval(interval);
       clearTimeout(fetchDataTimeout);
     };
-  }, [dispatch, location.state.bookingId, status, error, isCancelled]);
+  }, [
+    dispatch,
+    location.state.bookingId,
+    status,
+    error,
+    isCancelled,
+    navigate,
+  ]);
 
   const SOS = ({ Icon, color, text, link, width }) => (
     <div
@@ -111,7 +118,9 @@ export default function SearchingRider() {
     dispatch(cancelBooking(location.state.bookingId));
   };
 
-  return (
+  return loading ? (
+    <Loader />
+  ) : (
     <div style={{ height: "10vh", textAlign: "center" }}>
       {/* Map Component */}
       <div
@@ -252,8 +261,6 @@ export default function SearchingRider() {
           </div>
           <Btn title="Go Back" onClick={() => navigate("/")} />
         </>
-      ) : loading ? (
-        <Loader />
       ) : (
         <>
           <div

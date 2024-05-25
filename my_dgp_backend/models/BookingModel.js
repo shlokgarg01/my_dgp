@@ -1,8 +1,15 @@
 const mongoose = require("mongoose");
 const Enums = require("../utils/Enums");
 
+const counterSchema = new mongoose.Schema({
+  _id: { type: String, required: true },
+  seq: { type: Number, default: 0 },
+});
+const Counter = mongoose.model("Counter", counterSchema);
+
 const bookingModel = new mongoose.Schema(
   {
+    _id: { type: String },
     customer: {
       type: mongoose.Schema.ObjectId,
       ref: "User",
@@ -92,7 +99,7 @@ const bookingModel = new mongoose.Schema(
     otp: {
       type: Number,
       required: false,
-      select: false // this will not get the otp whenever we make query to db
+      select: false, // this will not get the otp whenever we make query to db
     },
     status: {
       type: String,
@@ -100,11 +107,11 @@ const bookingModel = new mongoose.Schema(
       default: Enums.BOOKING_STATUS.PLACED,
     },
     startTime: {
-      type: Date
+      type: Date,
     },
     endTime: {
-      type: Date
-    }
+      type: Date,
+    },
   },
   {
     timestamps: {
@@ -113,5 +120,23 @@ const bookingModel = new mongoose.Schema(
     },
   }
 );
+
+// Pre-save hook to auto-increment _id
+bookingModel.pre("save", async function (next) {
+  const doc = this;
+  try {
+    const counter = await Counter.findByIdAndUpdate(
+      { _id: "entityId" }, // Fixed identifier for this sequence
+      { $inc: { seq: 1 } }, // Increment the sequence by 1
+      { new: true, upsert: true, useFindAndModify: false } // Create the document if it doesn't exist
+    );
+    const idString = counter.seq.toString().padStart(6, "0"); // Ensure 6-digit format
+    doc._id = idString;
+          next();
+  } catch (error) {
+    console.error("Error in findByIdAndUpdate:", error);
+    next(error);
+  }
+});
 
 module.exports = mongoose.model("Booking", bookingModel);
