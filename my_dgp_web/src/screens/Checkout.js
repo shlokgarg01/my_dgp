@@ -7,13 +7,13 @@ import LoaderComponent from "../components/Loader";
 import Btn from "../components/components/Btn";
 import "../styles/CheckoutStyles.css";
 import "../styles/ComponentStyles.css";
-// import Maps from "../images/google_maps.png";
 import Colors from "../utils/Colors";
 import { toast } from "react-custom-alert";
 import LogoHeader from "../components/components/LogoHeader";
 import InputGroup from "../components/components/InputGroup";
 import { applyCouponToBooking } from "../actions/CouponActions";
-// import MapComponent from "../components/MapComponent";
+import axios from "axios";
+import { BASE_URL } from "../config/Axios";
 
 export default function Checkout() {
   const dispatch = useDispatch();
@@ -30,9 +30,13 @@ export default function Checkout() {
     success: couponSuccess,
   } = useSelector((state) => state.coupon);
 
-  const [paymentMode] = useState("Pay using cash");
+  const [paymentMode, setPaymentMode] = useState(Enums.PAYMENT_MODES.ONLINE);
   const [couponCode, setCouponCode] = useState("");
   const [couponDiscount, setCouponDiscount] = useState(0);
+  // const [rzpPaymentId, setRzpPaymentId] = useState(`MYDGP_${Date.now()}`);
+  // const [paymentStatus, setPaymentStatus] = useState(
+  //   Enums.PAYMENT_STATUS.NOT_PAID
+  // );
   const [totalPrice, setTotalPrice] = useState(params.get("totalPrice"));
 
   const updatePrices = () => {
@@ -68,7 +72,7 @@ export default function Checkout() {
     // eslint-disable-next-line
   }, [dispatch, error, success, couponError, couponSuccess]);
 
-  const data = {
+  const data = (paymentId = null, paymentStatus = null) => ({
     service: params.get("service"),
     subService: params.get("subService"),
     package: params.get("servicePackage"),
@@ -90,62 +94,104 @@ export default function Checkout() {
     email: params.get("email"),
     contactNumber: params.get("contactNumber"),
     paymentInfo: {
-      id: `MYDGP_${Date.now()}`,
-      status: Enums.PAYMENT_STATUS.PAID,
+      id: paymentId,
+      status: paymentStatus,
     },
+  });
+
+  const loadRazorpayScript = (src) => {
+    return new Promise((resolve) => {
+      const script = document.createElement("script");
+      script.src = src;
+      script.onload = () => {
+        resolve(true);
+      };
+      script.onerror = () => {
+        resolve(false);
+      };
+      document.body.appendChild(script);
+    });
+  };
+
+  const displayRazorpay = async () => {
+    const res = await loadRazorpayScript(
+      "https://checkout.razorpay.com/v1/checkout.js"
+    );
+    if (!res) {
+      alert("Razorpay SDK failed to load. Are you online?");
+      return;
+    }
+
+    // creating a new order
+    const result = await axios.post(
+      `${BASE_URL}/api/v1/bookings/createOrder`,
+      {
+        amount: data().totalPrice,
+        service: data().service,
+        subService: data().subService,
+        package: data().package,
+        date: data().date,
+      }
+    );
+
+    if (!result) {
+      alert("Server error. Are you online?");
+      return;
+    }
+
+    // Getting the order details back
+    const { amount, id: order_id, currency } = result.data.order;
+
+    const options = {
+      key: "rzp_test_FE577sCI98o3Rg", // Enter the Key ID generated from the Dashboard
+      amount: amount.toString(),
+      currency: currency,
+      name: data().name,
+      description: "Test Transaction",
+      order_id: order_id,
+      handler: async function (response) {
+        const res = {
+          orderCreationId: order_id,
+          razorpayPaymentId: response.razorpay_payment_id,
+          razorpayOrderId: response.razorpay_order_id,
+          razorpaySignature: response.razorpay_signature,
+        };
+
+        const result = await axios.post(
+          `${BASE_URL}/api/v1/bookings/payment/success`,
+          res
+        );
+
+        if (result.data.success) {
+          dispatch(createBooking(data(response.razorpay_payment_id, Enums.PAYMENT_STATUS.PAID)));
+        }
+      },
+      prefill: {
+        name: data().name,
+        email: data().email,
+        contact: data().contactNumber,
+      },
+      notes: {
+        address: data().address,
+      },
+      theme: {
+        color: Colors.PRIMARY,
+      },
+    };
+
+    const paymentObject = new window.Razorpay(options);
+    paymentObject.open();
   };
 
   const submit = () => {
-    dispatch(createBooking(data));
+    paymentMode === Enums.PAYMENT_MODES.ONLINE
+      ? displayRazorpay()
+      : dispatch(createBooking(data(`MYDGP_${Date.now()}`, Enums.PAYMENT_STATUS.NOT_PAID)));
   };
 
   const applyCoupon = () => {
     dispatch(applyCouponToBooking(couponCode, params.get("totalPrice")));
   };
-
-  // const Details = ({ heading, data, isTop, isBottom, subHeading, showTax }) => (
-  //   <div
-  //     className="checkoutDetailsContainer"
-  //     style={{
-  //       borderTopRightRadius: isTop ? 7 : 0,
-  //       borderTopLeftRadius: isTop ? 7 : 0,
-  //       borderBottomLeftRadius: isBottom ? 7 : 0,
-  //       borderBottomRightRadius: isBottom ? 7 : 0,
-  //     }}
-  //   >
-  //     <div className="checkoutDetailsHeading">{heading}</div>
-  //     {subHeading ? (
-  //       <div>
-  //         <div className="checkoutDetails">
-  //           {data}
-  //           {showTax ? (
-  //             <>
-  //               <div>₹ {params.get("taxPrice")}</div>
-  //               <div
-  //                 style={{
-  //                   backgroundColor: Colors.BLACK,
-  //                   height: 1,
-  //                   marginTop: 4,
-  //                   marginBottom: 4,
-  //                 }}
-  //               />
-  //               <div>
-  //                 ₹{" "}
-  //                 {parseInt(params.get("taxPrice")) +
-  //                   parseInt(params.get("itemsPrice"))}
-  //               </div>
-  //             </>
-  //           ) : null}
-  //         </div>
-  //         <div id="checkoutDetailsSubHeading">{subHeading}</div>
-  //       </div>
-  //     ) : (
-  //       <div className="checkoutDetails">
-  //         <div>{data}</div>
-  //       </div>
-  //     )}
-  //   </div>
-  // );
 
   const Header1 = ({ data }) => (
     <div
@@ -193,25 +239,6 @@ export default function Checkout() {
         >
           <div>
             <LogoHeader showLogo={false} />
-
-            {/* <div
-              style={{
-                height: "250px",
-                display: "flex",
-                flexDirection: "column",
-                alignItems: "center",
-              }}
-            >
-              <MapComponent
-                initialLocation={{
-                  lat: params.get("lat"),
-                  lng: params.get("lng"),
-                }}
-                isEditable={false}
-                style={{ height: 200, width: 200 }}
-              />
-            </div> */}
-
             <div
               style={{
                 backgroundColor: Colors.WHITE,
@@ -231,19 +258,18 @@ export default function Checkout() {
                 }}
               >
                 <div style={{ fontWeight: 500, marginBottom: 4, fontSize: 17 }}>
-                  <div>{data.name}</div>
-                  <div style={{ color: Colors.GRAY }}>{data.contactNumber}</div>
+                  <div>{data().name}</div>
+                  <div style={{ color: Colors.GRAY }}>{data().contactNumber}</div>
                 </div>
                 <div style={{ fontWeight: 700, fontSize: 22 }}>
-                  ₹
-                  {totalPrice}
+                  ₹{totalPrice}
                 </div>
               </div>
 
               <Header1
-                data={`${data.serviceName} ${data.packageName}, ${data.subServiceName}`}
+                data={`${data().serviceName} ${data().packageName}, ${data().subServiceName}`}
               />
-              <Header1 data={data.date.slice(0, 10)} />
+              <Header1 data={data().date.slice(0, 10)} />
             </div>
 
             <div
@@ -259,7 +285,7 @@ export default function Checkout() {
                 paddingRight: 10,
               }}
             >
-              {data.address}
+              {data().address}
             </div>
 
             <div
@@ -271,14 +297,14 @@ export default function Checkout() {
                 marginTop: 16,
               }}
             >
-              <SubHeading data={data.hours} heading="Total Hours" />
-              <SubHeading data={`₹ ${data.itemsPrice}`} heading="Sub Total" />
+              <SubHeading data={data().hours} heading="Total Hours" />
+              <SubHeading data={`₹ ${data().itemsPrice}`} heading="Sub Total" />
               <SubHeading
-                data={`₹ ${data.taxPrice}`}
+                data={`₹ ${data().taxPrice}`}
                 heading="Service Charge"
               />
               <SubHeading
-                data={`₹ ${parseInt(data.totalPrice) + couponDiscount}`}
+                data={`₹ ${parseInt(data().totalPrice) + couponDiscount}`}
                 heading="Total Price"
               />
               {couponDiscount > 0 ? (
@@ -333,50 +359,6 @@ export default function Checkout() {
               <b>Note - </b>We will provide you all the raw photos & videos
               within 24 hrs.
             </div>
-
-            {/* <div id="checkoutDetailsParentContainer">
-              <Details
-                isTop={true}
-                heading="Service"
-                data={data.serviceName}
-                subHeading={`Unlimited ${
-                  params.get("serviceName").split(" ")[0] === "Photography"
-                    ? "photos"
-                    : params.get("serviceName").split(" ")[0] === "Videography"
-                    ? "videos"
-                    : "photos & videos"
-                } in between the timings`}
-              />
-              <Details
-                isBottom={true}
-                heading="Date"
-                data={`${data.date.slice(0, 10)}, for ${data.hours} ${
-                  data.hours === 1 ? "hr" : "hrs"
-                }`}
-              />
-            </div>
-
-            <div id="checkoutDetailsParentContainer">
-              <Details
-                isTop={true}
-                heading="Location"
-                data={params.get("address")}
-              />
-              <Details
-                isBottom={true}
-                heading="Fare"
-                data={`₹ ${data.itemsPrice}`}
-                subHeading="Total Fare"
-                showTax={true}
-              />
-            </div>
-            <div
-              id="checkoutDetailsSubHeading"
-              style={{ paddingLeft: 10, paddingRight: 10 }}
-            >
-              <b>Note - </b>We will provide you all the raw photos & videos
-              within 24 hrs.
-            </div> */}
           </div>
 
           {/* Payment Mode Radio Button */}
@@ -392,16 +374,40 @@ export default function Checkout() {
             <input
               style={{ accentColor: Colors.PRIMARY }}
               type="radio"
-              id="paymentMode"
-              value={paymentMode}
-              readOnly
-              checked={paymentMode === "Pay using cash"}
+              id="paymentModeCash"
+              value={Enums.PAYMENT_MODES.CASH}
+              onChange={(e) => setPaymentMode(e.target.value)}
+              checked={paymentMode === Enums.PAYMENT_MODES.CASH}
             />
             <label
               style={{ fontSize: 18, marginLeft: 7 }}
-              htmlFor="paymentMode"
+              htmlFor="paymentModeCash"
             >
-              {paymentMode}
+              {Enums.PAYMENT_MODES.CASH}
+            </label>
+          </div>
+          <div
+            style={{
+              display: "flex",
+              flexDirection: "row",
+              alignItems: "center",
+              marginLeft: 16,
+              marginTop: 10,
+            }}
+          >
+            <input
+              style={{ accentColor: Colors.PRIMARY }}
+              type="radio"
+              id="paymentModeOnline"
+              value={Enums.PAYMENT_MODES.ONLINE}
+              onChange={(e) => setPaymentMode(e.target.value)}
+              checked={paymentMode === Enums.PAYMENT_MODES.ONLINE}
+            />
+            <label
+              style={{ fontSize: 18, marginLeft: 7 }}
+              htmlFor="paymentModeOnline"
+            >
+              {Enums.PAYMENT_MODES.ONLINE}
             </label>
           </div>
           <Btn onClick={submit} title="Submit & Proceed" />

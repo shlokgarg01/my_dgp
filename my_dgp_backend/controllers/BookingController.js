@@ -1,3 +1,7 @@
+const Razorpay = require("razorpay");
+const { v4: uuidv4 } = require("uuid");
+const crypto = require("crypto")
+
 const Booking = require("../models/BookingModel");
 const BookingRequest = require("../models/BookingRequestsModel");
 const User = require("../models/UserModel");
@@ -361,5 +365,79 @@ exports.getPendingBookingAmount = catchAsyncErrors(async (req, res, next) => {
   return res.status(200).json({
     success: true,
     charges,
+  });
+});
+
+// Create Order for Booking i.e. Pre-Payment Processing
+exports.createOrder = catchAsyncErrors(async (req, res, next) => {
+  const {
+    service,
+    subService,
+    package,
+    date,
+    amount
+  } = req.body;
+  // get all available Service Providers
+  let allServiceProviders = await getAvailableServiceProviders(
+    date,
+    service,
+    subService,
+    package
+  );
+  if (allServiceProviders.length === 0) {
+    return next(
+      new ErrorHandler(
+        "No service provider is available on the selected date. Please select a new date",
+        400
+      )
+    );
+  }
+
+  const instance = new Razorpay({
+    key_id: process.env.RAZORPAY_KEY_ID,
+    key_secret: process.env.RAZORPAY_SECRET,
+  });
+
+  const options = {
+    amount: amount * 100, // amount in smallest currency unit i.e. paisa
+    currency: "INR",
+    receipt: `${uuidv4()}`,
+  };
+  const order = await instance.orders.create(options);
+
+  if (!order)
+    return next(
+      new ErrorHandler("Something went wrong. Please try again!", 400)
+    );
+
+  return res.status(200).json({
+    success: true,
+    order,
+  });
+});
+
+// Create payment Success method
+exports.paymentSuccess = catchAsyncErrors(async (req, res, next) => {
+  const {
+    orderCreationId,
+    razorpayPaymentId,
+    razorpayOrderId,
+    razorpaySignature,
+  } = req.body;
+
+  // Creating our own digest, the format should be like this:
+  // digest = hmac_sha256(orderCreationId + "|" + razorpayPaymentId, secret);
+  const shasum = crypto.createHmac("sha256", process.env.RAZORPAY_SECRET);
+  shasum.update(`${orderCreationId}|${razorpayPaymentId}`);
+  const digest = shasum.digest("hex");
+
+  // comparing our digest with the actual signature
+  if (digest !== razorpaySignature)
+    return next(new ErrorHandler("Transaction not legit!", 400));
+
+  res.json({
+    success: true,
+    orderId: razorpayOrderId,
+    paymentId: razorpayPaymentId,
   });
 });

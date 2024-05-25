@@ -11,4 +11,8 @@ module.exports = {
     PAID: "PAID",
     NOT_PAID: "NOT_PAID",
   },
+  PAYMENT_MODES: {
+    CASH: "Pay Using Cash",
+    ONLINE: "Pay Online"
+  }
 };

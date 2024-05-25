@@ -8,6 +8,8 @@ const {
   updateBookingStatus,
   confirmBookingStatus,
   getPendingBookingAmount,
+  createOrder,
+  paymentSuccess,
 } = require("../controllers/BookingController");
 const router = express.Router();
 
@@ -27,5 +29,9 @@ router
   .get(isAuthenticatedUser, getCurrentBookingsOfAUser);
 router.route("/bookings/status/:id").get(isAuthenticatedUser, confirmBookingStatus);
 router.route("/bookings/pendingAmount/:id").get(isAuthenticatedUser, getPendingBookingAmount)
+
+// Booking Routes
+router.route("/bookings/createOrder").post(createOrder)
+router.route("/bookings/payment/success").post(paymentSuccess)
 
 module.exports = router;

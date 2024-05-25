@@ -1,3 +1,5 @@
+const Razorpay = require("razorpay");
+
 const BookingRequest = require("../models/BookingRequestsModel");
 const Booking = require("../models/BookingModel");
 const catchAsyncErrors = require("../middleware/CatchAsyncErrors");
@@ -11,12 +13,14 @@ const { BOOKING_OTP, BOOKING_ACCEPTANCE } = require("../Data/Messages");
 exports.getAllBookingRequests = catchAsyncErrors(async (req, res, next) => {
   let bookingRequests = await BookingRequest.find({
     serviceProviders: { $elemMatch: { $eq: req.user._id } },
-  }).populate("booking customer serviceProviders service address").populate({
-    path: 'booking',
-    populate: {
-      path: "subService package"
-    }
   })
+    .populate("booking customer serviceProviders service address")
+    .populate({
+      path: "booking",
+      populate: {
+        path: "subService package",
+      },
+    });
 
   res.status(201).json({
     success: true,
@@ -120,8 +124,25 @@ exports.cancelBookingRequest = catchAsyncErrors(async (req, res, next) => {
       useFindAndModify: false,
     }
   );
-  await booking_request.deleteOne();
 
+  // refund amount if it was pre-paid order
+  if (booking.paymentInfo.status === Enums.PAYMENT_STATUS.PAID) {
+    let payment_id = booking.paymentInfo.id,
+      amount = booking.totalPrice * 100;
+    const instance = new Razorpay({
+      key_id: process.env.RAZORPAY_KEY_ID,
+      key_secret: process.env.RAZORPAY_SECRET,
+    });
+
+    const razorpayResponse = await instance.payments.refund(payment_id, {
+      amount,
+    });
+    console.log(
+      `Razorpay refund response for booking id ${booking.id} is ${razorpayResponse}`
+    );
+  }
+
+  await booking_request.deleteOne();
   return res.status(200).json({
     success: true,
     message: "Booking Deleted!",
