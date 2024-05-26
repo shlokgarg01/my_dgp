@@ -13,7 +13,11 @@ import InputGroup from "../components/components/InputGroup";
 import LogoHeader from "../components/components/LogoHeader";
 import Btn from "../components/components/Btn";
 import { FaPhone } from "react-icons/fa";
-import { MdOutlineMail, MdDriveFileRenameOutline } from "react-icons/md";
+import {
+  MdOutlineMail,
+  MdDriveFileRenameOutline,
+  MdOutlineEdit,
+} from "react-icons/md";
 import { AiOutlineLogin } from "react-icons/ai";
 import "../styles/ComponentStyles.css";
 import LoaderComponent from "../components/Loader";
@@ -33,6 +37,7 @@ export default function UserDetails() {
   const [name, setName] = useState("");
   const [otp, setOtp] = useState(null);
   const [firebaseConfirmation, setFirebaseConfirmation] = useState(null);
+  const [editNumber, setEditNumber] = useState(false);
 
   useEffect(() => {
     if (error) {
@@ -71,29 +76,54 @@ export default function UserDetails() {
     // eslint-disable-next-line
   }, [dispatch, error, isAuthenticated]);
 
-  const sendOTP = async () => {
+  const validateOTPSend = () => {
     if (!name) {
       toast.error("Please enter your name");
-      return;
+      return false;
     } else if (!email) {
       toast.error("Please enter your email");
-      return;
+      return false;
     } else if (!contactNumber || contactNumber.length !== 10) {
       toast.error("Invalid contact number");
-      return;
+      return false;
     }
+    return true;
+  };
 
-    setLoading(true);
-    const recaptcha = new RecaptchaVerifier(auth, "captcha-container", {
-      size: "invisible",
-    });
-    const confirmation = await signInWithPhoneNumber(
-      auth,
-      `+91${contactNumber}`,
-      recaptcha
-    );
-    setLoading(false);
-    setFirebaseConfirmation(confirmation);
+  const resendOTP = async () => {
+    if (validateOTPSend()) {
+      setLoading(true);
+      const recaptcha = new RecaptchaVerifier(
+        auth,
+        `captcha-container-resend`,
+        {
+          size: "invisible",
+        }
+      );
+      const confirmation = await signInWithPhoneNumber(
+        auth,
+        `+91${contactNumber}`,
+        recaptcha
+      );
+      setLoading(false);
+      setFirebaseConfirmation(confirmation);
+    }
+  };
+
+  const sendOTP = async () => {
+    if (validateOTPSend()) {
+      setLoading(true);
+      const recaptcha = new RecaptchaVerifier(auth, "captcha-container", {
+        size: "invisible",
+      });
+      const confirmation = await signInWithPhoneNumber(
+        auth,
+        `+91${contactNumber}`,
+        recaptcha
+      );
+      setLoading(false);
+      setFirebaseConfirmation(confirmation);
+    }
   };
 
   const submit = async () => {
@@ -139,7 +169,10 @@ export default function UserDetails() {
                 communications.
               </div>
 
-              <form onSubmit={(e) => e.preventDefault()} style={{ textAlign: 'center' }}>
+              <form
+                onSubmit={(e) => e.preventDefault()}
+                style={{ textAlign: "center" }}
+              >
                 <InputGroup
                   icon={
                     <MdDriveFileRenameOutline
@@ -162,24 +195,50 @@ export default function UserDetails() {
                 />
                 <InputGroup
                   icon={<FaPhone size={25} color={Colors.DARK_GRAY} />}
+                  trailingIcon={
+                    firebaseConfirmation ? (
+                      <MdOutlineEdit
+                        size={25}
+                        color={Colors.DARK_GRAY}
+                        onClick={() => setEditNumber(true)}
+                      />
+                    ) : null
+                  }
                   placeholder="Contact Number"
                   type="number"
                   value={contactNumber}
                   onChange={(e) => setContactNumber(e.target.value)}
-                  disabled={firebaseConfirmation || loading}
+                  disabled={(!editNumber) && (firebaseConfirmation || loading)}
                 />
 
                 {firebaseConfirmation ? (
-                  <InputGroup
-                    icon={<AiOutlineLogin size={25} color={Colors.DARK_GRAY} />}
-                    placeholder="Enter the OTP"
-                    type="number"
-                    value={otp}
-                    onChange={(e) => setOtp(e.target.value)}
-                  />
+                  <>
+                    <InputGroup
+                      icon={
+                        <AiOutlineLogin size={25} color={Colors.DARK_GRAY} />
+                      }
+                      placeholder="Enter the OTP"
+                      type="number"
+                      value={otp}
+                      onChange={(e) => setOtp(e.target.value)}
+                    />
+                    <div
+                      onClick={resendOTP}
+                      style={{
+                        color: Colors.BLUE,
+                        textAlign: "right",
+                        marginTop: 4,
+                        marginRight: 7,
+                        fontWeight: "bold",
+                      }}
+                    >
+                      Resend OTP
+                    </div>
+                  </>
                 ) : null}
 
-                <div id="captcha-container"></div>
+                <div id="captcha-container" />
+                <div id="captcha-container-resend" />
                 <Btn
                   onClick={firebaseConfirmation ? submit : sendOTP}
                   title={firebaseConfirmation ? "Submit" : "Send OTP"}

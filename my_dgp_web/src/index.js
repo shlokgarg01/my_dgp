@@ -20,7 +20,7 @@ import store from "./store";
 const root = ReactDOM.createRoot(document.getElementById("root"));
 root.render(
   <Provider store={store}>
-    <ToastContainer floatingTime={2000} />
+    <ToastContainer floatingTime={3500} />
     <App />
   </Provider>
 );

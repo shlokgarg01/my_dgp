@@ -9,7 +9,8 @@ const Colors = {
   DARK_GRAY: "#545454",
   GREEN: "#00FF00",
   DARK_GREEN: "#02bf21",
-  RED: "red"
+  RED: "red",
+  BLUE: 'blue'
 }
 
 export default Colors;

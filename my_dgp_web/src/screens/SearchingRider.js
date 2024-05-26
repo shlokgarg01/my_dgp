@@ -61,8 +61,12 @@ export default function SearchingRider() {
       });
     }, 25);
 
-    if (isCancelled) {
-      toast.success("Booking Cancelled");
+    if (isCancelled || status === Enums.BOOKING_STATUS.CANCELLED) {
+      if (isCancelled) toast.success("Booking Cancelled");
+      if (status === Enums.BOOKING_STATUS.CANCELLED)
+        toast.error(
+          "No service provider is available to accept. Please book after sometime."
+        );
       clearInterval(interval);
       clearTimeout(fetchDataTimeout);
       navigate("/");

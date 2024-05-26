@@ -1,6 +1,6 @@
 const Razorpay = require("razorpay");
 const { v4: uuidv4 } = require("uuid");
-const crypto = require("crypto")
+const crypto = require("crypto");
 
 const Booking = require("../models/BookingModel");
 const BookingRequest = require("../models/BookingRequestsModel");
@@ -130,9 +130,7 @@ exports.updateBookingStatus = catchAsyncErrors(async (req, res, next) => {
   let currentStatus = booking.status;
 
   // Validations
-  if (currentStatus === Enums.BOOKING_STATUS.CLOSED) {
-    return next(new ErrorHandler(`Booking Already Closed!`, 400));
-  } else if (
+  if (
     newStatus !== Enums.BOOKING_STATUS.ONGOING &&
     newStatus !== Enums.BOOKING_STATUS.CLOSED &&
     newStatus !== Enums.BOOKING_STATUS.COMPLETED
@@ -262,7 +260,7 @@ exports.getCurrentBookingsOfAUser = catchAsyncErrors(async (req, res, next) => {
       $lt: nextDay,
     },
     status: {
-      $nin: [Enums.BOOKING_STATUS.CLOSED, Enums.BOOKING_STATUS.CANCELLED],
+      $nin: [Enums.BOOKING_STATUS.COMPLETED, Enums.BOOKING_STATUS.CANCELLED],
     },
   }).populate("customer address");
 
@@ -299,6 +297,44 @@ exports.confirmBookingStatus = catchAsyncErrors(async (req, res, next) => {
   if (!booking) {
     return next(new ErrorHandler("No such booking found", 400));
   }
+
+  const createdAtDate = new Date(booking.createdAt);
+  const currentTime = new Date();
+  const differenceInSeconds = Math.floor((currentTime - createdAtDate) / 1000);
+
+  // Cancel booking if not accepted in 60 seconds
+  if (differenceInSeconds >= 10) {
+    booking = await Booking.findByIdAndUpdate(
+      req.params.id,
+      {
+        status: Enums.BOOKING_STATUS.CANCELLED,
+      },
+      { new: true, runValidators: true, useFindAndModify: false }
+    )
+    
+    // refund amount if it was pre-paid order
+    if (booking.paymentInfo.status === Enums.PAYMENT_STATUS.PAID) {
+      let payment_id = booking.paymentInfo.id,
+      amount = booking.totalPrice * 100;
+      const instance = new Razorpay({
+        key_id: process.env.RAZORPAY_KEY_ID,
+        key_secret: process.env.RAZORPAY_SECRET,
+      });
+      
+      const razorpayResponse = await instance.payments.refund(payment_id, {
+        amount,
+      });
+      console.log(
+        `Razorpay refund response for booking id ${req.params.id} is ${razorpayResponse}`
+      );
+    }
+
+    let booking_request = await BookingRequest.findOne({
+      booking: req.params.id,
+    });
+    await booking_request.deleteOne();
+  }
+
   let status = booking.status;
   let service_provider = null;
 
@@ -370,13 +406,7 @@ exports.getPendingBookingAmount = catchAsyncErrors(async (req, res, next) => {
 
 // Create Order for Booking i.e. Pre-Payment Processing
 exports.createOrder = catchAsyncErrors(async (req, res, next) => {
-  const {
-    service,
-    subService,
-    package,
-    date,
-    amount
-  } = req.body;
+  const { service, subService, package, date, amount } = req.body;
   // get all available Service Providers
   let allServiceProviders = await getAvailableServiceProviders(
     date,

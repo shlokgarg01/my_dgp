@@ -7,6 +7,7 @@ export default function InputGroup({
   onChange,
   type,
   icon,
+  trailingIcon,
   bgColor,
   disabled,
   roundedBorder,
@@ -22,6 +23,7 @@ export default function InputGroup({
         alignItems: "center",
         marginTop: noMargin ? 0 : 16,
         paddingLeft: 10,
+        paddingRight: 10
       }}
     >
       {icon}
@@ -35,6 +37,7 @@ export default function InputGroup({
           width: "100%",
           borderWidth: 0,
           paddingLeft: 10,
+          marginRight: 100,
           height: 34,
           outline: "none", // removes border on focus
           borderRadius: roundedBorder ? 100 : 7,
@@ -42,6 +45,7 @@ export default function InputGroup({
         value={value}
         onChange={onChange}
       />
+      {trailingIcon}
     </div>
   );
 }
