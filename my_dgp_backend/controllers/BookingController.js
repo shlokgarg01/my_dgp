@@ -303,7 +303,7 @@ exports.confirmBookingStatus = catchAsyncErrors(async (req, res, next) => {
   const differenceInSeconds = Math.floor((currentTime - createdAtDate) / 1000);
 
   // Cancel booking if not accepted in 60 seconds
-  if (differenceInSeconds >= 10) {
+  if (differenceInSeconds >= 60) {
     booking = await Booking.findByIdAndUpdate(
       req.params.id,
       {
