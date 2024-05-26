@@ -303,7 +303,7 @@ exports.confirmBookingStatus = catchAsyncErrors(async (req, res, next) => {
   const differenceInSeconds = Math.floor((currentTime - createdAtDate) / 1000);
 
   // Cancel booking if not accepted in 60 seconds
-  if (differenceInSeconds >= 60) {
+  if (differenceInSeconds >= 60 && booking.status === Enums.BOOKING_STATUS.PLACED) {
     booking = await Booking.findByIdAndUpdate(
       req.params.id,
       {
@@ -332,7 +332,7 @@ exports.confirmBookingStatus = catchAsyncErrors(async (req, res, next) => {
     let booking_request = await BookingRequest.findOne({
       booking: req.params.id,
     });
-    await booking_request.deleteOne();
+    if (booking_request) await booking_request.deleteOne();
   }
 
   let status = booking.status;
