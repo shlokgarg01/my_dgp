@@ -23,6 +23,7 @@ import "../styles/ComponentStyles.css";
 import LoaderComponent from "../components/Loader";
 import { toast } from "react-custom-alert";
 import { CLEAR_ERRORS } from "../constants/UserConstants";
+import { EMAIL_REGEX } from "../config/Config";
 
 export default function UserDetails() {
   const dispatch = useDispatch();
@@ -80,8 +81,14 @@ export default function UserDetails() {
     if (!name) {
       toast.error("Please enter your name");
       return false;
+    } else if (!isNaN(+name)) { // true means it's a Number, else a String
+      toast.error("Invalid Name");
+      return false;
     } else if (!email) {
       toast.error("Please enter your email");
+      return false;
+    } else if (!EMAIL_REGEX.test(email)) {
+      toast.error("Invalid email!")
       return false;
     } else if (!contactNumber || contactNumber.length !== 10) {
       toast.error("Invalid contact number");

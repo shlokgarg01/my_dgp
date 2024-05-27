@@ -122,7 +122,7 @@ exports.updateBookingStatus = catchAsyncErrors(async (req, res, next) => {
       serviceProvider: req.user._id,
     }).select("+otp"),
     newStatus = req.body.status,
-    otp = req.body.otp;
+    {otp, photoNumber} = req.body;
 
   if (!booking) {
     return next(new ErrorHandler("No such booking exists!", 404));
@@ -162,13 +162,13 @@ exports.updateBookingStatus = catchAsyncErrors(async (req, res, next) => {
     if (newStatus === Enums.BOOKING_STATUS.ONGOING) {
       booking = await Booking.findByIdAndUpdate(
         req.params.id,
-        { status: newStatus, startTime: Date.now() },
+        { status: newStatus, startTime: Date.now(), startPhotoNumber: photoNumber },
         { new: true, runValidators: true, useFindAndModify: false }
       ).populate("customer");
     } else if (newStatus === Enums.BOOKING_STATUS.CLOSED) {
       booking = await Booking.findByIdAndUpdate(
         req.params.id,
-        { status: newStatus, endTime: Date.now() },
+        { status: newStatus, endTime: Date.now(), endPhotoNumber: photoNumber },
         { new: true, runValidators: true, useFindAndModify: false }
       ).populate("customer");
     } else if (newStatus === Enums.BOOKING_STATUS.COMPLETED) {
@@ -233,7 +233,7 @@ exports.getCompletedBookingsOfAUser = catchAsyncErrors(
   async (req, res, next) => {
     let bookings = await Booking.find({
       serviceProvider: req.user._id,
-      status: Enums.BOOKING_STATUS.CLOSED,
+      status: Enums.BOOKING_STATUS.COMPLETED,
     })
       .sort("date")
       .populate("customer address");

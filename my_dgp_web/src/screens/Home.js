@@ -49,8 +49,8 @@ export default function Home() {
         new Date().getHours() % 12 === 0 // if hour is 12, then it should set 12 not 00
           ? `12`
           : new Date().getHours() % 12 <= 9
-            ? `0${new Date().getHours() % 12}`
-            : `${new Date().getHours() % 12}`,
+          ? `0${new Date().getHours() % 12}`
+          : `${new Date().getHours() % 12}`,
       ampm: new Date()
         .toLocaleString("en-US", { timeZone: "Asia/Kolkata" })
         .slice(-2),
@@ -100,6 +100,7 @@ export default function Home() {
 
   const fetchLiveLocation = (pos) => {
     var crd = pos.coords;
+    console.log('============', crd)
     if (crd) setLocation([crd.latitude, crd.longitude]);
   };
 
@@ -273,7 +274,7 @@ export default function Home() {
             (selectedMinutes.hours === "00" && selectedMinutes.minutes === "00"
               ? selectedHours * 60
               : parseInt(selectedMinutes.hours) * 60 +
-              parseInt(selectedMinutes.minutes))}
+                parseInt(selectedMinutes.minutes))}
         </div>
       ) : null}
     </div>
@@ -289,7 +290,7 @@ export default function Home() {
         selectedMinutes.hours === "00" && selectedMinutes.minutes === "00"
           ? selectedHours * 60
           : parseInt(selectedMinutes.hours) * 60 +
-          parseInt(selectedMinutes.minutes);
+            parseInt(selectedMinutes.minutes);
     }
     return charges * time; // selected time is in hours & charges need to be calculated based on minutes
   };
@@ -306,9 +307,10 @@ export default function Home() {
       return;
     }
 
-    let finalDate = `${date.date.slice(7, 11)}-${Months.find((month) => month.abr === date.date.slice(0, 3)).value
-      }-${date.date.slice(4, 6)}`;
-    console.log(selectedMinutes, selectedHours)
+    let finalDate = `${date.date.slice(7, 11)}-${
+      Months.find((month) => month.abr === date.date.slice(0, 3)).value
+    }-${date.date.slice(4, 6)}`;
+    console.log(selectedMinutes, selectedHours);
     navigate({
       pathname: "/details",
       search: createSearchParams({
@@ -365,7 +367,7 @@ export default function Home() {
           color: Colors.WHITE,
           paddingTop: 7,
           paddingBottom: 7,
-          fontSize: 14,
+          // fontSize: 14,
         }}
       >
         Book a photographer & videographer instantly.
@@ -427,7 +429,7 @@ export default function Home() {
       {(!serviceName || !subService) && (
         <div style={{ margin: 10 }}>
           <img
-            alt="Banner Image"
+            alt="Banner"
             src={Banner}
             style={{ width: "100%", borderRadius: 10 }}
           />
@@ -487,7 +489,7 @@ export default function Home() {
                     0
                   ) ===
                     new Date().setHours(new Date().getHours() % 12, 0, 0, 0) &&
-                    currentAMPM === date.ampm ? (
+                  currentAMPM === date.ampm ? (
                     <>
                       <IoMdAlarm color={Colors.BLACK} size={25} />
                       Now
@@ -543,9 +545,9 @@ export default function Home() {
                     onClick={() =>
                       parseInt(selectedMinutes.minutes) > 0
                         ? setselectedMinutes({
-                          hours: selectedMinutes.hours,
-                          minutes: parseInt(selectedMinutes.minutes) - 1,
-                        })
+                            hours: selectedMinutes.hours,
+                            minutes: parseInt(selectedMinutes.minutes) - 1,
+                          })
                         : null
                     }
                   >
@@ -553,20 +555,20 @@ export default function Home() {
                   </div>
                   <div onClick={() => setIsMinutesSheetOpen(true)}>
                     {selectedMinutes.hours}:
-                    {selectedMinutes.minutes === "00"
+                    {typeof(selectedMinutes.minutes) === "string" ? selectedMinutes.minutes : selectedMinutes.minutes === "00"
                       ? selectedMinutes.minutes
                       : selectedMinutes.minutes <= 9
-                        ? `0${selectedMinutes.minutes}`
-                        : selectedMinutes.minutes}
+                      ? `0${selectedMinutes.minutes}`
+                      : selectedMinutes.minutes}
                   </div>
                   <div
                     style={{ marginLeft: 2, fontSize: 22 }}
                     onClick={() =>
                       parseInt(selectedMinutes.minutes) < 59
                         ? setselectedMinutes({
-                          hours: selectedMinutes.hours,
-                          minutes: parseInt(selectedMinutes.minutes) + 1,
-                        })
+                            hours: selectedMinutes.hours,
+                            minutes: parseInt(selectedMinutes.minutes) + 1,
+                          })
                         : null
                     }
                   >
@@ -588,8 +590,9 @@ export default function Home() {
             <div style={styles.packagePriceSubContainer}>
               <GiStopwatch color={Colors.BLACK} size={25} />
               <font style={{ fontWeight: "bold", marginLeft: 10 }}>
-                {`Select Service (${selectedHours} hr ${serviceName && serviceName.split(" ")[0]
-                  } for ${subServiceName})`}
+                {`Select Service (${selectedHours} hr ${
+                  serviceName && serviceName.split(" ")[0]
+                } for ${subServiceName})`}
               </font>
             </div>
 
@@ -644,14 +647,22 @@ export default function Home() {
                 onClick={() => setIsBottomSheetOpen(false)}
               />
             </div>
-            <div>
+            <div style={{ fontSize: 13 }}>
               <Picker
                 optionGroups={dateGroup}
                 valueGroups={date}
                 onChange={(name, val) => setDate({ ...date, [name]: val })}
               />
             </div>
-            <div style={{ position: 'absolute', bottom: 173, left: '50%', fontSize: 16, fontWeight: 'bold' }}>
+            <div
+              style={{
+                position: "absolute",
+                bottom: 173,
+                left: "50%",
+                fontSize: 16,
+                fontWeight: "bold",
+              }}
+            >
               :
             </div>
             <div
@@ -723,11 +734,31 @@ export default function Home() {
             <Picker
               optionGroups={minutesGroup}
               valueGroups={selectedMinutes}
-              onChange={(name, val) =>
-                setselectedMinutes({ ...selectedMinutes, [name]: val })
-              }
+              onChange={(name, val) => {
+                if (name === "hours")
+                  setselectedMinutes({ ...selectedMinutes, [name]: val });
+                else {
+                  setselectedMinutes({
+                    ...selectedMinutes,
+                    [name]:
+                      val === "00"
+                        ? val
+                        : parseInt(val) <= 9
+                        ? `0${parseInt(val)}`
+                        : val,
+                  });
+                }
+              }}
             />
-            <div style={{ position: 'absolute', bottom: 173, left: '50%', fontSize: 16, fontWeight: 'bold' }}>
+            <div
+              style={{
+                position: "absolute",
+                bottom: 173,
+                left: "50%",
+                fontSize: 16,
+                fontWeight: "bold",
+              }}
+            >
               :
             </div>
             <div

@@ -112,6 +112,12 @@ const bookingModel = new mongoose.Schema(
     endTime: {
       type: Date,
     },
+    startPhotoNumber: {
+      type: Number
+    },
+    endPhotoNumber: {
+      type: Number
+    }
   },
   {
     timestamps: {

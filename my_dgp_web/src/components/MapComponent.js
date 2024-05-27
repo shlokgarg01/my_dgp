@@ -75,7 +75,7 @@ const MapComponent = ({
     return randomCoordinates;
   };
 
-  let updateCorodinatesAndBikeCoordinates = (coordinates) => {
+  let updateCoordinatesAndBikeCoordinates = (coordinates) => {
     let bikeCordinates = generateRandomCoordinates(coordinates);
     setBikeLocations(bikeCordinates);
     handleLocationChange(coordinates);
@@ -88,17 +88,19 @@ const MapComponent = ({
         if (marker != null) {
           setPosition(marker.getLatLng());
           let coordinates = [marker.getLatLng().lat, marker.getLatLng().lng];
-          updateCorodinatesAndBikeCoordinates(coordinates);
+          updateCoordinatesAndBikeCoordinates(coordinates);
         }
       },
     }),
+    // eslint-disable-next-line
     []
   );
 
   useEffect(() => {
-    let cordinates = generateRandomCoordinates(initialLocation);
-    setBikeLocations(cordinates);
-  }, []);
+    let coordinates = generateRandomCoordinates(initialLocation);
+    setBikeLocations(coordinates);
+    setPosition(initialLocation)
+  }, [initialLocation]);
 
   const bikeIcon = L.icon({
     iconUrl: BikeIcon,
@@ -116,7 +118,7 @@ const MapComponent = ({
       .then((results) => getLatLng(results[0]))
       .then(({ lat, lng }) => {
         setPosition([lat, lng]);
-        updateCorodinatesAndBikeCoordinates([lat, lng]);
+        updateCoordinatesAndBikeCoordinates([lat, lng]);
       });
   };
 
@@ -127,7 +129,6 @@ const MapComponent = ({
           style={{
             top: 10,
             position: "absolute",
-            zIndex: 500000,
             // left: "15%",
             borderRadius: 100,
             zIndex: 1000,
