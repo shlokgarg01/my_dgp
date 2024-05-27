@@ -129,10 +129,10 @@ const MapComponent = ({
           style={{
             top: 10,
             position: "absolute",
-            // left: "15%",
+            left: "11.5%",
             borderRadius: 100,
             zIndex: 1000,
-            width: "95%",
+            width: "85%",
             boxShadow: `0px 2px 4px ${Colors.LIGHT_GRAY}`,
             pointerEvents: "auto",
           }}

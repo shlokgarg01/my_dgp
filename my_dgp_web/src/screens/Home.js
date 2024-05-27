@@ -21,6 +21,7 @@ import {
   MdOutlineVideoCameraFront,
 } from "react-icons/md";
 import Banner from "../images/desktop_banner.jpg";
+import HamburgerMenu from "../components/components/HamburgerMenu";
 
 export default function Home() {
   const [selectedService, setSelectedService] = useState(null);
@@ -100,7 +101,6 @@ export default function Home() {
 
   const fetchLiveLocation = (pos) => {
     var crd = pos.coords;
-    console.log('============', crd)
     if (crd) setLocation([crd.latitude, crd.longitude]);
   };
 
@@ -339,7 +339,9 @@ export default function Home() {
   return loading || packageLoading || priceLoading ? (
     <LoaderComponent />
   ) : (
-    <div style={{ backgroundColor: Colors.WHITE, minHeight: "100%" }}>
+    <>
+      <HamburgerMenu />
+      <div style={{ backgroundColor: Colors.WHITE, minHeight: "100%" }}>
       {/* Map */}
       <div
         style={{
@@ -786,6 +788,7 @@ export default function Home() {
         <Sheet.Backdrop />
       </Sheet>
     </div>
+    </>
   );
 }
 
