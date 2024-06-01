@@ -16,7 +16,6 @@ import { FaPhone } from "react-icons/fa";
 import {
   MdOutlineMail,
   MdDriveFileRenameOutline,
-  MdOutlineEdit,
 } from "react-icons/md";
 import { AiOutlineLogin } from "react-icons/ai";
 import "../styles/ComponentStyles.css";
@@ -24,21 +23,24 @@ import LoaderComponent from "../components/Loader";
 import { toast } from "react-custom-alert";
 import { CLEAR_ERRORS } from "../constants/UserConstants";
 import { EMAIL_REGEX } from "../config/Config";
+import { saveData } from "../actions/DataActions";
 
 export default function UserDetails() {
   const dispatch = useDispatch();
   let [params] = useSearchParams();
   const navigate = useNavigate();
+  const {savedData} = useSelector(state => state.savedData)
 
   const { user, error, isAuthenticated } = useSelector((state) => state.user);
   const [otpLoading, setOtpLoading] = useState(false);
   const [loading, setLoading] = useState(false);
-  const [contactNumber, setContactNumber] = useState();
-  const [email, setEmail] = useState("");
-  const [name, setName] = useState("");
+  const [contactNumber, setContactNumber] = useState(savedData.contactNumber);
+  const [email, setEmail] = useState(savedData.email || "");
+  const [name, setName] = useState(savedData.name || "");
   const [otp, setOtp] = useState(null);
   const [firebaseConfirmation, setFirebaseConfirmation] = useState(null);
   const [editNumber, setEditNumber] = useState(false);
+  const [captchaElementCount, setCaptchaElementCount] = useState(0);
 
   useEffect(() => {
     if (error) {
@@ -81,46 +83,39 @@ export default function UserDetails() {
     if (!name) {
       toast.error("Please enter your name");
       return false;
-    } else if (!isNaN(+name)) { // true means it's a Number, else a String
+    } else if (!isNaN(+name)) {
+      // true means it's a Number, else a String
       toast.error("Invalid Name");
       return false;
     } else if (!email) {
       toast.error("Please enter your email");
       return false;
     } else if (!EMAIL_REGEX.test(email)) {
-      toast.error("Invalid email!")
+      toast.error("Invalid email!");
       return false;
     } else if (!contactNumber || contactNumber.length !== 10) {
       toast.error("Invalid contact number");
       return false;
     }
+
     return true;
   };
 
-  const resendOTP = async () => {
-    if (validateOTPSend()) {
-      setLoading(true);
-      const recaptcha = new RecaptchaVerifier(
-        auth,
-        `captcha-container-resend`,
-        {
-          size: "invisible",
-        }
-      );
-      const confirmation = await signInWithPhoneNumber(
-        auth,
-        `+91${contactNumber}`,
-        recaptcha
-      );
-      setLoading(false);
-      setFirebaseConfirmation(confirmation);
-    }
-  };
+  const addCaptchaDiv = () => {
+    let captcha_id = `captcha-container-${captchaElementCount}`
+    const node = document.createElement("div");
+    node.setAttribute('id', captcha_id)
+
+    document.getElementById("captcha-container").appendChild(node);
+    setCaptchaElementCount(captchaElementCount + 1);
+    return captcha_id;
+  }
 
   const sendOTP = async () => {
     if (validateOTPSend()) {
+      let captcha_id = addCaptchaDiv()
       setLoading(true);
-      const recaptcha = new RecaptchaVerifier(auth, "captcha-container", {
+      const recaptcha = new RecaptchaVerifier(auth, captcha_id, {
         size: "invisible",
       });
       const confirmation = await signInWithPhoneNumber(
@@ -130,6 +125,7 @@ export default function UserDetails() {
       );
       setLoading(false);
       setFirebaseConfirmation(confirmation);
+      setEditNumber(false);
     }
   };
 
@@ -137,9 +133,12 @@ export default function UserDetails() {
     try {
       setOtpLoading(true);
       await firebaseConfirmation.confirm(otp);
-      dispatch(loginViaOTP({ name, email, contactNumber }));
+      let data = { name, email, contactNumber }
+      dispatch(saveData(data))
+      dispatch(loginViaOTP(data));
     } catch (err) {
-      toast.error(error);
+      toast.error("Invalid OTP! Please try again.");
+      setOtpLoading(false);
     }
   };
 
@@ -202,53 +201,53 @@ export default function UserDetails() {
                 />
                 <InputGroup
                   icon={<FaPhone size={25} color={Colors.DARK_GRAY} />}
-                  trailingIcon={
-                    firebaseConfirmation ? (
-                      <MdOutlineEdit
-                        size={25}
-                        color={Colors.DARK_GRAY}
-                        onClick={() => setEditNumber(true)}
-                      />
-                    ) : null
-                  }
                   placeholder="Contact Number"
                   type="number"
                   value={contactNumber}
                   onChange={(e) => setContactNumber(e.target.value)}
-                  disabled={(!editNumber) && (firebaseConfirmation || loading)}
+                  disabled={!editNumber && (firebaseConfirmation || loading)}
                 />
 
-                {firebaseConfirmation ? (
+                {firebaseConfirmation && !editNumber ? (
                   <>
-                    <InputGroup
-                      icon={
-                        <AiOutlineLogin size={25} color={Colors.DARK_GRAY} />
-                      }
-                      placeholder="Enter the OTP"
-                      type="number"
-                      value={otp}
-                      onChange={(e) => setOtp(e.target.value)}
-                    />
+                      <InputGroup
+                        icon={
+                          <AiOutlineLogin size={25} color={Colors.DARK_GRAY} />
+                        }
+                        placeholder="Enter the OTP"
+                        type="number"
+                        value={otp}
+                        onChange={(e) => setOtp(e.target.value)}
+                      />
                     <div
-                      onClick={resendOTP}
                       style={{
-                        color: Colors.BLUE,
-                        textAlign: "right",
+                        display: "flex",
+                        flexDirection: "row",
+                        justifyContent: "space-between",
                         marginTop: 4,
-                        marginRight: 7,
+                        padding: "0 10px",
+                        color: Colors.BLUE,
                         fontWeight: "bold",
                       }}
                     >
-                      Resend OTP
+                      <div
+                        onClick={() => {
+                          setEditNumber(true);
+                          setContactNumber("");
+                        }}
+                      >
+                        Entered Wrong Number?
+                      </div>
+                      <div onClick={sendOTP}>Resend OTP</div>
                     </div>
                   </>
                 ) : null}
 
-                <div id="captcha-container" />
-                <div id="captcha-container-resend" />
+                <div id="captcha-container">
+                </div>
                 <Btn
-                  onClick={firebaseConfirmation ? submit : sendOTP}
-                  title={firebaseConfirmation ? "Submit" : "Send OTP"}
+                  onClick={firebaseConfirmation && !editNumber ? submit : sendOTP}
+                  title={firebaseConfirmation && !editNumber ? "Submit" : "Send OTP"}
                   loading={loading}
                 />
               </form>

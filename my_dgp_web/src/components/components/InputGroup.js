@@ -37,7 +37,7 @@ export default function InputGroup({
           width: "100%",
           borderWidth: 0,
           paddingLeft: 10,
-          marginRight: 100,
+          marginRight: 10,
           height: 34,
           outline: "none", // removes border on focus
           borderRadius: roundedBorder ? 100 : 7,

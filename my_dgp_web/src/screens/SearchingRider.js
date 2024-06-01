@@ -136,10 +136,10 @@ export default function SearchingRider() {
         }}
       >
         <MapComponent
-          initialLocation={{
-            lat: location.state.coordinates.lat,
-            lng: location.state.coordinates.lng,
-          }}
+          initialLocation={[
+            parseFloat(location.state.coordinates.lat),
+            parseFloat(location.state.coordinates.lng),
+          ]}
           isEditable={false}
         />
       </div>

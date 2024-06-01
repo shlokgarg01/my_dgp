@@ -1,5 +1,12 @@
 import React, { useEffect, useMemo, useRef, useState } from "react";
-import { MapContainer, TileLayer, Marker } from "react-leaflet";
+import {
+  MapContainer,
+  TileLayer,
+  Marker,
+  useMap,
+  Popup,
+  useMapEvents,
+} from "react-leaflet";
 import L from "leaflet";
 import Colors from "../utils/Colors";
 import BikeIcon from "../images/Bike.png";
@@ -81,25 +88,33 @@ const MapComponent = ({
     handleLocationChange(coordinates);
   };
 
-  const eventHandlers = useMemo(
-    () => ({
-      dragend() {
-        const marker = markerRef.current;
-        if (marker != null) {
-          setPosition(marker.getLatLng());
-          let coordinates = [marker.getLatLng().lat, marker.getLatLng().lng];
-          updateCoordinatesAndBikeCoordinates(coordinates);
-        }
-      },
-    }),
-    // eslint-disable-next-line
-    []
-  );
+  const RecenterAutomatically = ({ lat, lng }) => {
+    const map = useMap();
+    useEffect(() => {
+      map.setView([lat, lng]);
+    }, [lat, lng]);
+    return null;
+  };
+
+  // const eventHandlers = useMemo(
+  //   () => ({
+  //     dragend() {
+  //       const marker = markerRef.current;
+  //       if (marker != null) {
+  //         setPosition([marker.getLatLng().lat, marker.getLatLng().lng]);
+  //         let coordinates = [marker.getLatLng().lat, marker.getLatLng().lng];
+  //         updateCoordinatesAndBikeCoordinates(coordinates);
+  //       }
+  //     },
+  //   }),
+  //   // eslint-disable-next-line
+  //   []
+  // );
 
   useEffect(() => {
     let coordinates = generateRandomCoordinates(initialLocation);
     setBikeLocations(coordinates);
-    setPosition(initialLocation)
+    setPosition(initialLocation);
   }, [initialLocation]);
 
   const bikeIcon = L.icon({
@@ -121,6 +136,15 @@ const MapComponent = ({
         updateCoordinatesAndBikeCoordinates([lat, lng]);
       });
   };
+
+  function MapCenter() {
+    useMapEvents({
+      drag: (e) => {
+        setPosition([e.target.getCenter().lat, e.target.getCenter().lng]);
+      },
+    });
+    return null;
+  }
 
   return (
     <>
@@ -144,12 +168,12 @@ const MapComponent = ({
             apiOptions={{ region: "in" }}
             selectProps={{
               onChange: updateAddress,
-              placeholder: "Search your address"
+              placeholder: "Search your address",
             }}
             inputProps={{
               style: { pointerEvents: "auto" },
             }}
-            // textInputProps={{  }}
+            // ={{  }}
           />
         </div>
       )}
@@ -161,19 +185,21 @@ const MapComponent = ({
         zoomControl={false} // hides the + - button for zoom
         center={initialLocation}
         zoom={15} // increases the default zoom level of the map
-        maxZoom={20}
+        // maxZoom={20} // on enabling it, it causes the map to become on zooming much. So, disabled it.
       >
+        <MapCenter />
         <TileLayer
           attribution="Google Maps"
           url="https://www.google.cn/maps/vt?lyrs=m@189&gl=cn&x={x}&y={y}&z={z}"
         />
         <Marker
-          draggable={isEditable}
-          eventHandlers={eventHandlers}
+          draggable={false}
+          // eventHandlers={eventHandlers}
           position={position}
           ref={markerRef}
         />
-
+        {/* To recenter the map whenever the coordinate changes */}
+        <RecenterAutomatically lat={position[0]} lng={position[1]} />
         {isEditable &&
           bikeLocations.map((bike, index) => (
             <Marker key={index} position={bike} icon={bikeIcon} />

@@ -22,24 +22,27 @@ import {
 } from "react-icons/md";
 import Banner from "../images/desktop_banner.jpg";
 import HamburgerMenu from "../components/components/HamburgerMenu";
+import { saveData } from "../actions/DataActions";
 
 export default function Home() {
-  const [selectedService, setSelectedService] = useState(null);
-  const [serviceName, setServiceName] = useState("");
-  const [subService, setSubService] = useState(null);
-  const [subServiceName, setSubServiceName] = useState("");
-  const [servicePackage, setPackage] = useState(null);
-  const [packageName, setPackageName] = useState("");
-  const [selectedHours, setSelectedHours] = useState(0);
+  const { savedData } = useSelector((state) => state.savedData);
+
+  const [selectedService, setSelectedService] = useState(savedData.service);
+  const [serviceName, setServiceName] = useState(savedData.serviceName || "");
+  const [subService, setSubService] = useState(savedData.subService);
+  const [subServiceName, setSubServiceName] = useState(savedData.subServiceName || "");
+  const [servicePackage, setPackage] = useState(savedData.servicePackage);
+  const [packageName, setPackageName] = useState(savedData.packageName || "");
+  const [selectedHours, setSelectedHours] = useState(savedData.hours || 0);
   const [selectedMinutes, setselectedMinutes] = useState({
-    hours: "00",
-    minutes: "00",
+    hours: savedData.hours || "00",
+    minutes: savedData.minutes || "01",
   });
   const [isMinutesSheetOpen, setIsMinutesSheetOpen] = useState(false);
-  const [address, setAddress] = useState("");
+  const [address, setAddress] = useState(savedData.address);
   const [isBottomSheetOpen, setIsBottomSheetOpen] = useState(false);
   const [location, setLocation] = useState([
-    28.570679971663644, 77.16227241314306,
+    parseFloat(savedData.lat) || 28.570679971663644, parseFloat(savedData.lng) || 77.16227241314306,
   ]);
   let TAX = 99;
 
@@ -310,29 +313,28 @@ export default function Home() {
     let finalDate = `${date.date.slice(7, 11)}-${
       Months.find((month) => month.abr === date.date.slice(0, 3)).value
     }-${date.date.slice(4, 6)}`;
-    console.log(selectedMinutes, selectedHours);
+    let res = {
+      service: selectedService,
+      subService,
+      servicePackage,
+      packageName,
+      serviceName,
+      subServiceName,
+      date: finalDate,
+      hours: selectedMinutes.hours === "00" ? selectedHours : selectedMinutes.hours,
+      minutes: selectedMinutes.minutes,
+      address,
+      lat: location[0],
+      lng: location[1],
+      taxPrice: TAX,
+      itemsPrice: getItemPrice(),
+      totalPrice: getItemPrice() + TAX,
+    };
+
+    dispatch(saveData(res));
     navigate({
       pathname: "/details",
-      search: createSearchParams({
-        service: selectedService,
-        subService,
-        servicePackage,
-        packageName,
-        serviceName,
-        subServiceName,
-        date: finalDate,
-        hours:
-          selectedMinutes.hours === "00"
-            ? selectedHours
-            : selectedMinutes.hours,
-        minutes: selectedMinutes.minutes,
-        address,
-        lat: location[0],
-        lng: location[1],
-        taxPrice: TAX,
-        itemsPrice: getItemPrice(),
-        totalPrice: getItemPrice() + TAX,
-      }).toString(),
+      search: createSearchParams(res).toString(),
     });
   };
 
@@ -342,452 +344,475 @@ export default function Home() {
     <>
       <HamburgerMenu />
       <div style={{ backgroundColor: Colors.WHITE, minHeight: "100%" }}>
-      {/* Map */}
-      <div
-        style={{
-          height: "250px",
-          display: "flex",
-          flexDirection: "column",
-          alignItems: "center",
-        }}
-      >
-        <MapComponent
-          style={{ height: 200, width: 200 }}
-          onSearchChange={setAddress}
-          handleLocationChange={handleLocationChange}
-          initialLocation={location}
-          searchValue={address}
-          isEditable={true}
-        />
-      </div>
-
-      {/* Tag line */}
-      <div
-        style={{
-          textAlign: "center",
-          backgroundColor: Colors.PRIMARY,
-          color: Colors.WHITE,
-          paddingTop: 7,
-          paddingBottom: 7,
-          // fontSize: 14,
-        }}
-      >
-        Book a photographer & videographer instantly.
-      </div>
-
-      {/* Services Slider */}
-      <div style={{ ...styles.serviceSliderContainer }}>
-        {services.map((service, index) => (
-          <ServiceSlider
-            key={index}
-            service={service}
-            index={index}
-            icon={
-              service.name === "Photography" ? (
-                <MdOutlineAddAPhoto
-                  size={25}
-                  color={
-                    serviceName === service.name ? Colors.PRIMARY : Colors.GRAY
-                  }
-                />
-              ) : service.name === "Videography" ? (
-                <MdOutlineVideocam
-                  size={25}
-                  color={
-                    serviceName === service.name ? Colors.PRIMARY : Colors.GRAY
-                  }
-                />
-              ) : (
-                <MdOutlineVideoCameraFront
-                  size={25}
-                  color={
-                    serviceName === service.name ? Colors.PRIMARY : Colors.GRAY
-                  }
-                />
-              )
-            }
-          />
-        ))}
-      </div>
-
-      {/* Sub Service Slider */}
-      {serviceName && (
+        {/* Map */}
         <div
           style={{
-            ...styles.serviceSliderContainer,
-            paddingLeft: 16,
-            paddingRight: 16,
+            height: "250px",
+            display: "flex",
+            flexDirection: "column",
+            alignItems: "center",
           }}
         >
-          {services
-            .find((service) => service.name === serviceName)
-            ?.subServices.map((subService) => (
-              <SubServiceSlider key={subService._id} subService={subService} />
-            ))}
-        </div>
-      )}
-
-      {/* Banner */}
-      {(!serviceName || !subService) && (
-        <div style={{ margin: 10 }}>
-          <img
-            alt="Banner"
-            src={Banner}
-            style={{ width: "100%", borderRadius: 10 }}
+          <MapComponent
+            style={{ height: 200, width: 200 }}
+            onSearchChange={setAddress}
+            handleLocationChange={handleLocationChange}
+            initialLocation={location}
+            searchValue={address}
+            isEditable={true}
           />
         </div>
-      )}
 
-      {serviceName && subServiceName && (
-        <>
-          {/* Duration Selection */}
+        {/* Tag line */}
+        <div
+          style={{
+            textAlign: "center",
+            backgroundColor: Colors.PRIMARY,
+            color: Colors.WHITE,
+            paddingTop: 7,
+            paddingBottom: 7,
+            // fontSize: 14,
+          }}
+        >
+          Book a photographer & videographer instantly.
+        </div>
+
+        {/* Services Slider */}
+        <div style={{ ...styles.serviceSliderContainer }}>
+          {services.map((service, index) => (
+            <ServiceSlider
+              key={index}
+              service={service}
+              index={index}
+              icon={
+                service.name === "Photography" ? (
+                  <MdOutlineAddAPhoto
+                    size={25}
+                    color={
+                      serviceName === service.name
+                        ? Colors.PRIMARY
+                        : Colors.GRAY
+                    }
+                  />
+                ) : service.name === "Videography" ? (
+                  <MdOutlineVideocam
+                    size={25}
+                    color={
+                      serviceName === service.name
+                        ? Colors.PRIMARY
+                        : Colors.GRAY
+                    }
+                  />
+                ) : (
+                  <MdOutlineVideoCameraFront
+                    size={25}
+                    color={
+                      serviceName === service.name
+                        ? Colors.PRIMARY
+                        : Colors.GRAY
+                    }
+                  />
+                )
+              }
+            />
+          ))}
+        </div>
+
+        {/* Sub Service Slider */}
+        {serviceName && (
           <div
             style={{
-              ...styles.packagePricesContainer,
-              borderBottom: "1px solid grey",
+              ...styles.serviceSliderContainer,
+              paddingLeft: 16,
+              paddingRight: 16,
             }}
           >
-            <div
-              style={{
-                ...styles.packagePriceSubContainer,
-                alignItems: "flex-start",
-              }}
-            >
-              <div style={{ display: "flex", paddingRight: 10 }}>
-                {/* <GiStopwatch color={Colors.BLACK} size={25} /> */}
-                <div>
-                  <div style={{ fontWeight: "bold", fontSize: 18 }}>
-                    Select service duration
-                  </div>
-                  <div style={{ color: Colors.GRAY }}>
-                    minimum 1 minute to maximum time as you wish
-                  </div>
-                </div>
-              </div>
-
-              {/* Date Selection */}
-              <div
-                style={{
-                  width: "30%",
-                  padding: 4,
-                  borderRadius: 7,
-                  boxShadow: `1px 1px 4px ${Colors.GRAY}`,
-                }}
-              >
-                <div
-                  style={{
-                    display: "flex",
-                    flexDirection: "column",
-                    alignItems: "center",
-                    justifyContent: "center",
-                    textAlign: "center",
-                  }}
-                  onClick={() => setIsBottomSheetOpen(true)}
-                >
-                  {new Date(`${date.year}-${date.month}-${date.date}`).setHours(
-                    date.hour,
-                    0,
-                    0,
-                    0
-                  ) ===
-                    new Date().setHours(new Date().getHours() % 12, 0, 0, 0) &&
-                  currentAMPM === date.ampm ? (
-                    <>
-                      <IoMdAlarm color={Colors.BLACK} size={25} />
-                      Now
-                    </>
-                  ) : (
-                    <div style={{ fontSize: 13 }}>
-                      {date.date.slice(0, 6)}
-                      <br />
-                      {date.hour}:{date.quaters} {date.ampm}
-                    </div>
-                  )}
-                </div>
-              </div>
-            </div>
-
-            <div
-              style={{
-                overflowX: "auto",
-                whiteSpace: "nowrap",
-                display: "flex",
-                alignItems: "center",
-                gap: "15px",
-              }}
-            >
-              {/* + - minutes component */}
-              <div
-                style={{
-                  backgroundColor: Colors.WHITE,
-                  marginTop: 0,
-                  display: "inline-flex",
-                  justifyContent: "center",
-                  alignItems: "center",
-                  height: 50,
-                  flex: "0.2 0 100px",
-                  fontWeight: "bold",
-                  fontSize: 17,
-                  boxShadow: `1px 1px 4px ${Colors.LIGHT_GRAY}`,
-                  border: `1px solid ${Colors.DARK_GRAY}`,
-                  borderRadius: 4,
-                }}
-              >
-                <div
-                  style={{
-                    display: "flex",
-                    alignItems: "center",
-                    fontSize: 17,
-                    justifyContent: "space-around",
-                    width: "100%",
-                  }}
-                >
-                  <div
-                    style={{ marginRight: 1, fontSize: 22 }}
-                    onClick={() =>
-                      parseInt(selectedMinutes.minutes) > 0
-                        ? setselectedMinutes({
-                            hours: selectedMinutes.hours,
-                            minutes: parseInt(selectedMinutes.minutes) - 1,
-                          })
-                        : null
-                    }
-                  >
-                    -
-                  </div>
-                  <div onClick={() => setIsMinutesSheetOpen(true)}>
-                    {selectedMinutes.hours}:
-                    {typeof(selectedMinutes.minutes) === "string" ? selectedMinutes.minutes : selectedMinutes.minutes === "00"
-                      ? selectedMinutes.minutes
-                      : selectedMinutes.minutes <= 9
-                      ? `0${selectedMinutes.minutes}`
-                      : selectedMinutes.minutes}
-                  </div>
-                  <div
-                    style={{ marginLeft: 2, fontSize: 22 }}
-                    onClick={() =>
-                      parseInt(selectedMinutes.minutes) < 59
-                        ? setselectedMinutes({
-                            hours: selectedMinutes.hours,
-                            minutes: parseInt(selectedMinutes.minutes) + 1,
-                          })
-                        : null
-                    }
-                  >
-                    +
-                  </div>
-                </div>
-              </div>
-
-              {Array.from({ length: 12 }, (_, index) => index + 1).map(
-                (item, index) => (
-                  <TimeSlider key={index} time={item} />
-                )
-              )}
-            </div>
+            {services
+              .find((service) => service.name === serviceName)
+              ?.subServices.map((subService) => (
+                <SubServiceSlider
+                  key={subService._id}
+                  subService={subService}
+                />
+              ))}
           </div>
+        )}
 
-          {/* Package Prices */}
-          <div style={styles.packagePricesContainer}>
-            <div style={styles.packagePriceSubContainer}>
-              <GiStopwatch color={Colors.BLACK} size={25} />
-              <font style={{ fontWeight: "bold", marginLeft: 10 }}>
-                {`Select Service (${selectedHours} hr ${
-                  serviceName && serviceName.split(" ")[0]
-                } for ${subServiceName})`}
-              </font>
-            </div>
-
-            {packages.map((p, index) => (
-              <div>
-                <PricesContent p={p} index={index} />
-              </div>
-            ))}
-          </div>
-
-          {/* Next Button */}
-          <button
-            onClick={submit}
-            style={{
-              width: "100%",
-              height: 40,
-              backgroundColor: Colors.PRIMARY,
-              color: Colors.WHITE,
-              borderRadius: 0,
-              border: 0,
-              marginTop: 25,
-              fontSize: 20,
-            }}
-          >
-            Proceed
-          </button>
-        </>
-      )}
-
-      <Sheet
-        isOpen={isBottomSheetOpen}
-        onClose={() => setIsBottomSheetOpen(false)}
-        detent="content-height"
-        disableDrag={true}
-      >
-        <Sheet.Container>
-          <Sheet.Header />
-          <Sheet.Content>
-            <div
-              style={{
-                display: "flex",
-                flexDirection: "row",
-                justifyContent: "space-between",
-                marginLeft: 16,
-                marginRight: 16,
-                alignItems: "center",
-              }}
-            >
-              <h3>Schedule a service</h3>
-              <IoMdClose
-                size={28}
-                onClick={() => setIsBottomSheetOpen(false)}
-              />
-            </div>
-            <div style={{ fontSize: 13 }}>
-              <Picker
-                optionGroups={dateGroup}
-                valueGroups={date}
-                onChange={(name, val) => setDate({ ...date, [name]: val })}
-              />
-            </div>
-            <div
-              style={{
-                position: "absolute",
-                bottom: 173,
-                left: "50%",
-                fontSize: 16,
-                fontWeight: "bold",
-              }}
-            >
-              :
-            </div>
-            <div
-              style={{
-                display: "flex",
-                flexDirection: "row",
-                justifyContent: "space-evenly",
-              }}
-            >
-              <Btn
-                smallButton={true}
-                title="Save"
-                onClick={() => setIsBottomSheetOpen(false)}
-              />
-              <Btn
-                smallButton={true}
-                title="Refresh"
-                onClick={() => setDate(currentTime())}
-              />
-            </div>
-          </Sheet.Content>
-        </Sheet.Container>
-        <Sheet.Backdrop />
-      </Sheet>
-
-      <Sheet
-        isOpen={isMinutesSheetOpen}
-        onClose={() => setIsBottomSheetOpen(false)}
-        detent="content-height"
-        disableDrag={true}
-      >
-        <Sheet.Container>
-          <Sheet.Header />
-          <Sheet.Content>
-            <div
-              style={{
-                display: "flex",
-                flexDirection: "row",
-                justifyContent: "space-between",
-                marginLeft: 16,
-                marginRight: 16,
-                alignItems: "center",
-              }}
-            >
-              <h3>Selected Duration</h3>
-              <IoMdClose
-                size={28}
-                onClick={() => setIsMinutesSheetOpen(false)}
-              />
-            </div>
-            <div
-              style={{
-                marginTop: 16,
-                display: "flex",
-                flexDirection: "row",
-                justifyContent: "space-evenly",
-                alignItems: "center",
-                paddingRight: 7,
-                paddingLeft: 16,
-              }}
-            >
-              <div style={{ width: "50%", textAlign: "center", fontSize: 19 }}>
-                Hours
-              </div>
-              <div style={{ width: "50%", textAlign: "center", fontSize: 19 }}>
-                Minutes
-              </div>
-            </div>
-            <Picker
-              optionGroups={minutesGroup}
-              valueGroups={selectedMinutes}
-              onChange={(name, val) => {
-                if (name === "hours")
-                  setselectedMinutes({ ...selectedMinutes, [name]: val });
-                else {
-                  setselectedMinutes({
-                    ...selectedMinutes,
-                    [name]:
-                      val === "00"
-                        ? val
-                        : parseInt(val) <= 9
-                        ? `0${parseInt(val)}`
-                        : val,
-                  });
-                }
-              }}
+        {/* Banner */}
+        {(!serviceName || !subService) && (
+          <div style={{ margin: 10 }}>
+            <img
+              alt="Banner"
+              src={Banner}
+              style={{ width: "100%", borderRadius: 10 }}
             />
+          </div>
+        )}
+
+        {serviceName && subServiceName && (
+          <>
+            {/* Duration Selection */}
             <div
               style={{
-                position: "absolute",
-                bottom: 173,
-                left: "50%",
-                fontSize: 16,
-                fontWeight: "bold",
+                ...styles.packagePricesContainer,
+                borderBottom: "1px solid grey",
               }}
             >
-              :
+              <div
+                style={{
+                  ...styles.packagePriceSubContainer,
+                  alignItems: "flex-start",
+                }}
+              >
+                <div style={{ display: "flex", paddingRight: 10 }}>
+                  {/* <GiStopwatch color={Colors.BLACK} size={25} /> */}
+                  <div>
+                    <div style={{ fontWeight: "bold", fontSize: 18 }}>
+                      Select service duration
+                    </div>
+                    <div style={{ color: Colors.GRAY }}>
+                      minimum 1 minute to maximum time as you wish
+                    </div>
+                  </div>
+                </div>
+
+                {/* Date Selection */}
+                <div
+                  style={{
+                    width: "30%",
+                    padding: 4,
+                    borderRadius: 7,
+                    boxShadow: `1px 1px 4px ${Colors.GRAY}`,
+                  }}
+                >
+                  <div
+                    style={{
+                      display: "flex",
+                      flexDirection: "column",
+                      alignItems: "center",
+                      justifyContent: "center",
+                      textAlign: "center",
+                    }}
+                    onClick={() => setIsBottomSheetOpen(true)}
+                  >
+                    {new Date(
+                      `${date.year}-${date.month}-${date.date}`
+                    ).setHours(date.hour, 0, 0, 0) ===
+                      new Date().setHours(
+                        new Date().getHours() % 12,
+                        0,
+                        0,
+                        0
+                      ) && currentAMPM === date.ampm ? (
+                      <>
+                        <IoMdAlarm color={Colors.BLACK} size={25} />
+                        Now
+                      </>
+                    ) : (
+                      <div style={{ fontSize: 13 }}>
+                        {date.date.slice(0, 6)}
+                        <br />
+                        {date.hour}:{date.quaters} {date.ampm}
+                      </div>
+                    )}
+                  </div>
+                </div>
+              </div>
+
+              <div
+                style={{
+                  overflowX: "auto",
+                  whiteSpace: "nowrap",
+                  display: "flex",
+                  alignItems: "center",
+                  gap: "15px",
+                }}
+              >
+                {/* + - minutes component */}
+                <div
+                  style={{
+                    backgroundColor: Colors.WHITE,
+                    marginTop: 0,
+                    display: "inline-flex",
+                    justifyContent: "center",
+                    alignItems: "center",
+                    height: 50,
+                    flex: "0.2 0 100px",
+                    fontWeight: "bold",
+                    fontSize: 17,
+                    boxShadow: `1px 1px 4px ${Colors.LIGHT_GRAY}`,
+                    border: `1px solid ${Colors.DARK_GRAY}`,
+                    borderRadius: 4,
+                  }}
+                >
+                  <div
+                    style={{
+                      display: "flex",
+                      alignItems: "center",
+                      fontSize: 17,
+                      justifyContent: "space-around",
+                      width: "100%",
+                    }}
+                  >
+                    <div
+                      style={{ marginRight: 1, fontSize: 22 }}
+                      onClick={() =>
+                        parseInt(selectedMinutes.minutes) > 0
+                          ? setselectedMinutes({
+                              hours: selectedMinutes.hours,
+                              minutes: parseInt(selectedMinutes.minutes) - 1,
+                            })
+                          : null
+                      }
+                    >
+                      -
+                    </div>
+                    <div onClick={() => setIsMinutesSheetOpen(true)}>
+                      {selectedMinutes.hours}:
+                      {typeof selectedMinutes.minutes === "string" ||
+                      selectedMinutes.minutes === "00"
+                        ? selectedMinutes.minutes
+                        : selectedMinutes.minutes <= 9
+                        ? `0${selectedMinutes.minutes}`
+                        : selectedMinutes.minutes}
+                    </div>
+                    <div
+                      style={{ marginLeft: 2, fontSize: 22 }}
+                      onClick={() => {
+                        if (parseInt(selectedMinutes.minutes) < 59) {
+                          setselectedMinutes({
+                            hours: selectedMinutes.hours,
+                            minutes:
+                              parseInt(selectedMinutes.minutes) + 1 <= 9
+                                ? `0${parseInt(selectedMinutes.minutes) + 1}`
+                                : `${parseInt(selectedMinutes.minutes) + 1}`,
+                          });
+                        } else if (parseInt(selectedMinutes.minutes) === 59) {
+                          setselectedMinutes({
+                            hours: `0${parseInt(selectedMinutes.hours) + 1}`,
+                            minutes: "00",
+                          });
+                        }
+                      }}
+                    >
+                      +
+                    </div>
+                  </div>
+                </div>
+
+                {Array.from({ length: 12 }, (_, index) => index + 1).map(
+                  (item, index) => (
+                    <TimeSlider key={index} time={item} />
+                  )
+                )}
+              </div>
             </div>
-            <div
+
+            {/* Package Prices */}
+            <div style={styles.packagePricesContainer}>
+              <div style={styles.packagePriceSubContainer}>
+                <GiStopwatch color={Colors.BLACK} size={25} />
+                <font style={{ fontWeight: "bold", marginLeft: 10 }}>
+                  {`Select Service (${selectedHours} hr ${
+                    serviceName && serviceName.split(" ")[0]
+                  } for ${subServiceName})`}
+                </font>
+              </div>
+
+              {packages.map((p, index) => (
+                <div>
+                  <PricesContent p={p} index={index} />
+                </div>
+              ))}
+            </div>
+
+            {/* Next Button */}
+            <button
+              onClick={submit}
               style={{
-                display: "flex",
-                flexDirection: "row",
-                justifyContent: "space-evenly",
+                width: "100%",
+                height: 40,
+                backgroundColor: Colors.PRIMARY,
+                color: Colors.WHITE,
+                borderRadius: 0,
+                border: 0,
+                marginTop: 25,
+                fontSize: 20,
               }}
             >
-              <Btn
-                smallButton={true}
-                title="Save"
-                onClick={() => setIsMinutesSheetOpen(false)}
-              />
-              <Btn
-                smallButton={true}
-                title="Refresh"
-                onClick={() => {
-                  setselectedMinutes({ hours: "00", minutes: "00" });
+              Proceed
+            </button>
+          </>
+        )}
+
+        <Sheet
+          isOpen={isBottomSheetOpen}
+          onClose={() => setIsBottomSheetOpen(false)}
+          detent="content-height"
+          disableDrag={true}
+        >
+          <Sheet.Container>
+            <Sheet.Header />
+            <Sheet.Content>
+              <div
+                style={{
+                  display: "flex",
+                  flexDirection: "row",
+                  justifyContent: "space-between",
+                  marginLeft: 16,
+                  marginRight: 16,
+                  alignItems: "center",
+                }}
+              >
+                <h3>Schedule a service</h3>
+                <IoMdClose
+                  size={28}
+                  onClick={() => setIsBottomSheetOpen(false)}
+                />
+              </div>
+              <div style={{ fontSize: 13 }}>
+                <Picker
+                  optionGroups={dateGroup}
+                  valueGroups={date}
+                  onChange={(name, val) => setDate({ ...date, [name]: val })}
+                />
+              </div>
+              <div
+                style={{
+                  position: "absolute",
+                  bottom: 173,
+                  left: "50%",
+                  fontSize: 16,
+                  fontWeight: "bold",
+                }}
+              >
+                :
+              </div>
+              <div
+                style={{
+                  display: "flex",
+                  flexDirection: "row",
+                  justifyContent: "space-evenly",
+                }}
+              >
+                <Btn
+                  smallButton={true}
+                  title="Save"
+                  onClick={() => setIsBottomSheetOpen(false)}
+                />
+                <Btn
+                  smallButton={true}
+                  title="Refresh"
+                  onClick={() => setDate(currentTime())}
+                />
+              </div>
+            </Sheet.Content>
+          </Sheet.Container>
+          <Sheet.Backdrop />
+        </Sheet>
+
+        <Sheet
+          isOpen={isMinutesSheetOpen}
+          onClose={() => setIsBottomSheetOpen(false)}
+          detent="content-height"
+          disableDrag={true}
+        >
+          <Sheet.Container>
+            <Sheet.Header />
+            <Sheet.Content>
+              <div
+                style={{
+                  display: "flex",
+                  flexDirection: "row",
+                  justifyContent: "space-between",
+                  marginLeft: 16,
+                  marginRight: 16,
+                  alignItems: "center",
+                }}
+              >
+                <h3>Selected Duration</h3>
+                <IoMdClose
+                  size={28}
+                  onClick={() => setIsMinutesSheetOpen(false)}
+                />
+              </div>
+              <div
+                style={{
+                  marginTop: 16,
+                  display: "flex",
+                  flexDirection: "row",
+                  justifyContent: "space-evenly",
+                  alignItems: "center",
+                  paddingRight: 7,
+                  paddingLeft: 16,
+                }}
+              >
+                <div
+                  style={{ width: "50%", textAlign: "center", fontSize: 19 }}
+                >
+                  Hours
+                </div>
+                <div
+                  style={{ width: "50%", textAlign: "center", fontSize: 19 }}
+                >
+                  Minutes
+                </div>
+              </div>
+              <Picker
+                optionGroups={minutesGroup}
+                valueGroups={selectedMinutes}
+                onChange={(name, val) => {
+                  if (name === "hours")
+                    setselectedMinutes({ ...selectedMinutes, [name]: val });
+                  else {
+                    setselectedMinutes({
+                      ...selectedMinutes,
+                      [name]:
+                        val === "00"
+                          ? val
+                          : parseInt(val) <= 9
+                          ? `0${parseInt(val)}`
+                          : val,
+                    });
+                  }
                 }}
               />
-            </div>
-          </Sheet.Content>
-        </Sheet.Container>
-        <Sheet.Backdrop />
-      </Sheet>
-    </div>
+              <div
+                style={{
+                  position: "absolute",
+                  bottom: 173,
+                  left: "50%",
+                  fontSize: 16,
+                  fontWeight: "bold",
+                }}
+              >
+                :
+              </div>
+              <div
+                style={{
+                  display: "flex",
+                  flexDirection: "row",
+                  justifyContent: "space-evenly",
+                }}
+              >
+                <Btn
+                  smallButton={true}
+                  title="Save"
+                  onClick={() => setIsMinutesSheetOpen(false)}
+                />
+                <Btn
+                  smallButton={true}
+                  title="Refresh"
+                  onClick={() => {
+                    setselectedMinutes({ hours: "00", minutes: "00" });
+                  }}
+                />
+              </div>
+            </Sheet.Content>
+          </Sheet.Container>
+          <Sheet.Backdrop />
+        </Sheet>
+      </div>
     </>
   );
 }

@@ -15,11 +15,13 @@ import { applyCouponToBooking } from "../actions/CouponActions";
 import axios from "axios";
 import { BASE_URL } from "../config/Axios";
 import { RAZORPAY_KEY_ID } from "../config/Config";
+import { clearData } from "../actions/DataActions";
 
 export default function Checkout() {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   let [params] = useSearchParams();
+  const {savedData} = useSelector(state => state.savedData)
   const { error, loading, success, booking } = useSelector(
     (state) => state.booking
   );
@@ -32,9 +34,9 @@ export default function Checkout() {
   } = useSelector((state) => state.coupon);
 
   const [paymentMode, setPaymentMode] = useState(Enums.PAYMENT_MODES.ONLINE);
-  const [couponCode, setCouponCode] = useState("");
-  const [couponDiscount, setCouponDiscount] = useState(0);
-  const [totalPrice, setTotalPrice] = useState(params.get("totalPrice"));
+  const [couponCode, setCouponCode] = useState(savedData.couponCode || "");
+  const [couponDiscount, setCouponDiscount] = useState(savedData.couponDiscount || 0);
+  const [totalPrice, setTotalPrice] = useState(savedData.totalPrice || params.get("totalPrice"));
 
   const updatePrices = () => {
     setTotalPrice(finalPrice);
@@ -59,7 +61,7 @@ export default function Checkout() {
     }
 
     if (success) {
-      console.log("---------", booking);
+      dispatch(clearData())
       navigate("/searchingRider", {
         state: {
           bookingId: booking._id,
