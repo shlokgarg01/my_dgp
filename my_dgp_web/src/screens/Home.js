@@ -256,8 +256,8 @@ export default function Home() {
         flexDirection: "row",
         justifyContent: "space-between",
         alignItems: "center",
-        padding: 13,
-        fontSize: 16,
+        padding: 7,
+        fontSize: 14,
         borderRadius: 7,
         boxShadow:
           p.name === packageName ? `1px 1px 4px ${Colors.LIGHT_GRAY}` : null,
@@ -636,7 +636,7 @@ export default function Home() {
                 color: Colors.WHITE,
                 borderRadius: 0,
                 border: 0,
-                marginTop: 25,
+                // marginTop: 25,
                 fontSize: 20,
               }}
             >
