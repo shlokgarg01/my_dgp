@@ -611,11 +611,11 @@ export default function Home() {
             {/* Package Prices */}
             <div style={styles.packagePricesContainer}>
               <div style={styles.packagePriceSubContainer}>
-                <GiStopwatch color={Colors.BLACK} size={25} />
-                <font style={{ fontWeight: "bold", marginLeft: 10 }}>
+                <GiStopwatch color={Colors.BLACK} size={19} />
+                <font style={{ fontWeight: "bold", marginLeft: 10, fontSize: 13 }}>
                   {`Select Service (${selectedHours} hr ${
                     serviceName && serviceName.split(" ")[0]
-                  } for ${subServiceName})`}
+                  }, ${subServiceName})`}
                 </font>
               </div>
 
