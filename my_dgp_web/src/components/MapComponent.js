@@ -1,10 +1,9 @@
-import React, { useEffect, useMemo, useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import {
   MapContainer,
   TileLayer,
   Marker,
   useMap,
-  Popup,
   useMapEvents,
 } from "react-leaflet";
 import L from "leaflet";
@@ -35,10 +34,14 @@ const MapComponent = ({
   onSearchChange,
   searchValue,
   isEditable,
+  increaseMapHeight,
+  subService
 }) => {
   const [position, setPosition] = useState(initialLocation);
   const [bikeLocations, setBikeLocations] = useState([]);
-  const markerRef = useRef(null);
+  const [showMarker, setShowMarker] = useState(true);
+  // const markerRef = useRef(null);
+  const mapRef = useRef(null);
 
   const generateRandomCoordinates = (newLocation) => {
     const earthRadiusKm = 6371;
@@ -92,7 +95,7 @@ const MapComponent = ({
     const map = useMap();
     useEffect(() => {
       map.setView([lat, lng]);
-    }, [lat, lng]);
+    }, [lat, lng, map]);
     return null;
   };
 
@@ -123,6 +126,23 @@ const MapComponent = ({
     iconAnchor: [16, 32],
   });
 
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (mapRef.current && !mapRef.current.contains(event.target)) {
+        // Handle the click outside map logic here
+        increaseMapHeight(false);
+        if (subService !== undefined && subService !== "") setShowMarker(false);
+        console.log("Clicked outside map. Decreasing the height", subService);
+      }
+    };
+    document.addEventListener("mousedown", handleClickOutside);
+
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [mapRef, subService]);
+
   const updateAddress = async (place) => {
     let add = place.label;
     let results = await geocodeByAddress(add);
@@ -141,6 +161,10 @@ const MapComponent = ({
     useMapEvents({
       drag: (e) => {
         setPosition([e.target.getCenter().lat, e.target.getCenter().lng]);
+      },
+      click: (e) => {
+        increaseMapHeight(true);
+        setShowMarker(true)
       },
     });
     return null;
@@ -173,38 +197,49 @@ const MapComponent = ({
             inputProps={{
               style: { pointerEvents: "auto" },
             }}
-            // ={{  }}
           />
         </div>
       )}
-      <MapContainer
+      <div
+        ref={mapRef}
         style={{
           height: "100vh",
           width: "100%",
         }}
-        zoomControl={false} // hides the + - button for zoom
-        center={initialLocation}
-        zoom={15} // increases the default zoom level of the map
-        // maxZoom={20} // on enabling it, it causes the map to become on zooming much. So, disabled it.
       >
-        <MapCenter />
-        <TileLayer
-          attribution="Google Maps"
-          url="https://www.google.cn/maps/vt?lyrs=m@189&gl=cn&x={x}&y={y}&z={z}"
-        />
-        <Marker
-          draggable={false}
-          // eventHandlers={eventHandlers}
-          position={position}
-          ref={markerRef}
-        />
-        {/* To recenter the map whenever the coordinate changes */}
-        <RecenterAutomatically lat={position[0]} lng={position[1]} />
-        {isEditable &&
-          bikeLocations.map((bike, index) => (
-            <Marker key={index} position={bike} icon={bikeIcon} />
-          ))}
-      </MapContainer>
+        <MapContainer
+          style={{
+            height: "100%",
+            width: "100%",
+          }}
+          zoomControl={false} // hides the + - button for zoom
+          center={initialLocation}
+          zoom={15} // increases the default zoom level of the map
+          // maxZoom={20} // on enabling it, it causes the map to become on zooming much. So, disabled it.
+        >
+          <MapCenter />
+          <TileLayer
+            attribution="Google Maps"
+            url="https://www.google.cn/maps/vt?lyrs=m@189&gl=cn&x={x}&y={y}&z={z}"
+          />
+
+          {/* Hides marker when the map is reduced in size */}
+          {showMarker && (
+            <Marker
+              draggable={false}
+              // eventHandlers={eventHandlers}
+              position={position}
+              // ref={markerRef}
+            />
+          )}
+          {/* To recenter the map whenever the coordinate changes */}
+          <RecenterAutomatically lat={position[0]} lng={position[1]} />
+          {isEditable &&
+            bikeLocations.map((bike, index) => (
+              <Marker key={index} position={bike} icon={bikeIcon} />
+            ))}
+        </MapContainer>
+      </div>
     </>
   );
 };

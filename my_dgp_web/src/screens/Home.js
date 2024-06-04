@@ -43,6 +43,7 @@ export default function Home() {
   const [isMinutesSheetOpen, setIsMinutesSheetOpen] = useState(false);
   const [address, setAddress] = useState(savedData.address);
   const [isBottomSheetOpen, setIsBottomSheetOpen] = useState(false);
+  const [increaseMapHeight, setIncreaseMapHeight] = useState(false);
   const [location, setLocation] = useState([
     parseFloat(savedData.lat) || 28.570679971663644,
     parseFloat(savedData.lng) || 77.16227241314306,
@@ -158,6 +159,8 @@ export default function Home() {
   }, [dispatch, error, packageError, priceError]);
 
   const handleLocationChange = (newLocation) => setLocation(newLocation);
+
+  const handleMapHeightChange = (val) => setIncreaseMapHeight(val)
 
   const TimeSlider = ({ time }) => (
     <div
@@ -358,7 +361,7 @@ export default function Home() {
         {/* Map */}
         <div
           style={{
-            height: subService ? "140px" : "250px",
+            height: (subService && !increaseMapHeight) ? "150px" : "250px",
             display: "flex",
             flexDirection: "column",
             alignItems: "center",
@@ -371,6 +374,8 @@ export default function Home() {
             initialLocation={location}
             searchValue={address}
             isEditable={true}
+            increaseMapHeight={handleMapHeightChange}
+            subService={subService}
           />
         </div>
 
@@ -629,7 +634,7 @@ export default function Home() {
                   style={{ fontWeight: "bold", marginLeft: 10, fontSize: 13 }}
                 >
                   {`Select Service (${
-                    selectedHours == 0
+                    selectedHours === 0
                       ? `${parseInt(selectedMinutes.hours)}hr ${parseInt(
                           selectedMinutes.minutes
                         )} min`
