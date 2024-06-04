@@ -30,7 +30,9 @@ export default function Home() {
   const [selectedService, setSelectedService] = useState(savedData.service);
   const [serviceName, setServiceName] = useState(savedData.serviceName || "");
   const [subService, setSubService] = useState(savedData.subService);
-  const [subServiceName, setSubServiceName] = useState(savedData.subServiceName || "");
+  const [subServiceName, setSubServiceName] = useState(
+    savedData.subServiceName || ""
+  );
   const [servicePackage, setPackage] = useState(savedData.servicePackage);
   const [packageName, setPackageName] = useState(savedData.packageName || "");
   const [selectedHours, setSelectedHours] = useState(savedData.hours || 0);
@@ -42,7 +44,8 @@ export default function Home() {
   const [address, setAddress] = useState(savedData.address);
   const [isBottomSheetOpen, setIsBottomSheetOpen] = useState(false);
   const [location, setLocation] = useState([
-    parseFloat(savedData.lat) || 28.570679971663644, parseFloat(savedData.lng) || 77.16227241314306,
+    parseFloat(savedData.lat) || 28.570679971663644,
+    parseFloat(savedData.lng) || 77.16227241314306,
   ]);
   let TAX = 99;
 
@@ -158,7 +161,13 @@ export default function Home() {
 
   const TimeSlider = ({ time }) => (
     <div
-      onClick={() => setSelectedHours(time)}
+      onClick={() => {
+        setselectedMinutes({
+          hours: "00",
+          minutes: "00",
+        });
+        setSelectedHours(time);
+      }}
       style={{
         backgroundColor: Colors.WHITE,
         display: "inline-flex",
@@ -187,7 +196,8 @@ export default function Home() {
       }}
       style={styles.serviceSliderImageContainer}
     >
-      {icon}
+      {/* In order to make page non-scrollable, we remove icon once sub-service is selected */}
+      {!subService ? icon : null}
       <div
         style={{
           color: service.name === serviceName ? Colors.PRIMARY : Colors.GRAY,
@@ -274,10 +284,10 @@ export default function Home() {
           ₹{" "}
           {prices.find((price) => price.name === `${serviceName} ${p.name}`)
             .charges *
-            (selectedMinutes.hours === "00" && selectedMinutes.minutes === "00"
-              ? selectedHours * 60
-              : parseInt(selectedMinutes.hours) * 60 +
-                parseInt(selectedMinutes.minutes))}
+            (selectedHours === 0
+              ? parseInt(selectedMinutes.hours) * 60 +
+                parseInt(selectedMinutes.minutes)
+              : selectedHours * 60)}
         </div>
       ) : null}
     </div>
@@ -321,7 +331,8 @@ export default function Home() {
       serviceName,
       subServiceName,
       date: finalDate,
-      hours: selectedMinutes.hours === "00" ? selectedHours : selectedMinutes.hours,
+      hours:
+        selectedMinutes.hours === "00" ? selectedHours : selectedMinutes.hours,
       minutes: selectedMinutes.minutes,
       address,
       lat: location[0],
@@ -556,14 +567,15 @@ export default function Home() {
                   >
                     <div
                       style={{ marginRight: 1, fontSize: 22 }}
-                      onClick={() =>
-                        parseInt(selectedMinutes.minutes) > 0
-                          ? setselectedMinutes({
-                              hours: selectedMinutes.hours,
-                              minutes: parseInt(selectedMinutes.minutes) - 1,
-                            })
-                          : null
-                      }
+                      onClick={() => {
+                        setSelectedHours(0);
+                        if (parseInt(selectedMinutes.minutes) > 0) {
+                          setselectedMinutes({
+                            hours: selectedMinutes.hours,
+                            minutes: parseInt(selectedMinutes.minutes) - 1,
+                          });
+                        }
+                      }}
                     >
                       -
                     </div>
@@ -579,6 +591,7 @@ export default function Home() {
                     <div
                       style={{ marginLeft: 2, fontSize: 22 }}
                       onClick={() => {
+                        setSelectedHours(0);
                         if (parseInt(selectedMinutes.minutes) < 59) {
                           setselectedMinutes({
                             hours: selectedMinutes.hours,
@@ -612,7 +625,9 @@ export default function Home() {
             <div style={styles.packagePricesContainer}>
               <div style={styles.packagePriceSubContainer}>
                 <GiStopwatch color={Colors.BLACK} size={19} />
-                <font style={{ fontWeight: "bold", marginLeft: 10, fontSize: 13 }}>
+                <font
+                  style={{ fontWeight: "bold", marginLeft: 10, fontSize: 13 }}
+                >
                   {`Select Service (${selectedHours} hr ${
                     serviceName && serviceName.split(" ")[0]
                   }, ${subServiceName})`}
@@ -798,7 +813,10 @@ export default function Home() {
                 <Btn
                   smallButton={true}
                   title="Save"
-                  onClick={() => setIsMinutesSheetOpen(false)}
+                  onClick={() => {
+                    setSelectedHours(0);
+                    setIsMinutesSheetOpen(false);
+                  }}
                 />
                 <Btn
                   smallButton={true}
