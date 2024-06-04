@@ -358,7 +358,7 @@ export default function Home() {
         {/* Map */}
         <div
           style={{
-            height: "250px",
+            height: subService ? "125px" : "250px",
             display: "flex",
             flexDirection: "column",
             alignItems: "center",
