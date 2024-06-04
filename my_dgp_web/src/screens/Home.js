@@ -358,7 +358,7 @@ export default function Home() {
         {/* Map */}
         <div
           style={{
-            height: subService ? "125px" : "250px",
+            height: subService ? "140px" : "250px",
             display: "flex",
             flexDirection: "column",
             alignItems: "center",
@@ -628,7 +628,13 @@ export default function Home() {
                 <font
                   style={{ fontWeight: "bold", marginLeft: 10, fontSize: 13 }}
                 >
-                  {`Select Service (${selectedHours} hr ${
+                  {`Select Service (${
+                    selectedHours == 0
+                      ? `${parseInt(selectedMinutes.hours)}hr ${parseInt(
+                          selectedMinutes.minutes
+                        )} min`
+                      : selectedHours + "hr"
+                  } ${
                     serviceName && serviceName.split(" ")[0]
                   }, ${subServiceName})`}
                 </font>
