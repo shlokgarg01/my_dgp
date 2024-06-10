@@ -141,6 +141,7 @@ export default function SearchingRider() {
             parseFloat(location.state.coordinates.lng),
           ]}
           isEditable={false}
+          increaseMapHeight={() => {}}
         />
       </div>
 
@@ -245,21 +246,29 @@ export default function SearchingRider() {
                 }}
               >
                 <div>{service_provider?.name}</div>
-                <a
-                  href={`tel:+91${service_provider?.contactNumber}`}
+                <div
                   style={{
-                    height: 40,
-                    width: 40,
-                    borderRadius: 100,
-                    border: `1px solid ${Colors.MEDIUM_GRAY}`,
+                    display: "flex",
                     alignItems: "center",
                     justifyContent: "center",
-                    display: "flex",
-                    textDecoration: "none",
                   }}
                 >
-                  <IoMdCall color={Colors.GRAY} size={25} />
-                </a>
+                  <a
+                    target="_blank"
+                    rel="noreferrer"
+                    href={`https://wa.me/+91${service_provider?.contactNumber}`}
+                  >
+                    <IoLogoWhatsapp color={Colors.DARK_GREEN} size={34} />
+                  </a>
+                  <a
+                    href={`tel:+91${service_provider?.contactNumber}`}
+                    style={{
+                      marginLeft: 10,
+                    }}
+                  >
+                    <IoMdCall color={Colors.GRAY} size={25} />
+                  </a>
+                </div>
               </div>
             </div>
           </div>

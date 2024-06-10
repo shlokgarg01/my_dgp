@@ -7,7 +7,8 @@ export const SavedDataReducer = (state = default_state, action) => {
       return {
         savedData: {
           ...state.savedData,
-          ...action.data}
+          ...action.data
+        }
       };
     case CLEAR_DATA:
       return default_state;

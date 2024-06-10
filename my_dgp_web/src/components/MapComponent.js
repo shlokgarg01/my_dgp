@@ -132,7 +132,6 @@ const MapComponent = ({
         // Handle the click outside map logic here
         increaseMapHeight(false);
         if (subService !== undefined && subService !== "") setShowMarker(false);
-        console.log("Clicked outside map. Decreasing the height", subService);
       }
     };
     document.addEventListener("mousedown", handleClickOutside);

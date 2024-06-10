@@ -13,10 +13,7 @@ import InputGroup from "../components/components/InputGroup";
 import LogoHeader from "../components/components/LogoHeader";
 import Btn from "../components/components/Btn";
 import { FaPhone } from "react-icons/fa";
-import {
-  MdOutlineMail,
-  MdDriveFileRenameOutline,
-} from "react-icons/md";
+import { MdOutlineMail, MdDriveFileRenameOutline } from "react-icons/md";
 import { AiOutlineLogin } from "react-icons/ai";
 import "../styles/ComponentStyles.css";
 import LoaderComponent from "../components/Loader";
@@ -26,10 +23,11 @@ import { EMAIL_REGEX } from "../config/Config";
 import { saveData } from "../actions/DataActions";
 
 export default function UserDetails() {
+  const TIMER = 59;
   const dispatch = useDispatch();
   let [params] = useSearchParams();
   const navigate = useNavigate();
-  const {savedData} = useSelector(state => state.savedData)
+  const { savedData } = useSelector((state) => state.savedData);
 
   const { user, error, isAuthenticated } = useSelector((state) => state.user);
   const [otpLoading, setOtpLoading] = useState(false);
@@ -41,6 +39,7 @@ export default function UserDetails() {
   const [firebaseConfirmation, setFirebaseConfirmation] = useState(null);
   const [editNumber, setEditNumber] = useState(false);
   const [captchaElementCount, setCaptchaElementCount] = useState(0);
+  let [timer, setTimer] = useState(TIMER);
 
   useEffect(() => {
     if (error) {
@@ -79,6 +78,14 @@ export default function UserDetails() {
     // eslint-disable-next-line
   }, [dispatch, error, isAuthenticated]);
 
+  // setting the timer for resend OTP
+  useEffect(() => {
+    const timerID = setInterval(() => {
+      if (timer > 0) setTimer(--timer);
+    }, 1000);
+    return () => clearInterval(timerID);
+  });
+
   const validateOTPSend = () => {
     if (!name) {
       toast.error("Please enter your name");
@@ -102,18 +109,18 @@ export default function UserDetails() {
   };
 
   const addCaptchaDiv = () => {
-    let captcha_id = `captcha-container-${captchaElementCount}`
+    let captcha_id = `captcha-container-${captchaElementCount}`;
     const node = document.createElement("div");
-    node.setAttribute('id', captcha_id)
+    node.setAttribute("id", captcha_id);
 
     document.getElementById("captcha-container").appendChild(node);
     setCaptchaElementCount(captchaElementCount + 1);
     return captcha_id;
-  }
+  };
 
   const sendOTP = async () => {
     if (validateOTPSend()) {
-      let captcha_id = addCaptchaDiv()
+      let captcha_id = addCaptchaDiv();
       setLoading(true);
       const recaptcha = new RecaptchaVerifier(auth, captcha_id, {
         size: "invisible",
@@ -126,6 +133,7 @@ export default function UserDetails() {
       setLoading(false);
       setFirebaseConfirmation(confirmation);
       setEditNumber(false);
+      setTimer(TIMER);
     }
   };
 
@@ -133,8 +141,8 @@ export default function UserDetails() {
     try {
       setOtpLoading(true);
       await firebaseConfirmation.confirm(otp);
-      let data = { name, email, contactNumber }
-      dispatch(saveData(data))
+      let data = { name, email, contactNumber };
+      dispatch(saveData(data));
       dispatch(loginViaOTP(data));
     } catch (err) {
       toast.error("Invalid OTP! Please try again.");
@@ -210,15 +218,15 @@ export default function UserDetails() {
 
                 {firebaseConfirmation && !editNumber ? (
                   <>
-                      <InputGroup
-                        icon={
-                          <AiOutlineLogin size={25} color={Colors.DARK_GRAY} />
-                        }
-                        placeholder="Enter the OTP"
-                        type="number"
-                        value={otp}
-                        onChange={(e) => setOtp(e.target.value)}
-                      />
+                    <InputGroup
+                      icon={
+                        <AiOutlineLogin size={25} color={Colors.DARK_GRAY} />
+                      }
+                      placeholder="Enter the OTP"
+                      type="number"
+                      value={otp}
+                      onChange={(e) => setOtp(e.target.value)}
+                    />
                     <div
                       style={{
                         display: "flex",
@@ -238,16 +246,29 @@ export default function UserDetails() {
                       >
                         Entered Wrong Number?
                       </div>
-                      <div onClick={sendOTP}>Resend OTP</div>
+                      <div>
+                        <div
+                          style={{
+                            color: timer === 0 ? Colors.BLUE : Colors.GRAY,
+                          }}
+                          onClick={timer === 0 ? sendOTP : null}
+                        >
+                          Resend OTP
+                        </div>
+                        <div style={{ color: Colors.GRAY, fontSize: 13 }}>{timer} sec</div>
+                      </div>
                     </div>
                   </>
                 ) : null}
 
-                <div id="captcha-container">
-                </div>
+                <div id="captcha-container"></div>
                 <Btn
-                  onClick={firebaseConfirmation && !editNumber ? submit : sendOTP}
-                  title={firebaseConfirmation && !editNumber ? "Submit" : "Send OTP"}
+                  onClick={
+                    firebaseConfirmation && !editNumber ? submit : sendOTP
+                  }
+                  title={
+                    firebaseConfirmation && !editNumber ? "Submit" : "Send OTP"
+                  }
                   loading={loading}
                 />
               </form>

@@ -14,7 +14,6 @@ const userSchema = new mongoose.Schema(
       type: String,
       required: false,
       default: "dummyemail@mydgp.com",
-      unique: true,
       validate: [validator.isEmail, "Please enter a valid email"],
     },
     contactNumber: {

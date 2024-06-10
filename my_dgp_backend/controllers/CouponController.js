@@ -5,7 +5,8 @@ const Enums = require("../utils/Enums")
 
 // create coupon -- Admin
 exports.createCoupon = catchAsyncErrors(async (req, res, next) => {
-  const existingCoupon = await Coupon.findOne({ code: req.body.code });
+  code = req.body.code.toLowerCase();
+  const existingCoupon = await Coupon.findOne({ code });
 
   if (existingCoupon) {
     return next(
@@ -86,7 +87,8 @@ exports.deleteCoupon = catchAsyncErrors(async (req, res, next) => {
 
 // validate a coupon
 exports.validateCoupon = catchAsyncErrors(async (req, res, next) => {
-  const { code, cartValue } = req.body;
+  let { code, cartValue } = req.body;
+  code = code.toLowerCase();
   const coupon = await Coupon.findOne({ code });
 
   if (!cartValue) {

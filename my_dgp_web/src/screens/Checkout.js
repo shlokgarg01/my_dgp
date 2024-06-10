@@ -15,7 +15,7 @@ import { applyCouponToBooking } from "../actions/CouponActions";
 import axios from "axios";
 import { BASE_URL } from "../config/Axios";
 import { RAZORPAY_KEY_ID } from "../config/Config";
-import { clearData } from "../actions/DataActions";
+import { clearData, saveData } from "../actions/DataActions";
 
 export default function Checkout() {
   const dispatch = useDispatch();
@@ -57,6 +57,7 @@ export default function Checkout() {
 
     if (couponSuccess) {
       toast.success("Coupon Applied");
+      dispatch(saveData({coupon: couponCode, couponDiscount}))
       updatePrices();
     }
 
@@ -203,6 +204,13 @@ export default function Checkout() {
   const applyCoupon = () => {
     dispatch(applyCouponToBooking(couponCode, params.get("totalPrice")));
   };
+
+  const removeCoupon = () => {
+    setTotalPrice(totalPrice + couponDiscount)
+    setCouponCode("");
+    setCouponDiscount(0);
+    dispatch(saveData({ coupon: "", couponDiscount: 0 }))
+  }
 
   const Header1 = ({ data }) => (
     <div
@@ -359,9 +367,10 @@ export default function Checkout() {
               />
               <Btn
                 smallButton
-                onClick={applyCoupon}
-                title="Apply"
+                onClick={savedData.coupon ? removeCoupon : applyCoupon}
+                title={savedData.coupon ? "Remove" : "Apply"}
                 btnHeight={34}
+                bgColor={savedData.coupon ? Colors.RED : Colors.PRIMARY}
                 noMargin
                 leftMargin
               />
