@@ -38,8 +38,12 @@ export default function UserDetails() {
   const [otp, setOtp] = useState(null);
   const [firebaseConfirmation, setFirebaseConfirmation] = useState(null);
   const [editNumber, setEditNumber] = useState(false);
+  const [someoneElseBooking, setSomeoneElseBooking] = useState(false);
   const [captchaElementCount, setCaptchaElementCount] = useState(0);
   let [timer, setTimer] = useState(TIMER);
+
+  const [someoneElseName, setSomeoneElseName] = useState("");
+  const [someoneElseNumber, setSomeoneElseNumber] = useState("");
 
   useEffect(() => {
     if (error) {
@@ -215,7 +219,32 @@ export default function UserDetails() {
                   onChange={(e) => setContactNumber(e.target.value)}
                   disabled={!editNumber && (firebaseConfirmation || loading)}
                 />
-
+                  <input class="form-check-input" type="checkbox" checked={someoneElseBooking} onChange={() => setSomeoneElseBooking(!someoneElseBooking)} />
+                  <label htmlFor="someoneElseBooking">Someone else is booking</label>
+                {someoneElseBooking && 
+                  <>
+                      <InputGroup
+                        icon={
+                          <MdDriveFileRenameOutline
+                            size={25}
+                            color={Colors.DARK_GRAY}
+                          />
+                        }
+                        value={someoneElseName}
+                        onChange={(e) => setSomeoneElseName(e.target.value)}
+                        placeholder="Name"
+                        disabled={firebaseConfirmation || loading}
+                      />
+                      <InputGroup
+                      icon={<FaPhone size={25} color={Colors.DARK_GRAY} />}
+                      placeholder="Contact Number"
+                      type="number"
+                      value={someoneElseNumber}
+                      onChange={(e) => setSomeoneElseNumber(e.target.value)}
+                      disabled={!editNumber && (firebaseConfirmation || loading)}
+                    />
+                  </>
+                }
                 {firebaseConfirmation && !editNumber ? (
                   <>
                     <InputGroup
@@ -239,6 +268,7 @@ export default function UserDetails() {
                       }}
                     >
                       <div
+                        style={{color: Colors.BLACK}}
                         onClick={() => {
                           setEditNumber(true);
                           setContactNumber("");

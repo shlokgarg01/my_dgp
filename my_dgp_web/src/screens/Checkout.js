@@ -292,7 +292,7 @@ export default function Checkout() {
                   data().subServiceName
                 }`}
               />
-              <Header1 data={data().date.slice(0, 10)} />
+              <Header1 data={`${data().date.slice(0, 10)}(${data().hours}hours ${data().minutes} min)`} />
             </div>
 
             <div
@@ -320,15 +320,15 @@ export default function Checkout() {
                 marginTop: 16,
               }}
             >
-              <SubHeading data={data().hours} heading="Total Hours" />
+              {/* <SubHeading data={data().hours} heading="Total Hours" /> */}
               <SubHeading data={`₹ ${data().itemsPrice}`} heading="Sub Total" />
               <SubHeading
                 data={`₹ ${data().taxPrice}`}
-                heading="Service Charge"
+                heading="Convenience charges"
               />
               <SubHeading
                 data={`₹ ${parseInt(data().totalPrice) + couponDiscount}`}
-                heading="Total Price"
+                heading="Total Price(Incl Taxes)"
               />
               {couponDiscount > 0 ? (
                 <>
