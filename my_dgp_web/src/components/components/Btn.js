@@ -9,7 +9,7 @@ export default function Btn({ title, onClick, loading, smallButton, bgColor, noM
       onClick={onClick}
       style={{
         alignSelf: 'center',
-        width: smallButton ? "40%" : "90%",
+        width: smallButton ? "40%" : "100%",
         height: btnHeight,
         backgroundColor: bgColor || Colors.PRIMARY,
         color: Colors.WHITE,

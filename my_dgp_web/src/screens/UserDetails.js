@@ -219,32 +219,6 @@ export default function UserDetails() {
                   onChange={(e) => setContactNumber(e.target.value)}
                   disabled={!editNumber && (firebaseConfirmation || loading)}
                 />
-                  <input class="form-check-input" type="checkbox" checked={someoneElseBooking} onChange={() => setSomeoneElseBooking(!someoneElseBooking)} />
-                  <label htmlFor="someoneElseBooking">Someone else is booking</label>
-                {someoneElseBooking && 
-                  <>
-                      <InputGroup
-                        icon={
-                          <MdDriveFileRenameOutline
-                            size={25}
-                            color={Colors.DARK_GRAY}
-                          />
-                        }
-                        value={someoneElseName}
-                        onChange={(e) => setSomeoneElseName(e.target.value)}
-                        placeholder="Name"
-                        disabled={firebaseConfirmation || loading}
-                      />
-                      <InputGroup
-                      icon={<FaPhone size={25} color={Colors.DARK_GRAY} />}
-                      placeholder="Contact Number"
-                      type="number"
-                      value={someoneElseNumber}
-                      onChange={(e) => setSomeoneElseNumber(e.target.value)}
-                      disabled={!editNumber && (firebaseConfirmation || loading)}
-                    />
-                  </>
-                }
                 {firebaseConfirmation && !editNumber ? (
                   <>
                     <InputGroup
@@ -268,7 +242,7 @@ export default function UserDetails() {
                       }}
                     >
                       <div
-                        style={{color: Colors.BLACK}}
+                        style={{ color: Colors.BLACK }}
                         onClick={() => {
                           setEditNumber(true);
                           setContactNumber("");
@@ -290,6 +264,35 @@ export default function UserDetails() {
                     </div>
                   </>
                 ) : null}
+
+                <div style={{ marginTop: 10, paddingBottom: 10, border: '0.5px solid gray', paddingTop: 10, borderRadius: 10, backgroundColor: 'white' }}>
+                  <label style={{ textAlign: 'start', width: '90%', paddingLeft: 10 }} htmlFor="someoneElseBooking" onTouchStart={() => setSomeoneElseBooking(!someoneElseBooking)}>Book For Someone Else</label>
+                  <input class="form-check-input" type="checkbox" checked={someoneElseBooking} onChange={() => setSomeoneElseBooking(!someoneElseBooking)} />
+                </div>
+                {someoneElseBooking &&
+                  <>
+                    <InputGroup
+                      icon={
+                        <MdDriveFileRenameOutline
+                          size={25}
+                          color={Colors.DARK_GRAY}
+                        />
+                      }
+                      value={someoneElseName}
+                      onChange={(e) => setSomeoneElseName(e.target.value)}
+                      placeholder="Name"
+                      disabled={firebaseConfirmation || loading}
+                    />
+                    <InputGroup
+                      icon={<FaPhone size={25} color={Colors.DARK_GRAY} />}
+                      placeholder="Contact Number"
+                      type="number"
+                      value={someoneElseNumber}
+                      onChange={(e) => setSomeoneElseNumber(e.target.value)}
+                      disabled={!editNumber && (firebaseConfirmation || loading)}
+                    />
+                  </>
+                }
 
                 <div id="captcha-container"></div>
                 <Btn
