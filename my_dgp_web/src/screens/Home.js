@@ -23,6 +23,7 @@ import {
 import Banner from "../images/desktop_banner.jpg";
 import HamburgerMenu from "../components/components/HamburgerMenu";
 import { saveData } from "../actions/DataActions";
+import axios from "axios";
 
 export default function Home() {
   const { savedData } = useSelector((state) => state.savedData);
@@ -57,8 +58,8 @@ export default function Home() {
         new Date().getHours() % 12 === 0 // if hour is 12, then it should set 12 not 00
           ? `12`
           : new Date().getHours() % 12 <= 9
-          ? `0${new Date().getHours() % 12}`
-          : `${new Date().getHours() % 12}`,
+            ? `0${new Date().getHours() % 12}`
+            : `${new Date().getHours() % 12}`,
       ampm: new Date()
         .toLocaleString("en-US", { timeZone: "Asia/Kolkata" })
         .slice(-2),
@@ -146,6 +147,29 @@ export default function Home() {
       console.log("Geolocation is not supported by this browser.");
     }
   }, []);
+
+  //reverse geocode => (lat/long to address)
+  useEffect(() => {
+    if (location) {
+      const fetchAddress = async () => {
+        try {
+          const response = await axios.get('https://nominatim.openstreetmap.org/reverse', {
+            params: {
+              lat: location[0],
+              lon: location[1],
+              format: 'json',
+            },
+          });
+          setAddress(response.data.display_name);
+        } catch (error) {
+          console.log("reverse geo code failed: ", error);
+          // setError('Failed to fetch address');
+        }
+      };
+      fetchAddress();
+    }
+  }, [location]);
+
 
   useEffect(() => {
     dispatch(getAllServices());
@@ -289,7 +313,7 @@ export default function Home() {
             .charges *
             (selectedHours === 0
               ? parseInt(selectedMinutes.hours) * 60 +
-                parseInt(selectedMinutes.minutes)
+              parseInt(selectedMinutes.minutes)
               : selectedHours * 60)}
         </div>
       ) : null}
@@ -306,7 +330,7 @@ export default function Home() {
         selectedMinutes.hours === "00" && selectedMinutes.minutes === "00"
           ? selectedHours * 60
           : parseInt(selectedMinutes.hours) * 60 +
-            parseInt(selectedMinutes.minutes);
+          parseInt(selectedMinutes.minutes);
     }
     return charges * time; // selected time is in hours & charges need to be calculated based on minutes
   };
@@ -323,9 +347,8 @@ export default function Home() {
       return;
     }
 
-    let finalDate = `${date.date.slice(7, 11)}-${
-      Months.find((month) => month.abr === date.date.slice(0, 3)).value
-    }-${date.date.slice(4, 6)}`;
+    let finalDate = `${date.date.slice(7, 11)}-${Months.find((month) => month.abr === date.date.slice(0, 3)).value
+      }-${date.date.slice(4, 6)}`;
     let res = {
       service: selectedService,
       subService,
@@ -587,11 +610,11 @@ export default function Home() {
                     <div onClick={() => setIsMinutesSheetOpen(true)}>
                       {selectedMinutes.hours}:
                       {typeof selectedMinutes.minutes === "string" ||
-                      selectedMinutes.minutes === "00"
+                        selectedMinutes.minutes === "00"
                         ? selectedMinutes.minutes
                         : selectedMinutes.minutes <= 9
-                        ? `0${selectedMinutes.minutes}`
-                        : selectedMinutes.minutes}
+                          ? `0${selectedMinutes.minutes}`
+                          : selectedMinutes.minutes}
                     </div>
                     <div
                       style={{ marginLeft: 2, fontSize: 22 }}
@@ -633,15 +656,13 @@ export default function Home() {
                 <font
                   style={{ fontWeight: "bold", marginLeft: 10, fontSize: 13 }}
                 >
-                  {`Select Service (${
-                    selectedHours === 0
-                      ? `${parseInt(selectedMinutes.hours)}hr ${parseInt(
-                          selectedMinutes.minutes
-                        )} min`
-                      : selectedHours + "hr"
-                  } ${
-                    serviceName && serviceName.split(" ")[0]
-                  }, ${subServiceName})`}
+                  {`Select Service (${selectedHours === 0
+                    ? `${parseInt(selectedMinutes.hours)}hr ${parseInt(
+                      selectedMinutes.minutes
+                    )} min`
+                    : selectedHours + "hr"
+                    } ${serviceName && serviceName.split(" ")[0]
+                    }, ${subServiceName})`}
                 </font>
               </div>
 
@@ -797,8 +818,8 @@ export default function Home() {
                         val === "00"
                           ? val
                           : parseInt(val) <= 9
-                          ? `0${parseInt(val)}`
-                          : val,
+                            ? `0${parseInt(val)}`
+                            : val,
                     });
                   }
                 }}

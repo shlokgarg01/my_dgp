@@ -40,6 +40,7 @@ const MapComponent = ({
   const [position, setPosition] = useState(initialLocation);
   const [bikeLocations, setBikeLocations] = useState([]);
   const [showMarker, setShowMarker] = useState(true);
+  const [isCurrentLocation, setCurrentLocation] = useState(true);
   // const markerRef = useRef(null);
   const mapRef = useRef(null);
 
@@ -69,7 +70,7 @@ const MapComponent = ({
 
       const lat2 = Math.asin(
         Math.sin(lat1) * Math.cos(angularDistance) +
-          Math.cos(lat1) * Math.sin(angularDistance) * Math.cos(bearing)
+        Math.cos(lat1) * Math.sin(angularDistance) * Math.cos(bearing)
       );
       const lon2 =
         lon1 +
@@ -139,14 +140,13 @@ const MapComponent = ({
     return () => {
       document.removeEventListener("mousedown", handleClickOutside);
     };
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [mapRef, subService]);
 
   const updateAddress = async (place) => {
     let add = place.label;
     let results = await geocodeByAddress(add);
     add = results[0].formatted_address;
-
     onSearchChange(add);
     geocodeByAddress(add)
       .then((results) => getLatLng(results[0]))
@@ -184,19 +184,25 @@ const MapComponent = ({
             pointerEvents: "auto",
           }}
         >
-          <GooglePlacesAutocomplete
-            zIndex={100}
-            apiKey={MAP_API_KEY}
-            onMouseDown={updateAddress}
-            apiOptions={{ region: "in" }}
-            selectProps={{
-              onChange: updateAddress,
-              placeholder: "Search your address",
-            }}
-            inputProps={{
-              style: { pointerEvents: "auto" },
-            }}
-          />
+          {isCurrentLocation ?
+            <input
+              style={{ accentColor: Colors.PRIMARY, width: '100%', borderWidth: 0.6, borderColor: Colors.MEDIUM_GRAY, padding: 5 }}
+              value={searchValue}
+              onTouchStart={() => { setCurrentLocation(false) }}
+            />
+            : <GooglePlacesAutocomplete
+              zIndex={100}
+              apiKey={MAP_API_KEY}
+              onMouseDown={updateAddress}
+              apiOptions={{ region: "in" }}
+              selectProps={{
+                onChange: updateAddress,
+                placeholder: "Search your address",
+              }}
+              inputProps={{
+                style: { pointerEvents: "auto" },
+              }}
+            />}
         </div>
       )}
       <div
@@ -214,7 +220,7 @@ const MapComponent = ({
           zoomControl={false} // hides the + - button for zoom
           center={initialLocation}
           zoom={15} // increases the default zoom level of the map
-          // maxZoom={20} // on enabling it, it causes the map to become on zooming much. So, disabled it.
+        // maxZoom={20} // on enabling it, it causes the map to become on zooming much. So, disabled it.
         >
           <MapCenter />
           <TileLayer
@@ -228,7 +234,7 @@ const MapComponent = ({
               draggable={false}
               // eventHandlers={eventHandlers}
               position={position}
-              // ref={markerRef}
+            // ref={markerRef}
             />
           )}
           {/* To recenter the map whenever the coordinate changes */}
