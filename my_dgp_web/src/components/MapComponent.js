@@ -14,6 +14,7 @@ import GooglePlacesAutocomplete, {
   getLatLng,
 } from "react-google-places-autocomplete";
 import { MAP_API_KEY } from "../config/Config";
+import axios from "axios";
 
 delete L.Icon.Default.prototype._getIconUrl;
 
@@ -129,11 +130,11 @@ const MapComponent = ({
 
   useEffect(() => {
     const handleClickOutside = (event) => {
-      if (mapRef.current && !mapRef.current.contains(event.target)) {
-        // Handle the click outside map logic here
-        increaseMapHeight(false);
-        if (subService !== undefined && subService !== "") setShowMarker(false);
-      }
+      // if (mapRef.current && !mapRef.current.contains(event.target)) {
+      //   // Handle the click outside map logic here
+      //   increaseMapHeight(false);
+      //   if (subService !== undefined && subService !== "") setShowMarker(false);
+      // }
     };
     document.addEventListener("mousedown", handleClickOutside);
 
@@ -156,14 +157,34 @@ const MapComponent = ({
       });
   };
 
+  const fetchAddress = async (lat, long) => {
+    try {
+      const response = await axios.get('https://nominatim.openstreetmap.org/reverse', {
+        params: {
+          lat: lat,
+          lon: long,
+          format: 'json',
+        },
+      });
+      onSearchChange(response.data.display_name);
+    } catch (error) {
+      console.log("reverse geo code failed: ", error);
+      // setError('Failed to fetch address');
+    }
+  };
+
   function MapCenter() {
     useMapEvents({
+      dragend: () => {
+        fetchAddress(position[0], position[1])
+        setCurrentLocation(true)
+      },
       drag: (e) => {
         setPosition([e.target.getCenter().lat, e.target.getCenter().lng]);
       },
       click: (e) => {
-        increaseMapHeight(true);
-        setShowMarker(true)
+        // increaseMapHeight(true);
+        // setShowMarker(true)
       },
     });
     return null;
@@ -216,10 +237,11 @@ const MapComponent = ({
           style={{
             height: "100%",
             width: "100%",
+            marginTop: -80
           }}
           zoomControl={false} // hides the + - button for zoom
           center={initialLocation}
-          zoom={15} // increases the default zoom level of the map
+          zoom={16} // increases the default zoom level of the map
         // maxZoom={20} // on enabling it, it causes the map to become on zooming much. So, disabled it.
         >
           <MapCenter />

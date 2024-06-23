@@ -6,13 +6,13 @@ export default function HamburgerMenu() {
   var styles = {
     bmBurgerButton: {
       position: "fixed",
-      width: "28px",
-      height: "25px",
-      left: "2%",
-      top: "2%",
+      width: "25px",
+      height: "24px",
+      left: "3%",
+      top: "15px",
     },
     bmBurgerBars: {
-      background: Colors.BLACK,
+      background: Colors.DARK_GRAY,
     },
     // bmBurgerBarsHover: {
     //   background: "#a90000",
