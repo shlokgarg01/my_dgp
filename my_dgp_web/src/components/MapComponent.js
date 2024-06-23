@@ -240,7 +240,7 @@ const MapComponent = ({
           style={{
             height: "100%",
             width: "100%",
-            marginTop: -80
+            marginTop: -150
           }}
           zoomControl={false} // hides the + - button for zoom
           center={initialLocation}

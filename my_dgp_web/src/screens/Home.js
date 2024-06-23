@@ -385,7 +385,7 @@ export default function Home() {
         {/* Map */}
         <div
           style={{
-            height: '600px',
+            height: '680px',
             // height: (subService && !increaseMapHeight) ? "150px" : "250px",
             display: "flex",
             flexDirection: "column",
