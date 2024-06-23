@@ -36,7 +36,8 @@ const MapComponent = ({
   searchValue,
   isEditable,
   increaseMapHeight,
-  subService
+  subService,
+  setServiceName,
 }) => {
   const [position, setPosition] = useState(initialLocation);
   const [bikeLocations, setBikeLocations] = useState([]);
@@ -229,6 +230,7 @@ const MapComponent = ({
       )}
       <div
         ref={mapRef}
+        onTouchEnd={() => { setServiceName('') }}
         style={{
           height: "100vh",
           width: "100%",

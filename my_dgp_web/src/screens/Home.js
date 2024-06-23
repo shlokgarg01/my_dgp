@@ -402,6 +402,7 @@ export default function Home() {
             isEditable={true}
             increaseMapHeight={handleMapHeightChange}
             subService={subService}
+            setServiceName={setServiceName}
           />
         </div>
 
