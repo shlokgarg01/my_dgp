@@ -115,6 +115,7 @@ const MapComponent = ({
   //   // eslint-disable-next-line
   //   []
   // );
+  // ...
 
   useEffect(() => {
     let coordinates = generateRandomCoordinates(initialLocation);
