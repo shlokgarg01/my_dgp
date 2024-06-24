@@ -141,7 +141,7 @@ export default function SearchingRider() {
             parseFloat(location.state.coordinates.lng),
           ]}
           isEditable={false}
-          increaseMapHeight={() => {}}
+          increaseMapHeight={() => { }}
         />
       </div>
 
@@ -272,7 +272,7 @@ export default function SearchingRider() {
               </div>
             </div>
           </div>
-          <Btn title="Go Back" onClick={() => navigate("/")} />
+          <Btn title="Home" onClick={() => navigate("/")} />
         </>
       ) : (
         <>

@@ -50,6 +50,8 @@ export default function Home() {
     parseFloat(savedData.lng) || 77.16227241314306,
   ]);
   let TAX = 99;
+  const [isRegularActive, setRegularActive] = useState(false);
+  const [isStandardActive, setStandardActive] = useState(false);
 
   const currentTime = () => {
     return {
@@ -285,7 +287,7 @@ export default function Home() {
     </div>
   );
 
-  const PricesContent = ({ p, index }) => (
+  const PricesContent = ({ p, index, isActive }) => (
     <div
       style={{
         display: "flex",
@@ -297,11 +299,16 @@ export default function Home() {
         padding: 12,
         fontSize: 14,
         borderRadius: 7,
+        color: isActive ? 'black' : 'grey',
         boxShadow:
           p.name === packageName ? `1px 1px 4px ${Colors.LIGHT_GRAY}` : null,
         border: p.name === packageName ? `1px solid ${Colors.GRAY}` : null,
       }}
       onClick={() => {
+        if (!isActive) {
+          toast.error("Please increase duration for this service");
+          return;
+        }
         setPackageName(p.name);
         setPackage(p._id);
       }}
@@ -375,6 +382,23 @@ export default function Home() {
       search: createSearchParams(res).toString(),
     });
   };
+
+
+  const handleServicesState = () => {
+    if (selectedHours > 0 || selectedMinutes.hours > 0) {
+      setStandardActive(true)
+      setRegularActive(true)
+      return;
+    }
+    if (selectedMinutes.minutes > 29) {
+      setStandardActive(true)
+    }
+  }
+
+  useEffect(() => {
+    handleServicesState()
+  }, [selectedMinutes])
+
 
   return loading || packageLoading || priceLoading ? (
     <LoaderComponent />
@@ -667,13 +691,13 @@ export default function Home() {
                       )} min`
                       : selectedHours + "hr"
                       } ${serviceName && serviceName.split(" ")[0]
-                      }, ${subServiceName})`}
+                      } for ${subServiceName})`}
                   </font>
                 </div>
 
                 {packages.map((p, index) => (
                   <div>
-                    <PricesContent p={p} index={index} />
+                    <PricesContent p={p} index={index} isActive={index == 2 ? true : (index == 0 ? isRegularActive : isStandardActive)} />
                   </div>
                 ))}
               </div>
