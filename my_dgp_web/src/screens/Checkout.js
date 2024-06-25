@@ -225,7 +225,8 @@ export default function Checkout() {
         paddingBottom: 5,
       }}
     >
-      {data}
+    <span style={{ color: Colors.GRAY, fontWeight: 500 }}>{data}</span>  
+    {/* {data} */}
     </div>
   );
 

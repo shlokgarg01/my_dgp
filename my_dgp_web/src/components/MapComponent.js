@@ -19,8 +19,10 @@ import axios from "axios";
 delete L.Icon.Default.prototype._getIconUrl;
 
 L.Icon.Default.mergeOptions({
-  iconRetinaUrl: require("../images/marker.png"),
-  iconUrl: require("../images/marker.png"),
+  iconRetinaUrl: require("../images/blueMarker.png"),
+  iconUrl: require("../images/blueMarker.png"),
+  // iconRetinaUrl: require("../images/marker.png"),
+  // iconUrl: require("../images/marker.png"),
   iconSize: new L.Point(40, 40),
   iconAnchor: null,
   popupAnchor: null,

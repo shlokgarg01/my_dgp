@@ -108,6 +108,19 @@ export default function UserDetails() {
       toast.error("Invalid contact number");
       return false;
     }
+      else if(someoneElseBooking){
+        if((!someoneElseNumber || someoneElseNumber.length !== 10)){
+          toast.error("Invalid contact number");
+          return false;
+        }else if (!someoneElseName) {
+          toast.error("Please enter your name");
+          return false;
+        } else if (!isNaN(+someoneElseName)) {
+          // true means it's a Number, else a String
+          toast.error("Invalid Name");
+          return false;
+      }
+      }
 
     return true;
   };
@@ -129,9 +142,10 @@ export default function UserDetails() {
       const recaptcha = new RecaptchaVerifier(auth, captcha_id, {
         size: "invisible",
       });
+      let contactNoOTP =contactNumber
       const confirmation = await signInWithPhoneNumber(
         auth,
-        `+91${contactNumber}`,
+        `+91${contactNoOTP}`,
         recaptcha
       );
       setLoading(false);
@@ -145,6 +159,9 @@ export default function UserDetails() {
     try {
       setOtpLoading(true);
       await firebaseConfirmation.confirm(otp);
+      
+      //  contactNumber = someoneElseBooking ? someoneElseNumber : contactNumber;
+      //  name = someoneElseBooking ? someoneElseName :  name
       let data = { name, email, contactNumber };
       dispatch(saveData(data));
       dispatch(loginViaOTP(data));
