@@ -70,6 +70,26 @@ const userSchema = new mongoose.Schema(
       required: false,
       default: 0,
     },
+    accountNo: {
+      type: Number,
+      required: false,
+      default: 0,
+    },
+    ifscCode: {
+      type: Number,
+      required: false,
+      default: 0,
+    },
+    accountHolderName: {
+      type: String,
+      required: false,
+      default: 0,
+    },
+    PortfolioLink: {
+      type: String,
+      required: false,
+      default: 0,
+    },
     isProfileUpdated: {
       type: Boolean,
       default: false
