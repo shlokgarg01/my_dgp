@@ -23,7 +23,8 @@ export default function InputGroup({
         alignItems: "center",
         marginTop: noMargin ? 0 : 16,
         paddingLeft: 10,
-        paddingRight: 10
+        paddingRight: 10,
+        padding: 5
       }}
     >
       {icon}

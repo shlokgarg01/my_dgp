@@ -108,19 +108,19 @@ export default function UserDetails() {
       toast.error("Invalid contact number");
       return false;
     }
-      else if(someoneElseBooking){
-        if((!someoneElseNumber || someoneElseNumber.length !== 10)){
-          toast.error("Invalid contact number");
-          return false;
-        }else if (!someoneElseName) {
-          toast.error("Please enter your name");
-          return false;
-        } else if (!isNaN(+someoneElseName)) {
-          // true means it's a Number, else a String
-          toast.error("Invalid Name");
-          return false;
+    else if (someoneElseBooking) {
+      if ((!someoneElseNumber || someoneElseNumber.length !== 10)) {
+        toast.error("Invalid contact number");
+        return false;
+      } else if (!someoneElseName) {
+        toast.error("Please enter your name");
+        return false;
+      } else if (!isNaN(+someoneElseName)) {
+        // true means it's a Number, else a String
+        toast.error("Invalid Name");
+        return false;
       }
-      }
+    }
 
     return true;
   };
@@ -142,7 +142,7 @@ export default function UserDetails() {
       const recaptcha = new RecaptchaVerifier(auth, captcha_id, {
         size: "invisible",
       });
-      let contactNoOTP =contactNumber
+      let contactNoOTP = contactNumber
       const confirmation = await signInWithPhoneNumber(
         auth,
         `+91${contactNoOTP}`,
@@ -159,7 +159,7 @@ export default function UserDetails() {
     try {
       setOtpLoading(true);
       await firebaseConfirmation.confirm(otp);
-      
+
       //  contactNumber = someoneElseBooking ? someoneElseNumber : contactNumber;
       //  name = someoneElseBooking ? someoneElseName :  name
       let data = { name, email, contactNumber };
@@ -282,7 +282,7 @@ export default function UserDetails() {
                   </>
                 ) : null}
 
-                <div style={{ marginTop: 10, paddingBottom: 10, border: '0.5px solid gray', paddingTop: 10, borderRadius: 10, backgroundColor: 'white' }}>
+                <div style={{ marginTop: 20, paddingBottom: 10, border: '0.2px solid gray', paddingTop: 10, borderRadius: 10, backgroundColor: 'white' }}>
                   <label style={{ textAlign: 'start', width: '90%', paddingLeft: 10 }} htmlFor="someoneElseBooking" onTouchStart={() => setSomeoneElseBooking(!someoneElseBooking)}>Book For Someone Else</label>
                   <input class="form-check-input" type="checkbox" checked={someoneElseBooking} onChange={() => setSomeoneElseBooking(!someoneElseBooking)} />
                 </div>
@@ -314,7 +314,7 @@ export default function UserDetails() {
                 <div id="captcha-container"></div>
                 <Btn
                   onClick={
-                    firebaseConfirmation && !editNumber ? submit : sendOTP
+                    !loading ? (firebaseConfirmation && !editNumber ? submit : sendOTP) : null
                   }
                   title={
                     firebaseConfirmation && !editNumber ? "Submit" : "Send OTP"
