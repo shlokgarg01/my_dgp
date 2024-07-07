@@ -106,7 +106,7 @@ exports.getUserDetails = catchAsyncErrors(async (req, res, next) => {
   if (user) {
     const ordersCount = await Booking.countDocuments({
       serviceProvider: user?._id,
-      status: Enums.BOOKING_STATUS.CLOSED,
+      status: Enums.BOOKING_STATUS.COMPLETED,
     });
     user = {
       ...user._doc,
