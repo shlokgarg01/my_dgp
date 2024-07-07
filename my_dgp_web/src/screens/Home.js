@@ -385,6 +385,8 @@ export default function Home() {
 
 
   const handleServicesState = () => {
+    console.log(selectedHours, 'hh');
+    console.log(selectedMinutes.hours, 'hh2');
     if (selectedHours > 0 || selectedMinutes.hours > 0) {
       setStandardActive(true)
       setRegularActive(true)
@@ -392,12 +394,15 @@ export default function Home() {
     }
     if (selectedMinutes.minutes > 29) {
       setStandardActive(true)
+      return;
     }
+    setStandardActive(false)
+    setRegularActive(false)
   }
 
   useEffect(() => {
     handleServicesState()
-  }, [selectedMinutes])
+  }, [selectedMinutes, selectedHours])
 
   //add buffer hour to prevent past time bookings
   const addHour = (hour) => {
