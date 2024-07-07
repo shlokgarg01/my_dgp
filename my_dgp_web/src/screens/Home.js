@@ -399,6 +399,17 @@ export default function Home() {
     handleServicesState()
   }, [selectedMinutes])
 
+  //add buffer hour to prevent past time bookings
+  const addHour = (hour) => {
+    const bufferHr = 1;
+    if (parseInt(hour) < 9) {
+      //added 0 before number for single digit
+      return `0${parseInt(hour) + bufferHr}`
+    }
+    else {
+      return (parseInt(hour) + bufferHr).toString();
+    }
+  }
 
   return loading || packageLoading || priceLoading ? (
     <LoaderComponent />
@@ -561,7 +572,10 @@ export default function Home() {
                         justifyContent: "center",
                         textAlign: "center",
                       }}
-                      onClick={() => setIsBottomSheetOpen(true)}
+                      onClick={() => {
+                        setIsBottomSheetOpen(true)
+                        setDate({ ...date, hour: addHour(currentTime().hour) })
+                      }}
                     >
                       {new Date(
                         `${date.year}-${date.month}-${date.date}`
@@ -745,14 +759,19 @@ export default function Home() {
                 <h3>Schedule a service</h3>
                 <IoMdClose
                   size={28}
-                  onClick={() => setIsBottomSheetOpen(false)}
+                  onClick={() => {
+                    setDate(currentTime())
+                    setIsBottomSheetOpen(false)
+                  }}
                 />
               </div>
               <div style={{ fontSize: 13 }}>
                 <Picker
                   optionGroups={dateGroup}
                   valueGroups={date}
-                  onChange={(name, val) => setDate({ ...date, [name]: val })}
+                  onChange={(name, val) => {
+                    setDate({ ...date, [name]: val })
+                  }}
                 />
               </div>
               <div
@@ -781,7 +800,8 @@ export default function Home() {
                 <Btn
                   smallButton={true}
                   title="Refresh"
-                  onClick={() => setDate(currentTime())}
+                  onClick={() => setDate({ ...date, hour: addHour(currentTime().hour) })
+                  }
                 />
               </div>
             </Sheet.Content>
@@ -893,7 +913,7 @@ export default function Home() {
           </Sheet.Container>
           <Sheet.Backdrop />
         </Sheet>
-      </div>
+      </div >
     </>
   );
 }
