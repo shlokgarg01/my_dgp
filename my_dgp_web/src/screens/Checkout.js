@@ -21,7 +21,7 @@ export default function Checkout() {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   let [params] = useSearchParams();
-  const {savedData} = useSelector(state => state.savedData)
+  const { savedData } = useSelector(state => state.savedData)
   const { error, loading, success, booking } = useSelector(
     (state) => state.booking
   );
@@ -57,7 +57,7 @@ export default function Checkout() {
 
     if (couponSuccess) {
       toast.success("Coupon Applied");
-      dispatch(saveData({coupon: couponCode, couponDiscount}))
+      dispatch(saveData({ coupon: couponCode, couponDiscount }))
       updatePrices();
     }
 
@@ -195,10 +195,10 @@ export default function Checkout() {
     paymentMode === Enums.PAYMENT_MODES.ONLINE
       ? displayRazorpay()
       : dispatch(
-          createBooking(
-            data(`MYDGP_${Date.now()}`, Enums.PAYMENT_STATUS.NOT_PAID)
-          )
-        );
+        createBooking(
+          data(`MYDGP_${Date.now()}`, Enums.PAYMENT_STATUS.NOT_PAID)
+        )
+      );
   };
 
   const applyCoupon = () => {
@@ -225,8 +225,8 @@ export default function Checkout() {
         paddingBottom: 5,
       }}
     >
-    <span style={{ color: Colors.GRAY, fontWeight: 500 }}>{data}</span>  
-    {/* {data} */}
+      <span style={{ color: Colors.GRAY, fontWeight: 500 }}>{data}</span>
+      {/* {data} */}
     </div>
   );
 
@@ -289,9 +289,8 @@ export default function Checkout() {
               </div>
 
               <Header1
-                data={`${data().serviceName} ${data().packageName}, ${
-                  data().subServiceName
-                }`}
+                data={`${data().serviceName} ${data().packageName}, ${data().subServiceName
+                  }`}
               />
               <Header1 data={`${data().date.slice(0, 10)}(${data().hours}hours ${data().minutes} min)`} />
             </div>
@@ -386,56 +385,60 @@ export default function Checkout() {
             </div>
           </div>
 
-          {/* Payment Mode Radio Button */}
-          <div
-            style={{
-              display: "flex",
-              flexDirection: "row",
-              alignItems: "center",
-              marginLeft: 16,
-              marginTop: 10,
-            }}
-          >
-            <input
-              style={{ accentColor: Colors.PRIMARY }}
-              type="radio"
-              id="paymentModeCash"
-              value={Enums.PAYMENT_MODES.CASH}
-              onChange={(e) => setPaymentMode(e.target.value)}
-              checked={paymentMode === Enums.PAYMENT_MODES.CASH}
-            />
-            <label
-              style={{ fontSize: 18, marginLeft: 7 }}
-              htmlFor="paymentModeCash"
+          <div>
+            {/* Payment Mode Radio Button */}
+            <div
+              style={{
+                display: "flex",
+                flexDirection: "row",
+                alignItems: "center",
+                marginLeft: 16,
+                marginTop: 10,
+              }}
             >
-              {Enums.PAYMENT_MODES.CASH}
-            </label>
-          </div>
-          <div
-            style={{
-              display: "flex",
-              flexDirection: "row",
-              alignItems: "center",
-              marginLeft: 16,
-              marginTop: 10,
-            }}
-          >
-            <input
-              style={{ accentColor: Colors.PRIMARY }}
-              type="radio"
-              id="paymentModeOnline"
-              value={Enums.PAYMENT_MODES.ONLINE}
-              onChange={(e) => setPaymentMode(e.target.value)}
-              checked={paymentMode === Enums.PAYMENT_MODES.ONLINE}
-            />
-            <label
-              style={{ fontSize: 18, marginLeft: 7 }}
-              htmlFor="paymentModeOnline"
+              <input
+                style={{ accentColor: Colors.PRIMARY }}
+                type="radio"
+                id="paymentModeCash"
+                value={Enums.PAYMENT_MODES.CASH}
+                onChange={(e) => setPaymentMode(e.target.value)}
+                checked={paymentMode === Enums.PAYMENT_MODES.CASH}
+              />
+              <label
+                style={{ fontSize: 18, marginLeft: 7 }}
+                htmlFor="paymentModeCash"
+              >
+                {Enums.PAYMENT_MODES.CASH}
+              </label>
+            </div>
+            <div
+              style={{
+                display: "flex",
+                flexDirection: "row",
+                alignItems: "center",
+                marginLeft: 16,
+                marginTop: 10,
+              }}
             >
-              {Enums.PAYMENT_MODES.ONLINE}
-            </label>
+              <input
+                style={{ accentColor: Colors.PRIMARY }}
+                type="radio"
+                id="paymentModeOnline"
+                value={Enums.PAYMENT_MODES.ONLINE}
+                onChange={(e) => setPaymentMode(e.target.value)}
+                checked={paymentMode === Enums.PAYMENT_MODES.ONLINE}
+              />
+              <label
+                style={{ fontSize: 18, marginLeft: 7 }}
+                htmlFor="paymentModeOnline"
+              >
+                {Enums.PAYMENT_MODES.ONLINE}
+              </label>
+            </div>
           </div>
-          <Btn onClick={submit} title="Submit & Proceed" />
+          <div >
+            <Btn onClick={submit} title="Submit & Proceed" />
+          </div>
         </div>
       )}
     </div>
