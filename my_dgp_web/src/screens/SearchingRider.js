@@ -125,14 +125,17 @@ export default function SearchingRider() {
   return loading ? (
     <Loader />
   ) : (
-    <div style={{ height: "10vh", textAlign: "center" }}>
+    <div style={{ height: "10vh", textAlign: "center", padding: 10 }}>
       {/* Map Component */}
       <div
         style={{
-          height: "300px",
+          height: "400px",
           display: "flex",
           flexDirection: "column",
           alignItems: "center",
+          marginTop: 140,
+          marginBottom: -30,
+          zIndex: -100,
         }}
       >
         <MapComponent
@@ -145,53 +148,45 @@ export default function SearchingRider() {
         />
       </div>
 
-      {/* SOS Buttons */}
-      <div
-        style={{
-          display: "flex",
-          flexDirection: "row",
-          alignItems: "center",
-          justifyContent: "flex-end",
-        }}
-      >
-        <SOS
-          text="WhatsApp"
-          color={Colors.DARK_GREEN}
-          link="https://wa.me/+918595703734"
-          Icon={IoLogoWhatsapp}
-          width={160}
-        />
-        <SOS
-          text="SOS"
-          color={Colors.RED}
-          link="tel:+918595703734"
-          Icon={FaShieldAlt}
-          width={100}
-        />
-      </div>
+      <div>
+        {/* SOS Buttons */}
+        <div
+          style={{
+            display: "flex",
+            flexDirection: "row",
+            alignItems: "center",
+            justifyContent: "flex-end",
+            marginTop: -150,
+            zIndex: 100
+          }}
+        >
+          <SOS
+            text="WhatsApp"
+            color={Colors.DARK_GREEN}
+            link="https://wa.me/+918595703734"
+            Icon={IoLogoWhatsapp}
+            width={160}
+          />
+          <SOS
+            text="SOS"
+            color={Colors.RED}
+            link="tel:+918595703734"
+            Icon={FaShieldAlt}
+            width={100}
+          />
+        </div>
 
-      {service_provider ? (
-        <>
-          <div style={{ fontSize: 16, padding: 16 }}>
-            <div
-              style={{
-                color: Colors.DARK_GREEN,
-                fontWeight: 700,
-                fontSize: 17,
-              }}
-            >
-              Your booking has been confirmed.
-            </div>
-            <div
-              style={{
-                display: "flex",
-                flexDirection: "row",
-                alignItems: "center",
-                justifyContent: "space-between",
-              }}
-            >
-              <div style={{ fontSize: 16, marginTop: 10, marginBottom: 10 }}>
-                Start your Service with PIN
+        {service_provider ? (
+          <>
+            <div style={{ fontSize: 16, padding: 16 }}>
+              <div
+                style={{
+                  color: Colors.DARK_GREEN,
+                  fontWeight: 700,
+                  fontSize: 17,
+                }}
+              >
+                Your booking has been confirmed.
               </div>
               <div
                 style={{
@@ -201,127 +196,139 @@ export default function SearchingRider() {
                   justifyContent: "space-between",
                 }}
               >
-                {booking.otp
-                  .toString()
-                  .split("")
-                  .map((digit, index) => (
-                    <div
-                      key={index}
-                      style={{
-                        display: "flex",
-                        alignItems: "center",
-                        justifyContent: "center",
-                        backgroundColor: Colors.WHITE,
-                        marginRight: 3,
-                        borderRadius: 4,
-                        height: 20,
-                        width: 20,
-                        fontSize: 16,
-                      }}
-                    >
-                      {digit}
-                    </div>
-                  ))}
-              </div>
-            </div>
-
-            <div
-              style={{
-                backgroundColor: Colors.WHITE,
-                borderRadius: 16,
-                padding: 10,
-                boxShadow: "0px 0px 16px lightgray",
-                marginTop: 16,
-              }}
-            >
-              <div
-                style={{
-                  display: "flex",
-                  flexDirection: "row",
-                  alignItems: "center",
-                  justifyContent: "space-between",
-                  paddingLeft: 10,
-                  paddingRight: 10,
-                  fontSize: 16,
-                }}
-              >
-                <div>{service_provider?.name}</div>
+                <div style={{ fontSize: 16, marginTop: 10, marginBottom: 10 }}>
+                  Start your Service with PIN
+                </div>
                 <div
                   style={{
                     display: "flex",
+                    flexDirection: "row",
                     alignItems: "center",
-                    justifyContent: "center",
+                    justifyContent: "space-between",
                   }}
                 >
-                  <a
-                    target="_blank"
-                    rel="noreferrer"
-                    href={`https://wa.me/+91${service_provider?.contactNumber}`}
-                  >
-                    <IoLogoWhatsapp color={Colors.DARK_GREEN} size={34} />
-                  </a>
-                  <a
-                    href={`tel:+91${service_provider?.contactNumber}`}
+                  {booking.otp
+                    .toString()
+                    .split("")
+                    .map((digit, index) => (
+                      <div
+                        key={index}
+                        style={{
+                          display: "flex",
+                          alignItems: "center",
+                          justifyContent: "center",
+                          backgroundColor: Colors.WHITE,
+                          marginRight: 3,
+                          borderRadius: 4,
+                          height: 20,
+                          width: 20,
+                          fontSize: 16,
+                        }}
+                      >
+                        {digit}
+                      </div>
+                    ))}
+                </div>
+              </div>
+
+              <div
+                style={{
+                  backgroundColor: Colors.WHITE,
+                  borderRadius: 16,
+                  padding: 10,
+                  boxShadow: "0px 0px 16px lightgray",
+                  marginTop: 16,
+                }}
+              >
+                <div
+                  style={{
+                    display: "flex",
+                    flexDirection: "row",
+                    alignItems: "center",
+                    justifyContent: "space-between",
+                    paddingLeft: 10,
+                    paddingRight: 10,
+                    fontSize: 16,
+                  }}
+                >
+                  <div>{service_provider?.name}</div>
+                  <div
                     style={{
-                      marginLeft: 10,
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "center",
                     }}
                   >
-                    <IoMdCall color={Colors.GRAY} size={25} />
-                  </a>
+                    <a
+                      target="_blank"
+                      rel="noreferrer"
+                      href={`https://wa.me/+91${service_provider?.contactNumber}`}
+                    >
+                      <IoLogoWhatsapp color={Colors.DARK_GREEN} size={34} />
+                    </a>
+                    <a
+                      href={`tel:+91${service_provider?.contactNumber}`}
+                      style={{
+                        marginLeft: 10,
+                      }}
+                    >
+                      <IoMdCall color={Colors.GRAY} size={25} />
+                    </a>
+                  </div>
                 </div>
               </div>
             </div>
-          </div>
-          <Btn title="Home" onClick={() => navigate("/")} />
-        </>
-      ) : (
-        <>
-          <div
-            style={{
-              fontSize: 20,
-              fontWeight: "600",
-              marginTop: 20,
-              marginBottom: 20,
-            }}
-          >
-            Contacting People Nearby...
-          </div>
-
-          <div
-            style={{
-              width: "100%",
-              height: "10px",
-              backgroundColor: Colors.MEDIUM_GRAY,
-            }}
-          >
+            <Btn title="Home" onClick={() => navigate("/")} />
+          </>
+        ) : (
+          <>
             <div
               style={{
-                width: `${loadingPercentage}%`,
-                height: "100%",
-                backgroundColor: Colors.GREEN,
+                fontSize: 20,
+                fontWeight: "600",
+                marginTop: 20,
+                marginBottom: 20,
               }}
-            ></div>
-          </div>
+            >
+              Contacting People Nearby...
+            </div>
 
-          <img
-            src={SearchRider}
-            style={{
-              height: 200,
-              width: 200,
-              borderRadius: 100,
-              // marginBottom: 25
-            }}
-            alt=""
-          />
+            <div
+              style={{
+                width: "100%",
+                height: "10px",
+                backgroundColor: Colors.MEDIUM_GRAY,
+              }}
+            >
+              <div
+                style={{
+                  width: `${loadingPercentage}%`,
+                  height: "100%",
+                  backgroundColor: Colors.GREEN,
+                }}
+              ></div>
+            </div>
 
-          {/* Cancel Button */}
-          <Btn
-            bgColor={Colors.RED}
-            onClick={cancelTheBooking}
-            title="CANCEL BOOKING"
-          />
-        </>
-      )}
+            <img
+              src={SearchRider}
+              style={{
+                height: 200,
+                width: 200,
+                borderRadius: 100,
+                // marginBottom: 25
+              }}
+              alt=""
+            />
+
+            {/* Cancel Button */}
+            <Btn
+              bgColor={Colors.RED}
+              onClick={cancelTheBooking}
+              title="CANCEL BOOKING"
+            />
+          </>
+        )}
+      </div>
     </div>
   );
 }

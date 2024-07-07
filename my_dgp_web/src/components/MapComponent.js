@@ -184,7 +184,7 @@ const MapComponent = ({
         setCurrentLocation(true)
       },
       drag: (e) => {
-        setPosition([e.target.getCenter().lat, e.target.getCenter().lng]);
+        isEditable && setPosition([e.target.getCenter().lat, e.target.getCenter().lng]);
       },
       click: (e) => {
         // increaseMapHeight(true);
@@ -232,7 +232,7 @@ const MapComponent = ({
       )}
       <div
         ref={mapRef}
-        onTouchEnd={() => { setServiceName('') }}
+        onTouchEnd={() => { isEditable && setServiceName('') }}
         style={{
           height: "100vh",
           width: "100%",
