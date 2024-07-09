@@ -3,6 +3,81 @@ const validator = require("validator");
 const jwt = require("jsonwebtoken");
 const Enums = require("../utils/Enums");
 
+const accountDetailsSchema = new mongoose.Schema({
+  accountNo: {
+    type: Number,
+    required: false,
+    default: 0,
+  },
+  ifscCode: {
+    type: Number,
+    required: false,
+  },
+  accountHolderName: {
+    type: String,
+    required: false,
+    default: '',
+  },
+});
+
+const equipmentItemsSchema = new mongoose.Schema({
+  val1: {
+    type: String,
+    required: false,
+    default: '',
+  },
+  val2: {
+    type: String,
+    required: false,
+    default: '',
+  },
+  val3: {
+    type: String,
+    required: false,
+    default: '',
+  },
+  val4: {
+    type: String,
+    required: false,
+    default: '',
+  },
+  val5: {
+    type: String,
+    required: false,
+    default: '',
+  },
+  val6: {
+    type: String,
+    required: false,
+    default: '',
+  },
+  val7: {
+    type: String,
+    required: false,
+    default: '',
+  },
+  val8: {
+    type: String,
+    required: false,
+    default: '',
+  },
+  val9: {
+    type: String,
+    required: false,
+    default: '',
+  },
+  val10: {
+    type: String,
+    required: false,
+    default: '',
+  },
+  val11: {
+    type: String,
+    required: false,
+    default: '',
+  },
+});
+
 const userSchema = new mongoose.Schema(
   {
     name: {
@@ -70,20 +145,8 @@ const userSchema = new mongoose.Schema(
       required: false,
       default: 0,
     },
-    accountNo: {
-      type: Number,
-      required: false,
-      default: 0,
-    },
-    ifscCode: {
-      type: Number,
-      required: false,
-    },
-    accountHolderName: {
-      type: String,
-      required: false,
-      default: '',
-    },
+    accountDetails: accountDetailsSchema,
+    equipmentDetails: equipmentItemsSchema,
     PortfolioLink: {
       type: String,
       required: false,
