@@ -78,17 +78,16 @@ const userSchema = new mongoose.Schema(
     ifscCode: {
       type: Number,
       required: false,
-      default: 0,
     },
     accountHolderName: {
       type: String,
       required: false,
-      default: 0,
+      default: '',
     },
     PortfolioLink: {
       type: String,
       required: false,
-      default: 0,
+      default: '',
     },
     isProfileUpdated: {
       type: Boolean,
