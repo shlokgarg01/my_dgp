@@ -1,14 +1,23 @@
 import { slide as Menu } from "react-burger-menu";
-import React from "react";
+import React, { useState, useEffect } from 'react';
 import Colors from "../../utils/Colors";
 
 export default function HamburgerMenu() {
+
+  const [windowWidth, setWindowWidth] = useState(window.innerWidth);
+
+  useEffect(() => {
+    const handleResize = () => setWindowWidth(window.innerWidth);
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
+
   var styles = {
     bmBurgerButton: {
       position: "fixed",
       width: "25px",
       height: "24px",
-      left: "3%",
+      left: windowWidth <= 768 ? "3%" : "50%", // Adjust value for mobile
       top: "15px",
     },
     bmBurgerBars: {

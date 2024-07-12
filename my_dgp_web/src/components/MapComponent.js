@@ -197,16 +197,9 @@ const MapComponent = ({
   return (
     <>
       {isEditable && (
-        <div
+        <div className="search-container"
           style={{
-            top: 10,
-            position: "absolute",
-            left: "11.5%",
-            borderRadius: 100,
-            zIndex: 1000,
-            width: "85%",
             boxShadow: `0px 2px 4px ${Colors.LIGHT_GRAY}`,
-            pointerEvents: "auto",
           }}
         >
           {isCurrentLocation ?
@@ -214,6 +207,7 @@ const MapComponent = ({
               style={{ accentColor: Colors.PRIMARY, width: '100%', borderWidth: 0.6, borderColor: Colors.MEDIUM_GRAY, padding: 5 }}
               value={searchValue}
               onTouchStart={() => { setCurrentLocation(false) }}
+              onChange={() => { setCurrentLocation(false) }}
             />
             : <GooglePlacesAutocomplete
               zIndex={100}

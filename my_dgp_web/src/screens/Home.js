@@ -446,7 +446,7 @@ export default function Home() {
           />
         </div>
 
-        <div style={{ position: 'absolute', bottom: 0, left: 0, right: 0, zIndex: 1000, backgroundColor: 'white' }}>
+        <div className="homepage-container" >
           {/* Tag line */}
           <div
             style={{
@@ -524,7 +524,7 @@ export default function Home() {
 
           {/* Banner */}
           {(!serviceName || !subService) && (
-            <div style={{ margin: 10 }}>
+            <div className="home-banner">
               <img
                 alt="Banner"
                 src={Banner}

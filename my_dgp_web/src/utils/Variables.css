@@ -6,3 +6,72 @@
   --gray-color: #808080;
   --dark-gray-color: #545454;
 }
+
+/* In Variables.css or another CSS file */
+.app-container {
+  display: flex;
+  flex-direction: column;
+  height: 100vh; /* Ensure the container takes full viewport height */
+}
+
+.app-image {
+  display: none;
+}
+
+.homepage-container{
+  position: absolute ;
+  bottom: 0;
+  left: 0%;
+  right: 0;
+  z-index:  1000;
+  background-Color: white; 
+}
+
+.home-banner{
+  margin: 10
+}
+
+.search-container{
+  top: 10px;
+  position: absolute;
+  left: 11.5%;
+  border-radius: 100;
+  z-index: 1000;
+  width: 85%;
+  pointer-events: auto
+}
+@media (min-width: 768px) {
+  .app-container {
+    flex-direction: row;
+  }
+
+  .homepage-container{
+    left: 50%;
+  }
+
+  .app-image {
+    display: block;
+    width: 50%;
+    height: 100%; /* Make sure the image container takes full height */
+  }
+
+  .app-image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover; /* Ensure the image covers the container without stretching */
+  }
+
+  .app-content {
+    width: 50%;
+    height: 100%; /* Ensure the content takes full height */
+  }
+
+  .home-banner{
+    display: none;
+  }
+
+  .search-container{
+  
+  left: 52%;
+  width: 47%;}
+}
