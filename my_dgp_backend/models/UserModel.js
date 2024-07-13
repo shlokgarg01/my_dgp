@@ -10,8 +10,9 @@ const accountDetailsSchema = new mongoose.Schema({
     default: 0,
   },
   ifscCode: {
-    type: Number,
+    type: String,
     required: false,
+    default: '',
   },
   accountHolderName: {
     type: String,
