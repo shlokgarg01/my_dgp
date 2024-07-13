@@ -25,11 +25,6 @@ const bookingModel = new mongoose.Schema(
       ref: "Service",
       required: false,
     },
-    booking: {
-      type: String,
-      ref: "Booking",
-      required: true,
-    },
     subService: {
       type: mongoose.Schema.ObjectId,
       ref: "SubService",

@@ -262,7 +262,7 @@ exports.getCurrentBookingsOfAUser = catchAsyncErrors(async (req, res, next) => {
     status: {
       $nin: [Enums.BOOKING_STATUS.COMPLETED, Enums.BOOKING_STATUS.CANCELLED],
     },
-  }).populate("customer address");
+  }).populate("customer address service subService")
 
   res.status(200).json({
     success: true,
@@ -282,13 +282,7 @@ exports.getFutureBookingsOfAUser = catchAsyncErrors(async (req, res, next) => {
     },
   })
     .sort("date")
-    .populate("customer address booking service subService")
-    .populate({
-      path: "booking",
-      populate: {
-        path: "subService package",
-      },
-    });
+    .populate("customer address service subService")
 
   res.status(200).json({
     success: true,
