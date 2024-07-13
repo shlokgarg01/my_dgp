@@ -118,11 +118,11 @@ exports.createBooking = catchAsyncErrors(async (req, res, next) => {
 // update status of booking - to be done by the service_provider
 exports.updateBookingStatus = catchAsyncErrors(async (req, res, next) => {
   let booking = await Booking.findOne({
-      _id: req.params.id,
-      serviceProvider: req.user._id,
-    }).select("+otp"),
+    _id: req.params.id,
+    serviceProvider: req.user._id,
+  }).select("+otp"),
     newStatus = req.body.status,
-    {otp, photoNumber} = req.body;
+    { otp, photoNumber } = req.body;
 
   if (!booking) {
     return next(new ErrorHandler("No such booking exists!", 404));
@@ -282,7 +282,7 @@ exports.getFutureBookingsOfAUser = catchAsyncErrors(async (req, res, next) => {
     },
   })
     .sort("date")
-    .populate("customer address");
+    .populate("customer address booking service");
 
   res.status(200).json({
     success: true,
@@ -311,16 +311,16 @@ exports.confirmBookingStatus = catchAsyncErrors(async (req, res, next) => {
       },
       { new: true, runValidators: true, useFindAndModify: false }
     )
-    
+
     // refund amount if it was pre-paid order
     if (booking.paymentInfo.status === Enums.PAYMENT_STATUS.PAID) {
       let payment_id = booking.paymentInfo.id,
-      amount = booking.totalPrice * 100;
+        amount = booking.totalPrice * 100;
       const instance = new Razorpay({
         key_id: process.env.RAZORPAY_KEY_ID,
         key_secret: process.env.RAZORPAY_SECRET,
       });
-      
+
       const razorpayResponse = await instance.payments.refund(payment_id, {
         amount,
       });
