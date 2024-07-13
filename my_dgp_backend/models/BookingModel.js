@@ -25,6 +25,11 @@ const bookingModel = new mongoose.Schema(
       ref: "Service",
       required: false,
     },
+    booking: {
+      type: String,
+      ref: "Booking",
+      required: false,
+    },
     subService: {
       type: mongoose.Schema.ObjectId,
       ref: "SubService",
@@ -138,7 +143,7 @@ bookingModel.pre("save", async function (next) {
     );
     const idString = counter.seq.toString().padStart(6, "0"); // Ensure 6-digit format
     doc._id = idString;
-          next();
+    next();
   } catch (error) {
     console.error("Error in findByIdAndUpdate:", error);
     next(error);

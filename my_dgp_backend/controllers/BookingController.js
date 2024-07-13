@@ -282,7 +282,13 @@ exports.getFutureBookingsOfAUser = catchAsyncErrors(async (req, res, next) => {
     },
   })
     .sort("date")
-    .populate("customer address service")
+    .populate("customer address booking service")
+    .populate({
+      path: "booking",
+      populate: {
+        path: "subService package",
+      },
+    });
 
   res.status(200).json({
     success: true,
