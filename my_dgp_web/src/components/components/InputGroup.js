@@ -11,8 +11,18 @@ export default function InputGroup({
   bgColor,
   disabled,
   roundedBorder,
-  noMargin
+  noMargin,
+  maxLength =""
 }) {
+  const handleInputChange = (e) => {
+    if (type === "number" && maxLength) {
+      if (e.target.value.length <= maxLength) {
+        onChange(e);
+      }
+    } else {
+      onChange(e);
+    }
+  };
   return (
     <div
       style={{
@@ -44,7 +54,7 @@ export default function InputGroup({
           borderRadius: roundedBorder ? 100 : 7,
         }}
         value={value}
-        onChange={onChange}
+        onChange={handleInputChange}
       />
       {trailingIcon}
     </div>

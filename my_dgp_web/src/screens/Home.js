@@ -15,6 +15,8 @@ import Picker from "react-scrollable-picker";
 import { Hours, AmPm, Minutes, Months, Quaters } from "../utils/Data/Date";
 import { toast } from "react-custom-alert";
 import { IoMdAlarm, IoMdClose } from "react-icons/io";
+import { FaInfoCircle } from 'react-icons/fa';
+
 import {
   MdOutlineAddAPhoto,
   MdOutlineVideocam,
@@ -52,6 +54,7 @@ export default function Home() {
   let TAX = 99;
   const [isRegularActive, setRegularActive] = useState(false);
   const [isStandardActive, setStandardActive] = useState(false);
+  const [showEyeButton, setShowEyeButton] = useState({});
 
   const currentTime = () => {
     return {
@@ -187,6 +190,13 @@ export default function Home() {
 
   const handleMapHeightChange = (val) => setIncreaseMapHeight(val)
 
+  const toggleShowEyeButton = (index) => {
+    setShowEyeButton((prev) => ({
+      ...prev,
+      [index]: !prev[index],
+    }));
+  };
+
   const TimeSlider = ({ time }) => (
     <div
       onClick={() => {
@@ -313,8 +323,17 @@ export default function Home() {
         setPackage(p._id);
       }}
     >
-      <div>{p.name}</div>
-      {loading === false ? (
+    <div style={{ display: 'flex', alignItems: 'center' }}>
+    {p.name}      
+    <div  onClick={() => toggleShowEyeButton(index)}>
+        <FaInfoCircle style={{ cursor: 'pointer', marginLeft: 8 }} />
+        {showEyeButton[index] && (
+          <div className="tooltiptext">
+            {`  ${Math.round(prices.find((price) => price.name === `${serviceName} ${p.name}`).charges)} per min`}
+          </div>
+        )}
+      </div>
+      </div>      {loading === false ? (
         <div>
           ₹{" "}
           {Math.round(prices.find((price) => price.name === `${serviceName} ${p.name}`)

@@ -40,6 +40,46 @@
   width: 85%;
   pointer-events: auto
 }
+
+.tooltip {
+  position: relative;
+  display: inline-block;
+  cursor: pointer;
+}
+
+.tooltip .tooltiptext {
+  visibility: hidden;
+  width: 120px;
+  background-color: #555;
+  color: #ffffff;
+  text-align: center;
+  border-radius: 6px;
+  padding: 5px 0;
+  position: absolute;
+  z-index: 1;
+  bottom: 125%; /* Position the tooltip above the text */
+  left: 50%;
+  margin-left: -60px;
+  opacity: 0;
+  transition: opacity 0.3s;
+}
+
+.tooltip .tooltiptext::after {
+  content: "";
+  position: absolute;
+  top: 100%; /* At the bottom of the tooltip */
+  left: 50%;
+  margin-left: -5px;
+  border-width: 5px;
+  border-style: solid;
+  border-color: #555 transparent transparent transparent;
+}
+
+.tooltip:hover .tooltiptext {
+  visibility: visible;
+  opacity: 1;
+}
+
 @media (min-width: 768px) {
   .app-container {
     flex-direction: row;
@@ -47,6 +87,7 @@
 
   .homepage-container{
     left: 50%;
+    padding: 15px
   }
 
   .app-image {
@@ -72,6 +113,6 @@
 
   .search-container{
   
-  left: 52%;
-  width: 47%;}
+  left: 54%;
+  width: 45%;}
 }

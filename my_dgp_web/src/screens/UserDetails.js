@@ -235,6 +235,7 @@ export default function UserDetails() {
                   value={contactNumber}
                   onChange={(e) => setContactNumber(e.target.value)}
                   disabled={!editNumber && (firebaseConfirmation || loading)}
+                  maxLength="10"
                 />
                 {firebaseConfirmation && !editNumber ? (
                   <>
@@ -307,6 +308,7 @@ export default function UserDetails() {
                       value={someoneElseNumber}
                       onChange={(e) => setSomeoneElseNumber(e.target.value)}
                       disabled={!editNumber && (firebaseConfirmation || loading)}
+                      maxLength="10"
                     />
                   </>
                 }
