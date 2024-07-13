@@ -317,12 +317,12 @@ export default function Home() {
       {loading === false ? (
         <div>
           ₹{" "}
-          {prices.find((price) => price.name === `${serviceName} ${p.name}`)
+          {Math.round(prices.find((price) => price.name === `${serviceName} ${p.name}`)
             .charges *
             (selectedHours === 0
               ? parseInt(selectedMinutes.hours) * 60 +
               parseInt(selectedMinutes.minutes)
-              : selectedHours * 60)}
+              : selectedHours * 60))}
         </div>
       ) : null}
     </div>

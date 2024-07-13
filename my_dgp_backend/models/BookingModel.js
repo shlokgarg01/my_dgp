@@ -28,7 +28,7 @@ const bookingModel = new mongoose.Schema(
     booking: {
       type: String,
       ref: "Booking",
-      required: false,
+      required: true,
     },
     subService: {
       type: mongoose.Schema.ObjectId,
