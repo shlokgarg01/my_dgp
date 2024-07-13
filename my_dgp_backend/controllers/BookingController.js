@@ -282,7 +282,7 @@ exports.getFutureBookingsOfAUser = catchAsyncErrors(async (req, res, next) => {
     },
   })
     .sort("date")
-    .populate("customer address booking service")
+    .populate("customer address booking service subService")
     .populate({
       path: "booking",
       populate: {
