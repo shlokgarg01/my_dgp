@@ -17,7 +17,7 @@ export default function HamburgerMenu() {
       position: "fixed",
       width: "25px",
       height: "24px",
-      left: windowWidth <= 768 ? "3%" : "51%", // Adjust value for mobile
+      left: windowWidth <= 768 ? "3%" : "2%", // Adjust value for mobile
       top: "15px",
     },
     bmBurgerBars: {

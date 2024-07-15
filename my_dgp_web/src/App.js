@@ -13,9 +13,6 @@ import Banner from './images/desktop_banner.jpg'
 export default function App() {
   return (
     <div className="app-container">
-      <div className="app-image">
-        <img src={Banner} alt="Display"  />
-      </div>
       <div className="app-content">
         <Router>
           <Routes>
@@ -27,6 +24,9 @@ export default function App() {
             <Route path="*" element={<NotFound />} />
           </Routes>
         </Router>
+      </div>
+      <div className="app-image">
+        <img src={Banner} alt="Display"  />
       </div>
     </div>
   );

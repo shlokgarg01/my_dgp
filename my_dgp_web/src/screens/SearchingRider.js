@@ -29,6 +29,13 @@ export default function SearchingRider() {
     (state) => state.cancelledBooking
   );
 
+
+  const [showDropdown, setShowDropdown] = useState(false);
+
+  const toggleDropdown = () => {
+    setShowDropdown(!showDropdown);
+  };
+
   useEffect(() => {
     if (error) {
       toast.error(error);
@@ -160,7 +167,7 @@ export default function SearchingRider() {
             zIndex: 100
           }}
         >
-          <SOS
+          {/* <SOS
             text="WhatsApp"
             color={Colors.DARK_GREEN}
             link="https://wa.me/+918595703734"
@@ -173,7 +180,30 @@ export default function SearchingRider() {
             link="tel:+918595703734"
             Icon={FaShieldAlt}
             width={100}
+          /> */}
+           <div className="dropdown-container">
+      <button className="dropdown-button" onClick={toggleDropdown}>SOS Options</button>
+      <div className={`dropdown-content ${showDropdown ? 'show' : ''}`}>
+        <div className="dropdown-item">
+          <SOS
+            text="WhatsApp"
+            color={Colors.DARK_GREEN}
+            link="https://wa.me/+918595703734"
+            Icon={IoLogoWhatsapp}
+            width={160}
           />
+        </div>
+        <div className="dropdown-item">
+          <SOS
+            text="SOS"
+            color={Colors.RED}
+            link="tel:+918595703734"
+            Icon={FaShieldAlt}
+            width={100}
+          />
+        </div>
+      </div>
+    </div>
         </div>
 
         {service_provider ? (
@@ -332,3 +362,4 @@ export default function SearchingRider() {
     </div>
   );
 }
+

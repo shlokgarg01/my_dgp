@@ -48,6 +48,17 @@ const MapComponent = ({
   // const markerRef = useRef(null);
   const mapRef = useRef(null);
 
+  const [windowWidth, setWindowWidth] = useState(window.innerWidth);
+
+  useEffect(() => {
+    const handleResize = () => setWindowWidth(window.innerWidth);
+    
+    window.addEventListener('resize', handleResize);
+    
+    // Cleanup the event listener on component unmount
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
+
   const generateRandomCoordinates = (newLocation) => {
     const earthRadiusKm = 6371;
 
@@ -236,7 +247,7 @@ const MapComponent = ({
           style={{
             height: "100%",
             width: "100%",
-            marginTop: -150
+            marginTop:  windowWidth <= 768 ? "-150px" : "0px",
           }}
           zoomControl={false} // hides the + - button for zoom
           center={initialLocation}
