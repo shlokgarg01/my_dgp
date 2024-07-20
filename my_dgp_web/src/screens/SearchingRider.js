@@ -152,6 +152,7 @@ export default function SearchingRider() {
           ]}
           isEditable={false}
           increaseMapHeight={() => { }}
+          searchRider={true}
         />
       </div>
 

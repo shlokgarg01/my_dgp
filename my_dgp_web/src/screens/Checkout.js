@@ -127,7 +127,7 @@ export default function Checkout() {
     let result;
     try {
       result = await axios.post(`${BASE_URL}/api/v1/bookings/createOrder`, {
-        amount: data().totalPrice,
+        amount: Math.round(data().totalPrice),
         service: data().service,
         subService: data().subService,
         package: data().package,
@@ -284,7 +284,7 @@ export default function Checkout() {
                   </div>
                 </div>
                 <div style={{ fontWeight: 700, fontSize: 22 }}>
-                  ₹{totalPrice}
+                  ₹{Math.round(totalPrice)}
                 </div>
               </div>
 
@@ -321,13 +321,13 @@ export default function Checkout() {
               }}
             >
               {/* <SubHeading data={data().hours} heading="Total Hours" /> */}
-              <SubHeading data={`₹ ${data().itemsPrice}`} heading="Sub Total" />
+              <SubHeading data={`₹ ${Math.round(data().itemsPrice)}`} heading="Sub Total" />
               <SubHeading
-                data={`₹ ${data().taxPrice}`}
+                data={`₹ ${Math.round(data().taxPrice)}`}
                 heading="Convenience charges"
               />
               <SubHeading
-                data={`₹ ${parseInt(data().totalPrice) + couponDiscount}`}
+                data={`₹ ${parseInt(Math.round(data().totalPrice)) + couponDiscount}`}
                 heading="Total Price(Incl Taxes)"
               />
               {couponDiscount > 0 ? (
@@ -336,7 +336,7 @@ export default function Checkout() {
                     data={`₹ ${discount}`}
                     heading="Coupon Discount"
                   />
-                  <SubHeading data={`₹ ${totalPrice}`} heading="Final Price" />
+                  <SubHeading data={`₹ ${Math.round(totalPrice)}`} heading="Final Price" />
                 </>
               ) : null}
             </div>

@@ -8,6 +8,10 @@ import './utils/Variables.css'
 import SearchingRider from './screens/SearchingRider'
 // import "leaflet/dist/leaflet.css";
 import Banner from './images/desktop_banner.jpg'
+import TermsAndConditions from '../src/screens/TermsAndConditions '
+import PrivacyPolicy from '../src/screens/PrivacyPolicy '
+import RefundPolicy from '../src/screens/RefundPolicy '
+import help from '../src/screens/Help'
 
 
 export default function App() {
@@ -21,6 +25,10 @@ export default function App() {
             <Route exact path="/searchingRider" element={<SearchingRider />} />
             <Route exact path="/checkout" element={<Checkout />} />
             <Route exact path="/admin/login" element={<Home />} />
+            <Route exact path="/terms-and-conditions" element={<TermsAndConditions/>} />
+            <Route exact path="/privacy-policy" element={<PrivacyPolicy/>} />
+            <Route exact path="/refund-policy" element={<RefundPolicy />} />
+            <Route exact path="/help" element={<help/>} />
             <Route path="*" element={<NotFound />} />
           </Routes>
         </Router>

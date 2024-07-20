@@ -1,6 +1,7 @@
 import { slide as Menu } from "react-burger-menu";
 import React, { useState, useEffect } from 'react';
 import Colors from "../../utils/Colors";
+import { Link } from "react-router-dom";
 
 export default function HamburgerMenu() {
 
@@ -63,9 +64,18 @@ export default function HamburgerMenu() {
   return (
     <div style={{ zIndex: 10000000 }}>
       <Menu styles={styles}>
-        <a id="home" className="menu-item" href="/">
+        <Link id="home" className="menu-item" to="/terms-and-conditions">
           Terms & Conditions
-        </a>
+        </Link>
+        <Link id="home" className="menu-item"  to="/privacy-policy">
+          Privacy Policy
+        </Link>
+        <Link id="home" className="menu-item" to="/refund-policy">
+          Refund Policy
+        </Link>
+        <Link id="home" className="menu-item" to="/help">
+          Help
+        </Link>
         {/* <a id="about" className="menu-item" href="/about">
           About
         </a>

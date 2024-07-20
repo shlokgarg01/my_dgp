@@ -40,6 +40,7 @@ const MapComponent = ({
   increaseMapHeight,
   subService,
   setServiceName,
+  searchRider,
 }) => {
   const [position, setPosition] = useState(initialLocation);
   const [bikeLocations, setBikeLocations] = useState([]);
@@ -247,7 +248,7 @@ const MapComponent = ({
           style={{
             height: "100%",
             width: "100%",
-            marginTop:  windowWidth <= 768 ? "-150px" : "0px",
+            marginTop: searchRider ||  windowWidth <= 768 ? "-150px" : "0px",
           }}
           zoomControl={false} // hides the + - button for zoom
           center={initialLocation}

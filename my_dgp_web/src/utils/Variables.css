@@ -80,6 +80,15 @@
   opacity: 1;
 }
 
+
+.tooltip-center{
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  gap: 15px;
+}
+
 @media (min-width: 768px) {
   .app-container {
     flex-direction: row;

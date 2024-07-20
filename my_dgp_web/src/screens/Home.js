@@ -325,7 +325,7 @@ export default function Home() {
     >
     <div style={{ display: 'flex', alignItems: 'center' }}>
     {p.name}      
-    <div  onClick={() => toggleShowEyeButton(index)}>
+    <div className="tooltip-center" onClick={() => toggleShowEyeButton(index)}>
         <FaInfoCircle style={{ cursor: 'pointer', marginLeft: 8 }} />
         {showEyeButton[index] && (
           <div className="tooltiptext">
