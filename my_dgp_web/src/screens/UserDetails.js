@@ -246,6 +246,7 @@ export default function UserDetails() {
                       placeholder="Enter the OTP"
                       type="number"
                       value={otp}
+                      maxLength="6"
                       onChange={(e) => setOtp(e.target.value)}
                     />
                     <div
