@@ -64,6 +64,9 @@ export default function HamburgerMenu() {
   return (
     <div style={{ zIndex: 10000000 }}>
       <Menu styles={styles}>
+      <Link id="home" className="menu-item" to="/">
+        Home       
+      </Link>
         <Link id="home" className="menu-item" to="/terms-and-conditions">
           Terms & Conditions
         </Link>

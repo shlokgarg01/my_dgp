@@ -1,8 +1,11 @@
 import React from 'react';
+import HamburgerMenu from '../components/components/HamburgerMenu';
 
 export default function PrivacyPolicy  () {
     return (
-        <div style={{ padding: '20px', maxWidth: '800px', margin: '0 auto' }}>
+        <>
+        <HamburgerMenu />
+        <div className='static-page-container'>
             <h1>Privacy Policy</h1>
             <p>Last updated: July 21, 2024</p>
             
@@ -60,5 +63,6 @@ export default function PrivacyPolicy  () {
             <p>Usage Data is collected automatically when using the Service.</p>
             <p>Usage Data may include information such as Your Device's Internet Protocol address </p>
         </div>
+    </>
     )
 }

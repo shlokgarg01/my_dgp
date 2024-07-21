@@ -11,7 +11,7 @@ import Banner from './images/desktop_banner.jpg'
 import TermsAndConditions from '../src/screens/TermsAndConditions '
 import PrivacyPolicy from '../src/screens/PrivacyPolicy '
 import RefundPolicy from '../src/screens/RefundPolicy '
-import help from '../src/screens/Help'
+import HelpPage from './screens/HelpPage'
 
 
 export default function App() {
@@ -28,7 +28,7 @@ export default function App() {
             <Route exact path="/terms-and-conditions" element={<TermsAndConditions/>} />
             <Route exact path="/privacy-policy" element={<PrivacyPolicy/>} />
             <Route exact path="/refund-policy" element={<RefundPolicy />} />
-            <Route exact path="/help" element={<help/>} />
+            <Route exact path="/help" element={<HelpPage/>} />
             <Route path="*" element={<NotFound />} />
           </Routes>
         </Router>
