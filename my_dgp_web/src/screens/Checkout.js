@@ -25,6 +25,7 @@ export default function Checkout() {
   const { error, loading, success, booking } = useSelector(
     (state) => state.booking
   );
+  const [paymentLoading, setPaymentLoading] = useState(false);
 
   const {
     finalPrice,
@@ -115,6 +116,7 @@ export default function Checkout() {
   };
 
   const displayRazorpay = async () => {
+    setPaymentLoading(true)
     const res = await loadRazorpayScript(
       "https://checkout.razorpay.com/v1/checkout.js"
     );
@@ -186,6 +188,8 @@ export default function Checkout() {
         color: Colors.PRIMARY,
       },
     };
+
+    setPaymentLoading(false);
 
     const paymentObject = new window.Razorpay(options);
     paymentObject.open();
@@ -437,6 +441,7 @@ export default function Checkout() {
             </div>
           </div>
           <div >
+            {paymentLoading && <LoaderComponent />}
             <Btn onClick={submit} title="Submit & Proceed" />
           </div>
         </div>
