@@ -79,8 +79,8 @@ export default function Home() {
 
     for (let i = 0; i < 7; ++i) {
       let date = new Date(Date.now() + 3600 * 1000 * 24 * i);
-      let label = date.toString().slice(4, 10).split(" ");
-      label = label[1] + " " + label[0];
+      let label = date.toString().slice(0, 10).split(" ");
+      label = label[0] + "," + label[2] + " " + label[1];
 
       dates.push({
         value: date.toString().slice(4, 15),
@@ -323,16 +323,16 @@ export default function Home() {
         setPackage(p._id);
       }}
     >
-    <div style={{ display: 'flex', alignItems: 'center' }}>
-    {p.name}      
-    <div className="tooltip-center" onClick={() => toggleShowEyeButton(index)}>
-        <FaInfoCircle style={{ cursor: 'pointer', marginLeft: 8 }} />
-        {showEyeButton[index] && (
-          <div className="tooltiptext">
-            {`  ${Math.round(prices.find((price) => price.name === `${serviceName} ${p.name}`).charges)} per min`}
-          </div>
-        )}
-      </div>
+      <div style={{ display: 'flex', alignItems: 'center' }}>
+        {p.name}
+        <div className="tooltip-center" onClick={() => toggleShowEyeButton(index)}>
+          <FaInfoCircle style={{ cursor: 'pointer', marginLeft: 8 }} />
+          {showEyeButton[index] && (
+            <div className="tooltiptext">
+              {`  ${Math.round(prices.find((price) => price.name === `${serviceName} ${p.name}`).charges)} per min`}
+            </div>
+          )}
+        </div>
       </div>      {loading === false ? (
         <div>
           ₹{" "}
@@ -789,7 +789,7 @@ export default function Home() {
                   }}
                 />
               </div>
-              <div style={{ fontSize: 13 }}>
+              <div style={{ fontSize: 11 }}>
                 <Picker
                   optionGroups={dateGroup}
                   valueGroups={date}

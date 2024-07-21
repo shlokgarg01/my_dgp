@@ -9,7 +9,7 @@ const sendRiderPushNotifications = async (fcm_tokens, message) => {
       const body = JSON.stringify({
         to: fcm_tokens[index],
         notification: {
-          title: "You have a new test booking request.",
+          title: "You have a new booking request.",
           body: message,
           sound: "gio_resotone.mp3",
           android_channel_id: "callNotificationChannel",
@@ -17,7 +17,7 @@ const sendRiderPushNotifications = async (fcm_tokens, message) => {
         content_available: true,
         priority: "high",
       });
-  
+
       const options = {
         hostname: "fcm.googleapis.com",
         path: "/fcm/send",
@@ -27,17 +27,17 @@ const sendRiderPushNotifications = async (fcm_tokens, message) => {
           "Authorization": `key=${SERVER_KEY}`,
         },
       };
-  
+
       const api = https.request(options, (response) => {
         response.on('end', () => {
           console.log("Push Notification Sent", response);
         });
       });
-  
+
       api.on('error', (error) => {
         console.error("Error while sending push notification to rider", error)
       });
-  
+
       api.write(body);
       api.end()
     }
