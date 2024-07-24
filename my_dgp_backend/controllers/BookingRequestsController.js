@@ -141,10 +141,12 @@ exports.cancelBookingRequest = catchAsyncErrors(async (req, res, next) => {
     );
   }
 
-  await booking_request.deleteOne();
-  return res.status(200).json({
-    success: true,
-    message: "Booking Deleted!",
-    booking,
-  });
+  if (booking_request) {
+    await booking_request.deleteOne();
+    return res.status(200).json({
+      success: true,
+      message: "Booking Deleted!",
+      booking,
+    });
+  }
 });
