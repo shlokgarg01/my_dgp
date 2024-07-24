@@ -75,8 +75,7 @@ exports.updateStatusOfBookingRequest = catchAsyncErrors(
           <h3>Booking Details</h3>
           <b>Booking Date</b>: ${new Date(booking.date).toDateString()}<br />
           <b>Name</b>: ${booking.customer.name}<br />
-          <b>Address</b>: ${booking.address.address}, ${
-          booking.address.country
+          <b>Address</b>: ${booking.address.address}, ${booking.address.country
         }<br />
           <b>Amount</b>: ₹ ${booking.totalPrice}<br />
           <b>Service</b>: ${booking.service.name}<br />
@@ -111,9 +110,9 @@ exports.updateStatusOfBookingRequest = catchAsyncErrors(
 exports.cancelBookingRequest = catchAsyncErrors(async (req, res, next) => {
   let booking_id = req.params.id;
   let booking_request = await BookingRequest.findOne({ booking: booking_id });
-  if (!booking_request) {
-    return next(new ErrorHandler("Booking already accepted", 400));
-  }
+  // if (!booking_request) {
+  //   return next(new ErrorHandler("Booking already accepted", 400));
+  // }
 
   let booking = await Booking.findByIdAndUpdate(
     booking_id,
