@@ -148,5 +148,11 @@ exports.cancelBookingRequest = catchAsyncErrors(async (req, res, next) => {
       message: "Booking Deleted!",
       booking,
     });
+  } else {
+    return res.status(200).json({
+      success: true,
+      message: "Booking Cancelled!",
+      booking,
+    });
   }
 });
