@@ -20,6 +20,8 @@ const SubServiceRoutes = require('./routes/SubServiceRoutes.js')
 const PackageRoutes = require('./routes/PackageRoutes.js')
 const PriceRoutes = require('./routes/PriceRoutes.js')
 const CouponRoutes = require('./routes/CouponRoutes')
+const DeliveryRoutes = require('./routes/DeliveryRoutes')
+
 
 app.use(morgan("combined"));
 
@@ -30,11 +32,11 @@ app.use(bodyParser.urlencoded({ extended: true, limit: "10mb" }));
 app.use(express.json());
 app.use(cors());
 
-if(process.env.NODE_ENV !== 'PRODUCTION') {
+if (process.env.NODE_ENV !== 'PRODUCTION') {
   require('dotenv').config({ path: "my_dgp_backend/.env" })
 }
 
-const server = app.listen(process.env.PORT, ()=>{
+const server = app.listen(process.env.PORT, () => {
   console.log(`Server is running on PORT ${process.env.PORT}`)
 })
 connectDatabase()
@@ -58,7 +60,7 @@ process.on("unhandledRejection", err => {
 
 app.get("/ping", (req, res) => {
   res.status(200).json({
-    message:"Server is running."
+    message: "Server is running."
   })
 })
 
@@ -74,6 +76,7 @@ app.use('/api/v1', PackageRoutes)
 app.use('/api/v1', SubServiceRoutes)
 app.use('/api/v1', PriceRoutes)
 app.use('/api/v1', CouponRoutes)
+app.use('/api/v1', DeliveryRoutes)
 
 // This is the static frontend file. Whenever any change in frontend is made, u need to generate build file & then run server again.
 // IMPORTANT - make sure that this static frontend route is after all the backend routes otherwise all API calls will fail.
