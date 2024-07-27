@@ -6,7 +6,7 @@ const Enums = require("../utils/Enums")
 // create delivery request
 exports.createDeliveryRequest = catchAsyncErrors(async (req, res) => {
     try {
-        const { _id, deliveryUrl, contactNumber } = req.body;
+        const { _id, deliveryUrl, contactNumber, isApproved } = req.body;
 
         // Check if _id is provided and is a string
         if (!_id || typeof _id !== 'string') {
@@ -14,7 +14,7 @@ exports.createDeliveryRequest = catchAsyncErrors(async (req, res) => {
         }
 
         // Create and save the new request
-        const newRequest = new DeliveryRequest({ _id, deliveryUrl, contactNumber });
+        const newRequest = new DeliveryRequest({ _id, deliveryUrl, contactNumber, isApproved });
         await newRequest.save();
         res.status(201).json(newRequest);
     } catch (error) {
