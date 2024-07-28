@@ -168,7 +168,7 @@ export default function SearchingRider() {
             zIndex: 100
           }}
         >
-          {/* <SOS
+          <SOS
             text="WhatsApp"
             color={Colors.DARK_GREEN}
             link="https://wa.me/+918595703734"
@@ -181,8 +181,8 @@ export default function SearchingRider() {
             link="tel:+918595703734"
             Icon={FaShieldAlt}
             width={100}
-          /> */}
-           <div className="dropdown-container">
+          />
+           {/* <div className="dropdown-container">
       <button className="dropdown-button" onClick={toggleDropdown}>SOS Options</button>
       <div className={`dropdown-content ${showDropdown ? 'show' : ''}`}>
         <div className="dropdown-item">
@@ -204,7 +204,7 @@ export default function SearchingRider() {
           />
         </div>
       </div>
-    </div>
+    </div> */}
         </div>
 
         {service_provider ? (
