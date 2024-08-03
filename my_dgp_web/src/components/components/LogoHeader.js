@@ -18,7 +18,7 @@ export default function LogoHeader({ showLogo }) {
     >
         <IoIosArrowDropleftCircle 
           onClick={() => navigate(-1)}
-          size={40}
+          size={35}
           color={Colors.BLACK}
         />
       {showLogo && (
@@ -27,8 +27,8 @@ export default function LogoHeader({ showLogo }) {
           style={{
             marginRight: '44%',
             // margin: "0 auto",
-            height: 40,
-            width: 40,
+            height: 60,
+            width: 60,
             borderRadius: 100,
           }}
           alt=""
