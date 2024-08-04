@@ -76,7 +76,7 @@ const MapComponent = ({
       // Generate random bearing (angle) between 0 and 360 degrees
       const randomBearing = Math.random() * 360;
       // Generate random distance between 0 and 10Km
-      const randomDistance = Math.random() * 10;
+      const randomDistance = Math.random() * 1;
 
       // Calculate new latitude and longitude based on the given coordinates, random distance, and bearing
       const lat1 = toRadians(newLocation[0]);

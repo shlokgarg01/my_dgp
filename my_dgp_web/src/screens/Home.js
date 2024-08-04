@@ -55,22 +55,42 @@ export default function Home() {
   const [isRegularActive, setRegularActive] = useState(false);
   const [isStandardActive, setStandardActive] = useState(false);
   const [showEyeButton, setShowEyeButton] = useState({});
-
   const currentTime = () => {
+    const now = new Date();
+    
+    // Get current hour in 12-hour format
+    const hour = now.getHours() % 12 === 0
+      ? `12`
+      : now.getHours() % 12 <= 9
+        ? `0${now.getHours() % 12}`
+        : `${now.getHours() % 12}`;
+  
+    // Get AM/PM
+    const ampm = now.toLocaleString("en-US", { timeZone: "Asia/Kolkata" }).slice(-2);
+  
+    // Get current minutes and determine the quarter
+    const minutes = now.getMinutes();
+    let quarter;
+    if (minutes < 15) {
+      quarter = "00";
+    } else if (minutes < 30) {
+      quarter = "15";
+    } else if (minutes < 45) {
+      quarter = "30";
+    } else {
+      quarter = "45";
+    }
+  
     return {
-      date: new Date().toString().slice(4, 15),
-      hour:
-        new Date().getHours() % 12 === 0 // if hour is 12, then it should set 12 not 00
-          ? `12`
-          : new Date().getHours() % 12 <= 9
-            ? `0${new Date().getHours() % 12}`
-            : `${new Date().getHours() % 12}`,
-      ampm: new Date()
-        .toLocaleString("en-US", { timeZone: "Asia/Kolkata" })
-        .slice(-2),
-      quaters: "00",
+      date: now.toString().slice(4, 15),
+      hour: hour,
+      ampm: ampm,
+      quarters: quarter,
     };
   };
+  
+  console.log(currentTime());
+  
   const [date, setDate] = useState(currentTime());
   const [currentAMPM] = useState(currentTime().ampm);
 
@@ -362,6 +382,38 @@ export default function Home() {
     return charges * time; // selected time is in hours & charges need to be calculated based on minutes
   };
 
+  const parseDateTime = (timeObject) => {
+    const dateString = timeObject.date;
+    const hour = parseInt(timeObject.hour, 10);
+    const ampm = timeObject.ampm;
+    const quarters = timeObject.quarters;
+  
+    // Handle 12-hour to 24-hour conversion
+    const hour24 = ampm === "PM" && hour !== 12 ? hour + 12 : (ampm === "AM" && hour === 12 ? 0 : hour);
+  
+    // Parse the date string
+    const dateParts = dateString.split(" ");
+    const month = dateParts[0];
+    const day = parseInt(dateParts[1], 10);
+    const year = parseInt(dateParts[2], 10);
+  
+    // Create a Date object
+    const date = new Date(`${month} ${day}, ${year} ${hour24}:${quarters}`);
+    return date;
+  };
+  
+  const compareTimes = (timeObject1, timeObject2) => {
+    const date1 = parseDateTime(timeObject1);
+    const date2 = parseDateTime(timeObject2);
+    console.log(date1)
+    console.log(date2)
+    if (date1 < date2) {
+      toast.error("You can't book on a previous date and time.");
+      return false;
+    } 
+    return true
+  };
+
   const submit = () => {
     if (!address) {
       toast.error("Please enter valid address");
@@ -376,6 +428,11 @@ export default function Home() {
 
     let finalDate = `${date.date.slice(7, 11)}-${Months.find((month) => month.abr === date.date.slice(0, 3)).value
       }-${date.date.slice(4, 6)}`;
+
+     const checktime= compareTimes(date ,currentTime())
+     if(!checktime)
+        return
+      
     let res = {
       service: selectedService,
       subService,
