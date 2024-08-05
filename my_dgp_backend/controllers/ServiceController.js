@@ -64,7 +64,7 @@ exports.getServiceDetails = catchAsyncErrors(async (req, res, next) => {
 
 // get all services
 exports.getAllServices = catchAsyncErrors(async (req, res, next) => {
-  let services = await Service.find()
+  let services = await Service.find();
 
   services = services.map(service => ({
     ...service.toObject(),
@@ -75,13 +75,21 @@ exports.getAllServices = catchAsyncErrors(async (req, res, next) => {
   // adding sub services to service
   const servicesArray = [];
   for (const service of services) {
-    let subServices = await SubService.find({ service: service._id })
-    const newObj = {...service, subServices}
+    let subServices = await SubService.find({ service: service._id });
+
+    // Sort subServices by name, placing "Others" last
+    subServices.sort((a, b) => {
+      if (a.name === 'Others') return 1;
+      if (b.name === 'Others') return -1;
+      return a.name.localeCompare(b.name);
+    });
+
+    const newObj = { ...service, subServices };
     servicesArray.push(newObj);
   }
 
   res.status(200).json({
     success: true,
     services: servicesArray
-  })
-})
+  });
+});
