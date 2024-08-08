@@ -22,8 +22,10 @@ export const createBooking = (bookingData) => async (dispatch) => {
       bookingData,
       config
     );
+    localStorage.setItem("data",JSON.stringify(bookingData));
 
     dispatch({ type: CREATE_BOOKING_SUCCESS, payload: data.booking });
+    return data.booking;
   } catch (error) {
     dispatch({
       type: CREATE_BOOKING_FAIL,
