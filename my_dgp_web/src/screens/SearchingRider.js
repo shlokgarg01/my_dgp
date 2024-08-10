@@ -7,6 +7,7 @@ import {
   cancelBooking,
   clearErrors,
   confirmBookingStatus,
+  createBooking,
 } from "../actions/BookingActions";
 import Enums from "../utils/Enums";
 import { toast } from "react-custom-alert";
@@ -16,6 +17,7 @@ import { IoMdCall } from "react-icons/io";
 import { FaShieldAlt } from "react-icons/fa";
 import { IoLogoWhatsapp } from "react-icons/io";
 import Loader from "../components/Loader";
+import { CONFIRM_BOOKING_STATUS_SUCCESS, CREATE_BOOKING_REQUEST, CREATE_BOOKING_SUCCESS } from "../constants/BookingsConstants";
 
 export default function SearchingRider() {
   const navigate = useNavigate();
@@ -29,8 +31,11 @@ export default function SearchingRider() {
     (state) => state.cancelledBooking
   );
 
-
+  
   const [showDropdown, setShowDropdown] = useState(false);
+  const [tryAgain, setTryAgain] = useState(false);
+  const[bookingId , setBookingId]= useState("")
+  const[APIbookingId , setAPIBookingId]= useState("")
 
   const toggleDropdown = () => {
     setShowDropdown(!showDropdown);
@@ -45,7 +50,14 @@ export default function SearchingRider() {
     let fetchDataTimeout;
     const fetchData = async () => {
       try {
-        dispatch(confirmBookingStatus(location.state.bookingId));
+        if(bookingId.length){
+          dispatch(confirmBookingStatus(bookingId));
+          setAPIBookingId(bookingId)
+        }
+        else{
+          dispatch(confirmBookingStatus(location.state.bookingId));
+          setAPIBookingId(location.state.bookingId)
+        }
 
         fetchDataTimeout = setTimeout(() => {
           fetchData();
@@ -67,17 +79,32 @@ export default function SearchingRider() {
         return (prevPercentage + 1) % 101;
       });
     }, 25);
+  
 
-    if (isCancelled || status === Enums.BOOKING_STATUS.CANCELLED) {
-      if (isCancelled) toast.success("Booking Cancelled");
+    if (isCancelled || status === Enums.BOOKING_STATUS.CANCELLED ) {
+      if (isCancelled) {
+        toast.success("Booking Cancelled");
+         navigate("/");
+      }
       if (status === Enums.BOOKING_STATUS.CANCELLED)
         toast.error(
           "No service provider is available to accept. Please book after sometime."
         );
       clearInterval(interval);
       clearTimeout(fetchDataTimeout);
-      navigate("/");
-    }
+     // navigate("/");
+     if(bookingId.length){
+     if(bookingId == APIbookingId)
+        setTryAgain(true);
+     else
+        setTryAgain(false);
+      }
+      else
+        setTryAgain(true)
+      //  alert(APIbookingId)
+      //  alert(`${bookingId} data`)
+      //  alert(`${location.state.bookingId} location.state.bookingId`)
+      }
 
     return () => {
       clearInterval(interval);
@@ -90,6 +117,7 @@ export default function SearchingRider() {
     error,
     isCancelled,
     navigate,
+    bookingId
   ]);
 
   const SOS = ({ Icon, color, text, link, width }) => (
@@ -128,6 +156,23 @@ export default function SearchingRider() {
   const cancelTheBooking = () => {
     dispatch(cancelBooking(location.state.bookingId));
   };
+  
+  const tryAgainBooking =async () =>{
+    let data = localStorage.getItem("data");
+    let parsedData = JSON.parse(data)
+    dispatch({ type: CONFIRM_BOOKING_STATUS_SUCCESS, payload: parsedData });
+
+   // console.log( JSON.parse(data))
+    setTryAgain(false)
+   // alert(status)
+    const response = await dispatch(createBooking(parsedData));
+    
+    console.log('Booking created successfully:', response?._id);
+    if(response?._id)
+     setTimeout(() => {
+      setBookingId(response?._id)
+     }, 20);
+  }
 
   return loading ? (
     <Loader />
@@ -357,6 +402,12 @@ export default function SearchingRider() {
               onClick={cancelTheBooking}
               title="CANCEL BOOKING"
             />
+            {/* Tryagain Button */}
+            {tryAgain && <Btn
+              bgColor={Colors.RED}
+              onClick={tryAgainBooking}
+              title="TRY BOOKING"
+            />}
           </>
         )}
       </div>
