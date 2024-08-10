@@ -236,7 +236,7 @@ exports.getCompletedBookingsOfAUser = catchAsyncErrors(
       status: Enums.BOOKING_STATUS.COMPLETED,
     })
       .sort("date")
-      .populate("customer address");
+      .populate("customer address service subService");
 
     res.status(200).json({
       success: true,
