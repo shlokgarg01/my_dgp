@@ -87,9 +87,9 @@ export default function SearchingRider() {
          navigate("/");
       }
       if (status === Enums.BOOKING_STATUS.CANCELLED)
-        toast.error(
-          "No service provider is available to accept. Please book after sometime."
-        );
+        // toast.error(
+        //   "No service provider is available to accept. Please book after sometime."
+        // );
       clearInterval(interval);
       clearTimeout(fetchDataTimeout);
      // navigate("/");
@@ -366,7 +366,7 @@ export default function SearchingRider() {
                 marginBottom: 20,
               }}
             >
-              Contacting People Nearby...
+                         {!tryAgain ?  `Contacting People Nearby...` : `Ops no Driver Found ! Try again`}
             </div>
 
             <div
@@ -376,15 +376,16 @@ export default function SearchingRider() {
                 backgroundColor: Colors.MEDIUM_GRAY,
               }}
             >
+              {!tryAgain ? 
               <div
                 style={{
                   width: `${loadingPercentage}%`,
                   height: "100%",
                   backgroundColor: Colors.GREEN,
                 }}
-              ></div>
+              ></div> :"" }
             </div>
-
+            {!tryAgain ?
             <img
               src={SearchRider}
               style={{
@@ -394,7 +395,7 @@ export default function SearchingRider() {
                 // marginBottom: 25
               }}
               alt=""
-            />
+            /> :"" }
 
             {/* Cancel Button */}
             <Btn
@@ -406,7 +407,7 @@ export default function SearchingRider() {
             {tryAgain && <Btn
               bgColor={Colors.RED}
               onClick={tryAgainBooking}
-              title="TRY BOOKING"
+              title="TRY AGAIN"
             />}
           </>
         )}
