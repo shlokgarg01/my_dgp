@@ -385,7 +385,7 @@ export default function Checkout() {
               style={{ paddingLeft: 10, paddingRight: 10, marginTop: 4 }}
             >
               <b>Note - </b>We will provide you all the raw photos & videos
-              within 24 hrs.
+              within 24 hrs (via link transfer).
             </div>
           </div>
 
