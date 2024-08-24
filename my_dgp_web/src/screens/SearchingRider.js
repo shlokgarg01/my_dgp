@@ -155,6 +155,7 @@ export default function SearchingRider() {
 
   const cancelTheBooking = () => {
     dispatch(cancelBooking(location.state.bookingId));
+    localStorage.removeItem("data")
   };
   
   const tryAgainBooking =async () =>{
@@ -366,7 +367,7 @@ export default function SearchingRider() {
                 marginBottom: 20,
               }}
             >
-                         {!tryAgain ?  `Contacting People Nearby...` : `Ops no Driver Found ! Try again`}
+                         {!tryAgain ?  `Contacting People Nearby...` : `Ops no Driver Found !l Try again`}
             </div>
 
             <div
