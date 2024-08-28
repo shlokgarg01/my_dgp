@@ -156,6 +156,7 @@ export default function SearchingRider() {
 
   const cancelTheBooking = () => {
     dispatch(cancelBooking(location.state.bookingId));
+    localStorage.removeItem("data")
   };
   
   const tryAgainBooking =async () =>{
