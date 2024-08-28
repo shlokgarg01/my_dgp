@@ -34,6 +34,7 @@ export default function SearchingRider() {
   
   const [showDropdown, setShowDropdown] = useState(false);
   const [tryAgain, setTryAgain] = useState(false);
+  const [tryAgainLoading,setTryAgainLoading] = useState(false);
   const[bookingId , setBookingId]= useState("")
   const[APIbookingId , setAPIBookingId]= useState("")
 
@@ -164,6 +165,10 @@ export default function SearchingRider() {
 
    // console.log( JSON.parse(data))
     setTryAgain(false)
+    setTryAgainLoading(true);
+    setTimeout(() => {
+      setTryAgainLoading(false);
+    }, 4000);
    // alert(status)
     const response = await dispatch(createBooking(parsedData));
     
@@ -174,7 +179,7 @@ export default function SearchingRider() {
      }, 20);
   }
 
-  return loading ? (
+  return loading || tryAgainLoading ? (
     <Loader />
   ) : (
     <div style={{ height: "10vh", textAlign: "center", padding: 10 }}>
@@ -366,7 +371,7 @@ export default function SearchingRider() {
                 marginBottom: 20,
               }}
             >
-                         {!tryAgain ?  `Contacting People Nearby...` : `Ops no Driver Found ! Try again`}
+                         {!tryAgain ?  `Contacting People Nearby...` : `Oops !! No service provider found ! Please try again !`}
             </div>
 
             <div
@@ -397,18 +402,21 @@ export default function SearchingRider() {
               alt=""
             /> :"" }
 
+            <div style={{position:'absolute',bottom:20,left:10,right:10}}>
+            {/* Tryagain Button */}
+            {tryAgain && <Btn
+              bgColor={Colors.PRIMARY}
+              onClick={tryAgainBooking}
+              title="Try Again"
+              noMargin={true}
+            />}
             {/* Cancel Button */}
             <Btn
               bgColor={Colors.RED}
               onClick={cancelTheBooking}
-              title="CANCEL BOOKING"
+              title="Cancel"
             />
-            {/* Tryagain Button */}
-            {tryAgain && <Btn
-              bgColor={Colors.RED}
-              onClick={tryAgainBooking}
-              title="TRY AGAIN"
-            />}
+            </div>
           </>
         )}
       </div>
