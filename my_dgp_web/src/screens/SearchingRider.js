@@ -183,17 +183,17 @@ export default function SearchingRider() {
   return loading || tryAgainLoading ? (
     <Loader />
   ) : (
-    <div style={{ height: "10vh", textAlign: "center", padding: 10 }}>
+    <div style={{  textAlign: "center", padding: 10 }}>
       {/* Map Component */}
       <div
         style={{
-          height: "400px",
+          height: "60vh",
           display: "flex",
           flexDirection: "column",
           alignItems: "center",
-          marginTop: 140,
-          marginBottom: -30,
-          zIndex: -100,
+          // marginTop: 140,
+          // marginBottom: -30,
+          // zIndex: -100,
         }}
       >
         <MapComponent
@@ -403,7 +403,7 @@ export default function SearchingRider() {
               alt=""
             /> :"" }
 
-            <div style={{position:'absolute',bottom:20,left:10,right:10}}>
+            <div style={{position:'absolute',bottom:10,left:10,right:10}}>
             {/* Tryagain Button */}
             {tryAgain && <Btn
               bgColor={Colors.PRIMARY}
