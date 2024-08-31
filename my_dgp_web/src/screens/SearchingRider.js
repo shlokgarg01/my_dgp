@@ -37,6 +37,14 @@ export default function SearchingRider() {
   const [tryAgainLoading,setTryAgainLoading] = useState(false);
   const[bookingId , setBookingId]= useState("")
   const[APIbookingId , setAPIBookingId]= useState("")
+  const [isDesktop, setIsDesktop] = useState(window.innerWidth > 768);
+
+  useEffect(() => {
+    const handleResize = () => setIsDesktop(window.innerWidth > 768);
+
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
 
   const toggleDropdown = () => {
     setShowDropdown(!showDropdown);
@@ -201,7 +209,9 @@ export default function SearchingRider() {
           backgroundColor: 'white',
           zIndex: 1000,
           position: 'absolute',
-          bottom: 0, right:0,left:0,
+          bottom: 0, 
+          right:isDesktop?'50%':0,
+          left:0,
           padding: 10,
           height: 460,
           display:'flex',
