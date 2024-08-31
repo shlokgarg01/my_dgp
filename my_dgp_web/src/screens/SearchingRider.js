@@ -185,17 +185,7 @@ export default function SearchingRider() {
   ) : (
     <div style={{  textAlign: "center", padding: 10 }}>
       {/* Map Component */}
-      <div
-        style={{
-          height: "60vh",
-          display: "flex",
-          flexDirection: "column",
-          alignItems: "center",
-          // marginTop: 140,
-          // marginBottom: -30,
-          // zIndex: -100,
-        }}
-      >
+      <div>
         <MapComponent
           initialLocation={[
             parseFloat(location.state.coordinates.lat),
@@ -207,16 +197,24 @@ export default function SearchingRider() {
         />
       </div>
 
-      <div>
-        {/* SOS Buttons */}
+        <div style={{
+          backgroundColor: 'white',
+          zIndex: 1000,
+          position: 'absolute',
+          bottom: 0, right:0,left:0,
+          padding: 10,
+          height: 460,
+          display:'flex',
+          flexDirection:'column',
+          justifyContent:'space-between'
+        }}>
+          
         <div
           style={{
             display: "flex",
             flexDirection: "row",
             alignItems: "center",
             justifyContent: "flex-end",
-            marginTop: -150,
-            zIndex: 100
           }}
         >
           <SOS
@@ -364,6 +362,7 @@ export default function SearchingRider() {
           </>
         ) : (
           <>
+          <div>
             <div
               style={{
                 fontSize: 20,
@@ -402,8 +401,9 @@ export default function SearchingRider() {
               }}
               alt=""
             /> :"" }
+            </div>
 
-            <div style={{position:'absolute',bottom:10,left:10,right:10}}>
+            <div style={{}}>
             {/* Tryagain Button */}
             {tryAgain && <Btn
               bgColor={Colors.PRIMARY}
