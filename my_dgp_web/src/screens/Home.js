@@ -26,6 +26,7 @@ import Banner from "../images/desktop_banner.jpg";
 import HamburgerMenu from "../components/components/HamburgerMenu";
 import { saveData } from "../actions/DataActions";
 import axios from "axios";
+import DemoContentModal from "../components/components/DemoContentModal/DemoContentModal";
 
 export default function Home() {
   const { savedData } = useSelector((state) => state.savedData);
@@ -796,6 +797,9 @@ export default function Home() {
                   </div>
                 ))}
               </div>
+
+              {/* <DemoContentModal/>  */}
+
 
               {/* Next Button */}
               <button
