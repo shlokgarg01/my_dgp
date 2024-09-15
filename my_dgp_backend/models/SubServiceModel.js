@@ -10,7 +10,13 @@ const subServiceSchema = new mongoose.Schema(
       type: mongoose.Schema.ObjectId,
       ref: "Service",
       required: true,
-    }
+    },
+    demoLinks: [
+      {
+        type: String,
+        required: false,
+      },
+    ],
   },
   {
     timestamps: {
