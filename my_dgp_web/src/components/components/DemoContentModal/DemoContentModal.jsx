@@ -10,7 +10,7 @@ const images = Array.from({ length: 12 }, (_, index) => ({
   src: `https://picsum.photos/200?random=${index}`,
 }));
 
-const DemoContentModal = ({ excessCharge, onClose,price,packageName,description }) => {
+const DemoContentModal = ({ excessCharge, onClose,price,packageName,description,images }) => {
   const [isSheetOpen, setIsSheetOpen] = useState(true); // Bottom sheet initially open
 
   return (
@@ -25,7 +25,8 @@ const DemoContentModal = ({ excessCharge, onClose,price,packageName,description 
           <Sheet.Header />
           <Sheet.Content>
           <IoIosClose onClick={onClose} size={40} style={{position:'absolute',left:'45%',top:-90,background:'white',borderRadius:20}} />
-            <div className='heading bold-text' >{packageName}
+          <div style={{overflowY: 'scroll',maxHeight:'70vh' }}>
+            <div style = {{fontSize:20} }className='heading bold-text' >{packageName}
               <div style={{ fontSize:12,fontWeight:'normal'}}>
                 {description}
               </div>
@@ -40,11 +41,12 @@ const DemoContentModal = ({ excessCharge, onClose,price,packageName,description 
               </div>
               </div>
               <div className='excessChargeText'>
-              Charges of {excessCharge}/Min. will be incurred for any time exceeding the selected duration
+              Charges of ₹{excessCharge}/Min. will be incurred for any time exceeding the selected duration
               </div>
             </div>
-            <div style={{marginLeft:'20px'}} className='bold-text'>Our Past Work</div>
-            <Gallery />
+           {images?.length >1 && <div style={{marginLeft:'20px'}} className='bold-text'>Our Past Work</div>}
+            <Gallery images={images} />
+            </div>
           </Sheet.Content>
         </Sheet.Container>
         <Sheet.Backdrop />

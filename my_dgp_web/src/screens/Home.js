@@ -37,6 +37,7 @@ export default function Home() {
   const [subServiceName, setSubServiceName] = useState(
     savedData.subServiceName || ""
   );
+  const [demoImages, setDemoImages] = useState();
   const [servicePackage, setPackage] = useState(savedData.servicePackage);
   const [packageName, setPackageName] = useState(savedData.packageName || "");
   const [selectedHours, setSelectedHours] = useState(savedData.hours || 0);
@@ -280,6 +281,7 @@ export default function Home() {
   const SubServiceSlider = ({ subService }) => (
     <div
       onClick={() => {
+        setDemoImages(subService?.demoLinks)
         setSubServiceName(subService.name);
         setSubService(subService._id);
       }}
@@ -354,15 +356,16 @@ export default function Home() {
             onClose={() => toggleShowEyeButton(index)}
             excessCharge={Math.round(prices.find((price) => price.name === `${serviceName} ${p.name}`).charges)}
             price={
-            Math.round(prices.find((price) => price.name === `${serviceName} ${p.name}`)
-              .charges *
-              (selectedHours === 0
-                ? parseInt(selectedMinutes.hours) * 60 +
-                parseInt(selectedMinutes.minutes)
-                : selectedHours * 60))
-              }
+              Math.round(prices.find((price) => price.name === `${serviceName} ${p.name}`)
+                .charges *
+                (selectedHours === 0
+                  ? parseInt(selectedMinutes.hours) * 60 +
+                  parseInt(selectedMinutes.minutes)
+                  : selectedHours * 60))
+            }
             packageName={`${p.name}`}
-            description={'Provided by a skilled photographer, this budget-friendly package offers reliable service for basic needs without additional frills.'}             
+            description={p.name == 'Regular' ? 'Provided by a skilled photographer, this budget-friendly package offers reliable service for basic needs without additional frills.' : p.name == 'Standard' ? 'Features an experienced photographer and offers a balanced option between cost and quality, providing a more refined approach and enhanced service.' : 'Utilizes a top-tier photographer with extensive expertise, delivering exceptional service and superior quality. This premium option is ideal for those seeking the highest level of professionalism and are willing to invest more for a top-notch experience.'}
+            images={demoImages}
           />
           // <div className="tooltiptext">
           //   {`  ${Math.round(prices.find((price) => price.name === `${serviceName} ${p.name}`).charges)} per min`}

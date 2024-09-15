@@ -3,15 +3,15 @@ import React, { useState, useEffect } from 'react';
 // Function to generate a random image URL
 const getRandomImageUrl = (width, height) => `https://picsum.photos/${width}/${height}?random=${Math.random()}`;
 
-const Gallery = () => {
+const Gallery = ({images}) => {
   const [isOpen, setIsOpen] = useState(false);
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
-  const [images, setImages] = useState([]);
+  // const [images, setImages] = useState([]);
   
   useEffect(() => {
     // Generate a list of random images
-    const randomImages = Array.from({ length: 9 }, () => getRandomImageUrl(300, 200));
-    setImages(randomImages);
+    // const randomImages = Array.from({ length: 9 }, () => getRandomImageUrl(300, 200));
+    // setImages(randomImages);
   }, []);
 
   const openLightbox = (index) => {
@@ -41,12 +41,18 @@ const Gallery = () => {
     gridTemplateColumns: 'repeat(3, 1fr)',
     gap: '10px',
     padding: '10px',
+    alignItems:'center',
+    marginBottom:20,
+    //can be removed vv
+    display:'flex',
+    justifyContent:'space-evenly',
+    flexWrap:'wrap',
   };
 
   const imageStyle = {
-    width: '100%',
-    height: '100%',
-    objectFit: 'cover',  // Ensures images cover the thumbnail area without distortion
+    width: '110px',
+    height: '110px',
+    objectFit: 'cover', 
     cursor: 'pointer',
     transition: 'transform 0.2s',
   };
@@ -68,8 +74,8 @@ const Gallery = () => {
   const carouselContainerStyle = {
     display: 'flex',
     overflow: 'hidden',
-    width: '80%',
-    height: '80%',
+    width: '90%',
+    height: '90%',
     position: 'relative',
   };
 
