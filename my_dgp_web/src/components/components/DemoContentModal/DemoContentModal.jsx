@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
-import Sheet  from 'react-modal-sheet'; // Import the Sheet component
-import './DemoContentModal.css'; // Import the CSS file with styles
+import Sheet from 'react-modal-sheet';
+import './DemoContentModal.css';
+import Gallery from '../Gallery';
+import { IoIosClose } from "react-icons/io";
 
 // Dummy image data for demonstration
 const images = Array.from({ length: 12 }, (_, index) => ({
@@ -8,35 +10,8 @@ const images = Array.from({ length: 12 }, (_, index) => ({
   src: `https://picsum.photos/200?random=${index}`,
 }));
 
-const DemoContentModal = () => {
+const DemoContentModal = ({ excessCharge, onClose,price,packageName,description }) => {
   const [isSheetOpen, setIsSheetOpen] = useState(true); // Bottom sheet initially open
-  const [isFullscreenOpen, setIsFullscreenOpen] = useState(false);
-  const [selectedImage, setSelectedImage] = useState(null);
-  const [currentIndex, setCurrentIndex] = useState(0);
-
-  const openImage = (image, index) => {
-    setSelectedImage(image);
-    setCurrentIndex(index);
-    setIsSheetOpen(false); // Close bottom sheet
-    setIsFullscreenOpen(true); // Open full-screen modal
-  };
-
-  const closeFullscreen = () => {
-    setIsFullscreenOpen(false)
-    setIsSheetOpen(true)
-  };
-
-  const showNextImage = () => {
-    const nextIndex = (currentIndex + 1) % images.length;
-    setSelectedImage(images[nextIndex]);
-    setCurrentIndex(nextIndex);
-  };
-
-  const showPrevImage = () => {
-    const prevIndex = (currentIndex - 1 + images.length) % images.length;
-    setSelectedImage(images[prevIndex]);
-    setCurrentIndex(prevIndex);
-  };
 
   return (
     <div className="DemoContentModal">
@@ -49,40 +24,31 @@ const DemoContentModal = () => {
         <Sheet.Container>
           <Sheet.Header />
           <Sheet.Content>
-            <div
-              style={{
-                display: "flex",
-                flexDirection: "column",
-                justifyContent: "space-between",
-                marginLeft: 16,
-                marginRight: 16,
-                alignItems: "center",
-              }}
-            >
-              <h3>Demo Pictures</h3>
-              <div className="grid">
-                {images.map((image, index) => (
-                  <div key={image.id} className="tile" onClick={() => openImage(image, index)}>
-                    <img src={image.src} alt={`Tile ${image.id}`} />
-                  </div>
-                ))}
+          <IoIosClose onClick={onClose} size={40} style={{position:'absolute',left:'45%',top:-90,background:'white',borderRadius:20}} />
+            <div className='heading bold-text' >{packageName}
+              <div style={{ fontSize:12,fontWeight:'normal'}}>
+                {description}
               </div>
             </div>
+            <div className='estimated-container'>
+              <div className='bold-text' style={{display:'flex',flexDirection:'row',justifyContent:'space-between'}}>
+              <div>
+                Estimated Charges
+              </div>
+              <div>
+              ₹{price}
+              </div>
+              </div>
+              <div className='excessChargeText'>
+              Charges of {excessCharge}/Min. will be incurred for any time exceeding the selected duration
+              </div>
+            </div>
+            <div style={{marginLeft:'20px'}} className='bold-text'>Our Past Work</div>
+            <Gallery />
           </Sheet.Content>
         </Sheet.Container>
         <Sheet.Backdrop />
       </Sheet>
-
-      {isFullscreenOpen && (
-        <div className="fullscreen-overlay">
-          <div className="fullscreen-content">
-            <button className="close-button" onClick={closeFullscreen}>×</button>
-            <button className="prev" onClick={showPrevImage}>&lt;</button>
-            {selectedImage && <img src={selectedImage.src} alt="Full-screen" className="fullscreen-image" />}
-            <button className="next" onClick={showNextImage}>&gt;</button>
-          </div>
-        </div>
-      )}
     </div>
   );
 };

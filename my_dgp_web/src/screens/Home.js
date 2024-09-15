@@ -58,17 +58,17 @@ export default function Home() {
   const [showEyeButton, setShowEyeButton] = useState({});
   const currentTime = () => {
     const now = new Date();
-    
+
     // Get current hour in 12-hour format
     const hour = now.getHours() % 12 === 0
       ? `12`
       : now.getHours() % 12 <= 9
         ? `0${now.getHours() % 12}`
         : `${now.getHours() % 12}`;
-  
+
     // Get AM/PM
     const ampm = now.toLocaleString("en-US", { timeZone: "Asia/Kolkata" }).slice(-2);
-  
+
     // Get current minutes and determine the quarter
     const minutes = now.getMinutes();
     let quarter;
@@ -81,7 +81,7 @@ export default function Home() {
     } else {
       quarter = "45";
     }
-  
+
     return {
       date: now.toString().slice(4, 15),
       hour: hour,
@@ -89,9 +89,9 @@ export default function Home() {
       quarters: quarter,
     };
   };
-  
+
   console.log(currentTime());
-  
+
   const [date, setDate] = useState(currentTime());
   const [currentAMPM] = useState(currentTime().ampm);
 
@@ -348,12 +348,26 @@ export default function Home() {
         {p.name}
         <div className="tooltip-center" onClick={() => toggleShowEyeButton(index)}>
           <FaInfoCircle style={{ cursor: 'pointer', marginLeft: 8 }} />
-          {showEyeButton[index] && (
-            <div className="tooltiptext">
-              {`  ${Math.round(prices.find((price) => price.name === `${serviceName} ${p.name}`).charges)} per min`}
-            </div>
-          )}
         </div>
+        {showEyeButton[index] && (
+          <DemoContentModal
+            onClose={() => toggleShowEyeButton(index)}
+            excessCharge={Math.round(prices.find((price) => price.name === `${serviceName} ${p.name}`).charges)}
+            price={
+            Math.round(prices.find((price) => price.name === `${serviceName} ${p.name}`)
+              .charges *
+              (selectedHours === 0
+                ? parseInt(selectedMinutes.hours) * 60 +
+                parseInt(selectedMinutes.minutes)
+                : selectedHours * 60))
+              }
+            packageName={`${p.name}`}
+            description={'Provided by a skilled photographer, this budget-friendly package offers reliable service for basic needs without additional frills.'}             
+          />
+          // <div className="tooltiptext">
+          //   {`  ${Math.round(prices.find((price) => price.name === `${serviceName} ${p.name}`).charges)} per min`}
+          // </div>
+        )}
       </div>      {loading === false ? (
         <div>
           ₹{" "}
@@ -388,21 +402,21 @@ export default function Home() {
     const hour = parseInt(timeObject.hour, 10);
     const ampm = timeObject.ampm;
     const quarters = timeObject.quarters;
-  
+
     // Handle 12-hour to 24-hour conversion
     const hour24 = ampm === "PM" && hour !== 12 ? hour + 12 : (ampm === "AM" && hour === 12 ? 0 : hour);
-  
+
     // Parse the date string
     const dateParts = dateString.split(" ");
     const month = dateParts[0];
     const day = parseInt(dateParts[1], 10);
     const year = parseInt(dateParts[2], 10);
-  
+
     // Create a Date object
     const date = new Date(`${month} ${day}, ${year} ${hour24}:${quarters}`);
     return date;
   };
-  
+
   const compareTimes = (timeObject1, timeObject2) => {
     const date1 = parseDateTime(timeObject1);
     const date2 = parseDateTime(timeObject2);
@@ -411,7 +425,7 @@ export default function Home() {
     if (date1 < date2) {
       toast.error("You can't book on a previous date and time.");
       return false;
-    } 
+    }
     return true
   };
 
@@ -430,10 +444,10 @@ export default function Home() {
     let finalDate = `${date.date.slice(7, 11)}-${Months.find((month) => month.abr === date.date.slice(0, 3)).value
       }-${date.date.slice(4, 6)}`;
 
-     const checktime= compareTimes(date ,currentTime())
-     if(!checktime)
-        return
-      
+    const checktime = compareTimes(date, currentTime())
+    if (!checktime)
+      return
+
     let res = {
       service: selectedService,
       subService,
@@ -797,10 +811,6 @@ export default function Home() {
                   </div>
                 ))}
               </div>
-
-              {/* <DemoContentModal/>  */}
-
-
               {/* Next Button */}
               <button
                 onClick={submit}
