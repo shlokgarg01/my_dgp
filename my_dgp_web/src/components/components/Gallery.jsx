@@ -1,18 +1,9 @@
-import React, { useState, useEffect } from 'react';
-
-// Function to generate a random image URL
-const getRandomImageUrl = (width, height) => `https://picsum.photos/${width}/${height}?random=${Math.random()}`;
+import React, { useState } from 'react';
+import ReactPlayer from 'react-player'; 
 
 const Gallery = ({images}) => {
   const [isOpen, setIsOpen] = useState(false);
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
-  // const [images, setImages] = useState([]);
-  
-  useEffect(() => {
-    // Generate a list of random images
-    // const randomImages = Array.from({ length: 9 }, () => getRandomImageUrl(300, 200));
-    // setImages(randomImages);
-  }, []);
 
   const openLightbox = (index) => {
     setCurrentImageIndex(index);
@@ -136,13 +127,19 @@ const Gallery = ({images}) => {
     <div>
       <div style={galleryStyle}>
         {images.map((src, index) => (
-          <img
+           <div key={index} >
+           {typeof src === 'string' && src.endsWith('.mp4') ? (
+             <ReactPlayer key={currentImageIndex} url={src} width={'110px'} height={'110px'}playing={false}   onClick={() => openLightbox(index)}   />
+           ) : (
+            <img
             key={index}
             src={src}
             alt={`Image ${index + 1}`}
             style={imageStyle}
             onClick={() => openLightbox(index)}
-          />
+          />           )}
+         </div> 
+         
         ))}
       </div>
 
@@ -152,11 +149,16 @@ const Gallery = ({images}) => {
             <div style={carouselInnerStyle}>
               {images.map((src, index) => (
                 <div key={index} style={carouselItemStyle}>
-                  <img src={src} alt={`Image ${index + 1}`} style={imgStyle} />
+                  {typeof src === 'string' && src.endsWith('.mp4') ? (
+                    <ReactPlayer key={currentImageIndex} url={src} width="100%" height="100%" controls={false} 
+                      playing={currentImageIndex === index}  />
+                  ) : (
+                    <img src={src} alt={`Media ${index + 1}`} style={{ width: '100%', height: '100%', objectFit: 'contain' }} />
+                  )}
                 </div>
               ))}
             </div>
-          </div>
+          </div> 
           <div style={buttonContainerStyle}>
             <button style={buttonStyle} onClick={goToPrevious}>
               &lt;
