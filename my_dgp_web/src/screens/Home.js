@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { GiStopwatch } from "react-icons/gi";
 import Colors from "../utils/Colors";
 import { useDispatch, useSelector } from "react-redux";
@@ -57,6 +57,7 @@ export default function Home() {
   const [isRegularActive, setRegularActive] = useState(false);
   const [isStandardActive, setStandardActive] = useState(false);
   const [showEyeButton, setShowEyeButton] = useState({});
+  const [isDesktop, setIsDesktop] = useState(window.innerWidth > 768);
   const currentTime = () => {
     const now = new Date();
 
@@ -278,14 +279,15 @@ export default function Home() {
     </div>
   );
 
-  const SubServiceSlider = ({ subService }) => (
-    <div
-      onClick={() => {
-        setDemoImages(subService?.demoLinks)
-        setSubServiceName(subService.name);
-        setSubService(subService._id);
-      }}
-      style={{
+  const SubServiceSlider = ({ subService }) => {
+    return (
+      <div
+        onClick={() => {
+            setDemoImages(subService?.demoLinks)
+            setSubServiceName(subService.name);
+            setSubService(subService._id);
+        }}
+        style={{
         ...styles.serviceSliderImageContainer,
         paddingRight: 4,
         paddingLeft: 4,
@@ -294,7 +296,7 @@ export default function Home() {
       <div
         style={{
           color:
-            subService.name === subServiceName ? Colors.PRIMARY : Colors.GRAY,
+          subService.name === subServiceName ? Colors.PRIMARY : Colors.GRAY,
           fontWeight: "bold",
           overflow: "hidden",
           fontSize: 14,
@@ -302,6 +304,7 @@ export default function Home() {
           WebkitBoxOrient: "vertical",
           WebkitLineClamp: "2",
           width: "auto",
+          userSelect:'none',
         }}
       >
         {subService.name}
@@ -318,7 +321,7 @@ export default function Home() {
         }}
       />
     </div>
-  );
+  )};
 
   const PricesContent = ({ p, index, isActive }) => (
     <div
@@ -510,6 +513,50 @@ export default function Home() {
     }
   }
 
+  const DraggableScroll = ({ children }) => {
+    const [isDown, setIsDown] = useState(false);
+    const [startX, setStartX] = useState(0);
+    const [scrollLeft, setScrollLeft] = useState(0);
+    const scrollRef = useRef(null);
+  
+    const onMouseDown = (e) => {
+      setIsDown(true);
+      setStartX(e.pageX - scrollRef.current.offsetLeft);
+      setScrollLeft(scrollRef.current.scrollLeft);
+    };
+  
+    const onMouseLeave = () => {
+      setIsDown(false);
+    };
+  
+    const onMouseUp = () => {
+      setIsDown(false);
+    };
+  
+    const onMouseMove = (e) => {
+      if (!isDown) return;
+      e.preventDefault();
+      const x = e.pageX - scrollRef.current.offsetLeft;
+      const walk = (x - startX) * 2; // Adjust scroll speed
+      scrollRef.current.scrollLeft = scrollLeft - walk;
+    };
+  
+    return (
+      <div
+        ref={scrollRef}
+        onMouseDown={onMouseDown}
+        onMouseLeave={onMouseLeave}
+        onMouseUp={onMouseUp}
+        onMouseMove={onMouseMove}
+        style={{ overflowX: 'auto', cursor: isDown ? 'grabbing' : 'grab' }}
+      >
+        <div style={{ display: 'flex',alignItems:'center' }}>
+          {children}
+        </div>
+      </div>
+    );
+  };
+
   return loading || packageLoading || priceLoading ? (
     <LoaderComponent />
   ) : (
@@ -597,24 +644,34 @@ export default function Home() {
           </div>
 
           {/* Sub Service Slider */}
-          {serviceName && (
-            <div
-              style={{
-                ...styles.serviceSliderContainer,
-                paddingLeft: 16,
-                paddingRight: 16,
-              }}
-            >
-              {services
-                .find((service) => service.name === serviceName)
-                ?.subServices.map((subService) => (
-                  <SubServiceSlider
-                    key={subService._id}
-                    subService={subService}
-                  />
-                ))}
-            </div>
-          )}
+            {serviceName && (
+              <div
+                style={{
+                  ...styles.serviceSliderContainer,
+                  paddingLeft: 16,
+                  paddingRight: 16,
+                }}
+              >
+                {isDesktop ? <DraggableScroll>
+                  {services
+                    .find((service) => service.name === serviceName)
+                    ?.subServices.map((subService) => (
+                      <SubServiceSlider
+                        key={subService._id}
+                        subService={subService}
+                      />
+                    ))}
+                </DraggableScroll> :
+                  services
+                    .find((service) => service.name === serviceName)
+                    ?.subServices.map((subService) => (
+                      <SubServiceSlider
+                        key={subService._id}
+                        subService={subService}
+                      />
+                    ))}
+              </div>
+            )}
 
           {/* Banner */}
           {(!serviceName || !subService) && (
