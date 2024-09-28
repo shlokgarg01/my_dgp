@@ -113,6 +113,18 @@ export default function Home() {
     return dates;
   };
 
+  //disabled right click
+  useEffect(() => {
+    const handleContextMenu = (e) => {
+      e.preventDefault();
+    };
+    document.addEventListener('contextmenu', handleContextMenu);
+    // Cleanup event listener on component unmount
+    return () => {
+      document.removeEventListener('contextmenu', handleContextMenu);
+    };
+  }, []);
+
   const dateGroup = {
     date: getDates(),
     hour: Hours,
