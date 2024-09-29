@@ -125,6 +125,12 @@ export default function Home() {
     };
   }, []);
 
+  //unselects sub category when category changes
+  useEffect(() => {
+   setSubService(null);
+   setSubServiceName(null)
+  }, [selectedService])
+
   const dateGroup = {
     date: getDates(),
     hour: Hours,

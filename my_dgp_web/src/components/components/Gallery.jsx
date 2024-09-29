@@ -104,9 +104,9 @@ const Gallery = ({images}) => {
     cursor: 'pointer',
     borderRadius: '5px',
     fontSize: '20px',
-    width:'40px',
-    height:'40px',
-    fontWeight:'500'
+    width: '40px',
+    height: '40px',
+    fontWeight: '500'
   };
 
   const closeButtonStyle = {
@@ -127,19 +127,47 @@ const Gallery = ({images}) => {
     <div>
       <div style={galleryStyle}>
         {images.map((src, index) => (
-           <div key={index} >
-           {typeof src === 'string' && src.endsWith('.mp4') ? (
-             <ReactPlayer key={currentImageIndex} url={src} width={'110px'} height={'110px'}playing={false}   onClick={() => openLightbox(index)}   />
-           ) : (
-            <img
-            key={index}
-            src={src}
-            alt={`Image ${index + 1}`}
-            style={imageStyle}
-            onClick={() => openLightbox(index)}
-          />           )}
-         </div> 
-         
+          <div key={index} >
+            {typeof src === 'string' && src.endsWith('.mp4') ? (
+              <div
+                style={{
+                  position: 'relative',
+                  display: 'inline-block',
+                  cursor: 'pointer' // Optional: changes cursor to pointer on hover
+                }}
+                onClick={() => openLightbox(index)}
+              >
+                <ReactPlayer
+                  key={currentImageIndex}
+                  url={src}
+                  width={'110px'}
+                  height={'110px'}
+                  playing={false}
+                  style={{ pointerEvents: 'none' }} // Prevent interactions with the player
+                />
+                <div
+                  style={{
+                    position: 'absolute',
+                    top: '50%',
+                    left: '50%',
+                    transform: 'translate(-50%, -50%)',
+                    color: 'white',
+                    fontSize: '24px', // Adjust size as needed
+                    pointerEvents: 'none' // Prevent interactions with the button
+                  }}
+                >
+                  <span>&#9658;</span> {/* Unicode for play icon */}
+                </div>
+              </div>) : (
+              <img
+                key={index}
+                src={src}
+                alt={`Image ${index + 1}`}
+                style={imageStyle}
+                onClick={() => openLightbox(index)}
+              />)}
+          </div>
+
         ))}
       </div>
 
