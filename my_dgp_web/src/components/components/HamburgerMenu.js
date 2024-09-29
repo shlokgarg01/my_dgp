@@ -32,14 +32,14 @@ export default function HamburgerMenu() {
       width: "24px",
     },
     bmCross: {
-      background: Colors.WHITE,
+      background: Colors.BLACK,
     },
     bmMenuWrap: {
       position: "fixed",
       height: "100%",
     },
     bmMenu: {
-      background: Colors.PRIMARY,
+      background: Colors.WHITE,
       padding: "2.5em 1.5em 0",
       fontSize: "1.15em",
     },
@@ -52,12 +52,13 @@ export default function HamburgerMenu() {
     },
     bmItem: {
       textDecoration: 'none',
-      color: Colors.WHITE,
+      color: Colors.PRIMARY,
       marginTop: 10
       // display: "inline-block",
     },
     bmOverlay: {
       background: "rgba(0, 0, 0, 0.3)",
+      zIndex:1100
     },
   };
 
