@@ -11,7 +11,7 @@ const {
 const router = express.Router();
 
 // router.route("/register/otp/send").post(sendOTPForRegistration);
-router.route("/register/customer").post(registerCustomer);
+router.route("/customer/register").post(registerCustomer);
 
 // router.route("/login/otp/send").post(sendOTPForLogin);
 // router.route("/login/otp/verify").post(authenticateUserViaOTPForLogin);
