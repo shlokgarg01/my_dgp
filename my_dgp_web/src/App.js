@@ -12,6 +12,7 @@ import TermsAndConditions from '../src/screens/TermsAndConditions '
 import PrivacyPolicy from '../src/screens/PrivacyPolicy '
 import RefundPolicy from '../src/screens/RefundPolicy '
 import HelpPage from './screens/HelpPage'
+import Login from './screens/Login'
 
 
 export default function App() {
@@ -22,6 +23,7 @@ export default function App() {
           <Routes>
             <Route exact path="/" element={<Home />} />
             <Route exact path="/details" element={<UserDetails />} />
+            <Route exact path="/login" element={<Login/>} />
             <Route exact path="/searchingRider" element={<SearchingRider />} />
             <Route exact path="/checkout" element={<Checkout />} />
             <Route exact path="/admin/login" element={<Home />} />

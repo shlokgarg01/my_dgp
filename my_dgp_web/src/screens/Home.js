@@ -493,7 +493,7 @@ export default function Home() {
 
     dispatch(saveData(res));
     navigate({
-      pathname: "/details",
+      pathname: "/Login",
       search: createSearchParams(res).toString(),
     });
   };

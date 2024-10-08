@@ -262,7 +262,7 @@ export default function Checkout() {
           style={{ padding: "25px 13px 13px 13px" }}
         >
           <div>
-            <LogoHeader showLogo={false} />
+            <LogoHeader backAction={()=>navigate(-2)} showLogo={false} />
             <div
               style={{
                 backgroundColor: Colors.WHITE,

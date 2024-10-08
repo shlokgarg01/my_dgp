@@ -1,10 +1,10 @@
 import React from "react";
-import Logo from "../../images/logo.png";
+import Logo from "../../images/logo_white.JPG";
 import { IoIosArrowDropleftCircle  } from "react-icons/io";
 import { useNavigate } from "react-router-dom";
 import Colors from "../../utils/Colors.js";
 
-export default function LogoHeader({ showLogo }) {
+export default function LogoHeader({ showLogo, backAction }) {
   const navigate = useNavigate();
   return (
     <div
@@ -17,8 +17,8 @@ export default function LogoHeader({ showLogo }) {
       }}
     >
         <IoIosArrowDropleftCircle 
-          onClick={() => navigate(-1)}
-          size={35}
+          onClick={() => backAction ? backAction():navigate(-1)} 
+          size={30}
           color={Colors.BLACK}
         />
       {showLogo && (
