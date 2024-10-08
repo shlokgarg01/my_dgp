@@ -9,6 +9,7 @@ const connectDatabase = require("./config/database.js")
 const path = require("path");
 
 const UserRoutes = require('./routes/UserRoutes')
+const CustomerRoutes = require('./routes/CustomerRoutes')
 const AddressRoutes = require("./routes/AddressRoutes")
 const BookingRoutes = require("./routes/BookingRoutes")
 const ServiceRoutes = require("./routes/ServiceRoutes")
@@ -65,6 +66,7 @@ app.get("/ping", (req, res) => {
 })
 
 app.use("/api/v1", UserRoutes)
+app.use("/api/v1", CustomerRoutes)
 app.use("/api/v1", AddressRoutes)
 app.use("/api/v1", BookingRoutes)
 app.use('/api/v1', ServiceRoutes)
