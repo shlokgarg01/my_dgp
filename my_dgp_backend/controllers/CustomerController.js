@@ -29,28 +29,21 @@ exports.sendOTPForRegistration = catchAsyncErrors(async (req, res, next) => {
 });
 
 // register user via OTP
-exports.registerUserViaOTP = catchAsyncErrors(async (req, res, next) => {
-  const { name, email, contactNumber, service } = req.body;
-  let role = req.body.role || Enums.USER_ROLES.USER; // in case of service provider, we send role from front_end
+exports.registerCustomer = catchAsyncErrors(async (req, res, next) => {
+  const { name, email, contactNumber } = req.body;
 
-  // adding all packages as default
-  let package_ids = await Package.find().select("_id");
-  package_ids = package_ids.map((id) => id._id.toString());
-
-  const user = await User.create({
+  const customer = await Customer.create({
     name,
     email,
     contactNumber,
-    role,
-    service,
-    packages: package_ids,
   });
 
-  await Redeem.create({
-    serviceProvider: user._id,
+  res.status(200).json({
+    success: true,
+    customer,
   });
 
-  sendToken(user, 201, res);
+//   sendToken(customer, 201, res);
 });
 
 // send OTP for Login
