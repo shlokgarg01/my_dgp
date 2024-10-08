@@ -7,6 +7,7 @@ const {
   updateCustomer,
   getCustomerDetails,
 } = require("../controllers/CustomerController");
+const { isAuthenticatedUser } = require("../middleware/Auth");
 
 const router = express.Router();
 
