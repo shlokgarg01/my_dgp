@@ -21,6 +21,7 @@ import { toast } from "react-custom-alert";
 import { CLEAR_ERRORS } from "../constants/UserConstants";
 import { EMAIL_REGEX } from "../config/Config";
 import { saveData } from "../actions/DataActions";
+import { isExisting } from "../actions/LoginActions";
 
 export default function Login() {
   const TIMER = 59;
@@ -40,6 +41,41 @@ export default function Login() {
   const [editNumber, setEditNumber] = useState(false);
   const [captchaElementCount, setCaptchaElementCount] = useState(0);
   let [timer, setTimer] = useState(TIMER);
+  const {loginData} = useSelector((state)=>state.loginData);
+  const [isRegistered,setRegistered] = useState(true);
+
+  useEffect(() => {
+    if(loginData?.success){
+      setRegistered(loginData?.isRegistered);
+      if (loginData?.isRegistered) {
+        navigate({
+          pathname: "/checkout",
+          search: createSearchParams({
+            service: params.get("service"),
+            serviceName: params.get("serviceName"),
+            subService: params.get("subService"),
+            subServiceName: params.get("subServiceName"),
+            servicePackage: params.get("servicePackage"),
+            packageName: params.get("packageName"),
+            address: params.get("address"),
+            lat: params.get("lat"),
+            lng: params.get("lng"),
+            date: params.get("date"),
+            hours: params.get("hours"),
+            minutes: params.get("minutes"),
+            customer: user._id,
+            taxPrice: params.get("taxPrice"),
+            itemsPrice: params.get("itemsPrice"),
+            totalPrice: params.get("totalPrice"),
+            name,
+            email,
+            contactNumber,
+          }).toString(),
+        });
+      }
+    }
+  }, [loginData])
+
 
   useEffect(() => {
     if (error) {
@@ -50,31 +86,8 @@ export default function Login() {
     if (isAuthenticated) {
       setOtpLoading(false);
       dispatch({ type: CLEAR_ERRORS });
-      localStorage.setItem('user',contactNumber);
-      navigate({
-        pathname: "/checkout",
-        search: createSearchParams({
-          service: params.get("service"),
-          serviceName: params.get("serviceName"),
-          subService: params.get("subService"),
-          subServiceName: params.get("subServiceName"),
-          servicePackage: params.get("servicePackage"),
-          packageName: params.get("packageName"),
-          address: params.get("address"),
-          lat: params.get("lat"),
-          lng: params.get("lng"),
-          date: params.get("date"),
-          hours: params.get("hours"),
-          minutes: params.get("minutes"),
-          customer: user._id,
-          taxPrice: params.get("taxPrice"),
-          itemsPrice: params.get("itemsPrice"),
-          totalPrice: params.get("totalPrice"),
-          name,
-          email,
-          contactNumber,
-        }).toString(),
-      });
+      localStorage.setItem('user', contactNumber);
+      dispatch(isExisting())
     }
     // eslint-disable-next-line
   }, [dispatch, error, isAuthenticated]);
@@ -82,32 +95,34 @@ export default function Login() {
   useEffect(() => {
     const storedUser = localStorage.getItem('user');
     if (storedUser) {
-      navigate({
-        pathname: "/checkout",
-        search: createSearchParams({
-          service: params.get("service"),
-          serviceName: params.get("serviceName"),
-          subService: params.get("subService"),
-          subServiceName: params.get("subServiceName"),
-          servicePackage: params.get("servicePackage"),
-          packageName: params.get("packageName"),
-          address: params.get("address"),
-          lat: params.get("lat"),
-          lng: params.get("lng"),
-          date: params.get("date"),
-          hours: params.get("hours"),
-          minutes: params.get("minutes"),
-          customer: user._id,
-          taxPrice: params.get("taxPrice"),
-          itemsPrice: params.get("itemsPrice"),
-          totalPrice: params.get("totalPrice"),
-          name,
-          email,
-          contactNumber:storedUser,
-        }).toString(),
-      })    }
+      dispatch(isExisting())
+      // navigate({
+      //   pathname: "/checkout",
+      //   search: createSearchParams({
+      //     service: params.get("service"),
+      //     serviceName: params.get("serviceName"),
+      //     subService: params.get("subService"),
+      //     subServiceName: params.get("subServiceName"),
+      //     servicePackage: params.get("servicePackage"),
+      //     packageName: params.get("packageName"),
+      //     address: params.get("address"),
+      //     lat: params.get("lat"),
+      //     lng: params.get("lng"),
+      //     date: params.get("date"),
+      //     hours: params.get("hours"),
+      //     minutes: params.get("minutes"),
+      //     customer: user._id,
+      //     taxPrice: params.get("taxPrice"),
+      //     itemsPrice: params.get("itemsPrice"),
+      //     totalPrice: params.get("totalPrice"),
+      //     name,
+      //     email,
+      //     contactNumber: storedUser,
+      //   }).toString(),
+      // })
+    }
   }, [])
-  
+
 
   // setting the timer for resend OTP
   useEffect(() => {
@@ -189,7 +204,7 @@ export default function Login() {
                     paddingTop:20,
                   }}
                 >
-                  Enter your mobile number
+                 {isRegistered?'Enter your mobile number to continue':'Welcome !'} 
                 </div>
                 <div
                   style={{
@@ -201,13 +216,14 @@ export default function Login() {
                     marginBottom: 25,
                   }}
                 >
-                  A 4-digit OTP will be sent on SMS
+                  {isRegistered?'A 4-digit OTP will be sent on SMS':'We need your name and email id to register'}
                 </div>
 
                 <form
                   onSubmit={(e) => e.preventDefault()}
                   style={{ textAlign: "center" }}
                 >
+                 { isRegistered && <div>
                   <InputGroup
                     icon={<FaPhone size={25} color={Colors.DARK_GRAY} />}
                     placeholder="Contact Number"
@@ -263,9 +279,33 @@ export default function Login() {
                       </div>
                     </>
                   ) : null}
-
-                  <div id="captcha-container"></div>
-                  <Btn
+</div>}
+                    {!isRegistered && 
+                    <div>
+                      <InputGroup
+                        icon={
+                          <MdDriveFileRenameOutline
+                            size={25}
+                            color={Colors.DARK_GRAY}
+                          />
+                        }
+                        value={name}
+                        onChange={(e) => setName(e.target.value)}
+                        placeholder="Your Name"
+                        disabled={firebaseConfirmation || loading}
+                      />
+                      <InputGroup
+                        icon={<MdOutlineMail size={25} color={Colors.DARK_GRAY} />}
+                        placeholder="Email id"
+                        type="email"
+                        value={email}
+                        onChange={(e) => setEmail(e.target.value)}
+                        disabled={firebaseConfirmation || loading}
+                      />
+                    </div>
+                    }
+                    <div id="captcha-container"></div>
+                    <Btn
                     onClick={
                       !loading ? (firebaseConfirmation && !editNumber ? submit : sendOTP) : null
                     }
