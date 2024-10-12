@@ -9,27 +9,31 @@ import { ApplyCouponReducer } from "./reducers/CouponReducer";
 import { SavedDataReducer } from "./reducers/DataReducer";
 import { LoginReducer, RegisterCustomerReducer } from "./reducers/LoginReducer";
 
-const reducer = combineReducers({
+// Root reducer with reset logic
+const appReducer = combineReducers({
   user: UserReducer,
   services: ServiceReducer,
-
   packages: PackageReducer,
-
   prices: PriceReducer,
-
   booking: BookingReducer,
   confirmedBooking: ConfirmBookingReducer,
   cancelledBooking: CancelBookingReducer,
-
   coupon: ApplyCouponReducer,
-
   savedData: SavedDataReducer,
   loginData: LoginReducer,
-  registerCustomerReducer: RegisterCustomerReducer
+  registerCustomerReducer: RegisterCustomerReducer,
 });
+
+// Root reducer to handle resetting the state
+const rootReducer = (state, action) => {
+  if (action.type === 'RESET_STORE') {
+    state = undefined;  // Reset the state to initial values (or empty state)
+  }
+  return appReducer(state, action);
+};
 
 const initialState = {};
 
-const store = createStore(reducer, initialState, applyMiddleware(thunk));
+const store = createStore(rootReducer, initialState, applyMiddleware(thunk));
 
 export default store;

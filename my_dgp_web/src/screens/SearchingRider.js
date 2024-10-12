@@ -91,9 +91,12 @@ export default function SearchingRider() {
   
 
     if (isCancelled || status === Enums.BOOKING_STATUS.CANCELLED ) {
+      // debugger
       if (isCancelled) {
         toast.success("Booking Cancelled");
-         navigate("/");
+        navigate("/");
+        dispatch({ type: 'RESET_STORE' });
+        localStorage.removeItem("data")
       }
       if (status === Enums.BOOKING_STATUS.CANCELLED)
         // toast.error(
@@ -164,7 +167,6 @@ export default function SearchingRider() {
 
   const cancelTheBooking = () => {
     dispatch(cancelBooking(location.state.bookingId));
-    localStorage.removeItem("data")
   };
   
   const tryAgainBooking =async () =>{
