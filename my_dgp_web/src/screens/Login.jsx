@@ -19,9 +19,8 @@ import "../styles/ComponentStyles.css";
 import LoaderComponent from "../components/Loader";
 import { toast } from "react-custom-alert";
 import { CLEAR_ERRORS } from "../constants/UserConstants";
-import { EMAIL_REGEX } from "../config/Config";
 import { saveData } from "../actions/DataActions";
-import { isExisting } from "../actions/LoginActions";
+import { isExisting, registerCustomer } from "../actions/LoginActions";
 
 export default function Login() {
   const TIMER = 59;
@@ -41,13 +40,18 @@ export default function Login() {
   const [editNumber, setEditNumber] = useState(false);
   const [captchaElementCount, setCaptchaElementCount] = useState(0);
   let [timer, setTimer] = useState(TIMER);
-  const {loginData} = useSelector((state)=>state.loginData);
-  const [isRegistered,setRegistered] = useState(true);
+  const { loginData } = useSelector((state) => state.loginData);
+  const [isRegistered, setRegistered] = useState(true);
+  const registerCustomerReducer = useSelector((state) => state.registerCustomerReducer);
 
+  //register action
   useEffect(() => {
-    if(loginData?.success){
+    if (loginData?.success) {
       setRegistered(loginData?.isRegistered);
       if (loginData?.isRegistered) {
+        if (contactNumber && contactNumber != undefined) {
+          localStorage.setItem('user', contactNumber);
+        }
         navigate({
           pathname: "/checkout",
           search: createSearchParams({
@@ -63,18 +67,54 @@ export default function Login() {
             date: params.get("date"),
             hours: params.get("hours"),
             minutes: params.get("minutes"),
-            customer: user._id,
+            customer: loginData?.user?._id,
             taxPrice: params.get("taxPrice"),
             itemsPrice: params.get("itemsPrice"),
             totalPrice: params.get("totalPrice"),
-            name,
-            email,
-            contactNumber,
+            name: loginData?.user?.name,
+            email: loginData?.user?.email,
+            contactNumber: loginData?.user?.contactNumber,
           }).toString(),
         });
       }
     }
   }, [loginData])
+
+  useEffect(() => {
+    if (!registerCustomerReducer?.data?.success && registerCustomerReducer?.data?.message) {
+      toast.error(registerCustomerReducer?.data?.message);
+    }
+    if (registerCustomerReducer?.data?.success) {
+      if (contactNumber && contactNumber != undefined) {
+        localStorage.setItem('user', contactNumber);
+      }
+      navigate({
+        pathname: "/checkout",
+        search: createSearchParams({
+          service: params.get("service"),
+          serviceName: params.get("serviceName"),
+          subService: params.get("subService"),
+          subServiceName: params.get("subServiceName"),
+          servicePackage: params.get("servicePackage"),
+          packageName: params.get("packageName"),
+          address: params.get("address"),
+          lat: params.get("lat"),
+          lng: params.get("lng"),
+          date: params.get("date"),
+          hours: params.get("hours"),
+          minutes: params.get("minutes"),
+          customer: loginData?.user?._id,
+          taxPrice: params.get("taxPrice"),
+          itemsPrice: params.get("itemsPrice"),
+          totalPrice: params.get("totalPrice"),
+          name,
+          email,
+          contactNumber,
+        }).toString(),
+      });
+    }
+  }, [registerCustomerReducer])
+
 
 
   useEffect(() => {
@@ -86,8 +126,7 @@ export default function Login() {
     if (isAuthenticated) {
       setOtpLoading(false);
       dispatch({ type: CLEAR_ERRORS });
-      localStorage.setItem('user', contactNumber);
-      dispatch(isExisting())
+      dispatch(isExisting(contactNumber))
     }
     // eslint-disable-next-line
   }, [dispatch, error, isAuthenticated]);
@@ -95,7 +134,7 @@ export default function Login() {
   useEffect(() => {
     const storedUser = localStorage.getItem('user');
     if (storedUser) {
-      dispatch(isExisting())
+      dispatch(isExisting(storedUser))
       // navigate({
       //   pathname: "/checkout",
       //   search: createSearchParams({
@@ -183,6 +222,22 @@ export default function Login() {
     }
   };
 
+  const handleSubmitBtn = () => {
+    if (!isRegistered) {
+      const registerCustomerPayload = {
+        name, email, contactNumber
+      }
+      dispatch(registerCustomer(registerCustomerPayload))
+    }
+    else if (!loading) {
+      if (firebaseConfirmation && !editNumber) {
+        submit();
+      } else {
+        sendOTP()
+      }
+    }
+  }
+
   return (
     <div>
       {otpLoading ? (
@@ -191,20 +246,20 @@ export default function Login() {
         <div>
           <div className="subContainer" style={{ height: "100%" }}>
             <div>
-              <div style={{backgroundColor:Colors.PRIMARY,paddingBottom:10,paddingTop:20}} >
-              <LogoHeader showLogo={true} />
+              <div style={{ backgroundColor: Colors.PRIMARY, paddingBottom: 10, paddingTop: 20 }} >
+                <LogoHeader showLogo={true} />
               </div>
-              <div style={{padding:30}}>
+              <div style={{ padding: 30 }}>
                 <div
                   style={{
                     fontSize: 22,
                     fontWeight: "bold",
                     marginBottom: 7,
                     textAlign: "center",
-                    paddingTop:20,
+                    paddingTop: 20,
                   }}
                 >
-                 {isRegistered?'Enter your mobile number to continue':'Welcome !'} 
+                  {isRegistered ? 'Enter your mobile number to continue' : 'Welcome !'}
                 </div>
                 <div
                   style={{
@@ -216,71 +271,71 @@ export default function Login() {
                     marginBottom: 25,
                   }}
                 >
-                  {isRegistered?'A 4-digit OTP will be sent on SMS':'We need your name and email id to register'}
+                  {isRegistered ? 'A 4-digit OTP will be sent on SMS' : 'We need your name and email id to register'}
                 </div>
 
                 <form
                   onSubmit={(e) => e.preventDefault()}
                   style={{ textAlign: "center" }}
                 >
-                 { isRegistered && <div>
-                  <InputGroup
-                    icon={<FaPhone size={25} color={Colors.DARK_GRAY} />}
-                    placeholder="Contact Number"
-                    type="number"
-                    value={contactNumber}
-                    onChange={(e) => setContactNumber(e.target.value)}
-                    disabled={!editNumber && (firebaseConfirmation || loading)}
-                    maxLength="10"
-                  />
-                  {firebaseConfirmation && !editNumber ? (
-                    <>
-                      <InputGroup
-                        icon={
-                          <AiOutlineLogin size={25} color={Colors.DARK_GRAY} />
-                        }
-                        placeholder="Enter the OTP"
-                        type="number"
-                        value={otp}
-                        maxLength="6"
-                        onChange={(e) => setOtp(e.target.value)}
-                      />
-                      <div
-                        style={{
-                          display: "flex",
-                          flexDirection: "row",
-                          justifyContent: "space-between",
-                          marginTop: 4,
-                          padding: "0 10px",
-                          color: Colors.BLUE,
-                          fontWeight: "bold",
-                        }}
-                      >
+                  {isRegistered && <div>
+                    <InputGroup
+                      icon={<FaPhone size={25} color={Colors.DARK_GRAY} />}
+                      placeholder="Contact Number"
+                      type="number"
+                      value={contactNumber}
+                      onChange={(e) => setContactNumber(e.target.value)}
+                      disabled={!editNumber && (firebaseConfirmation || loading)}
+                      maxLength="10"
+                    />
+                    {firebaseConfirmation && !editNumber ? (
+                      <>
+                        <InputGroup
+                          icon={
+                            <AiOutlineLogin size={25} color={Colors.DARK_GRAY} />
+                          }
+                          placeholder="Enter the OTP"
+                          type="number"
+                          value={otp}
+                          maxLength="6"
+                          onChange={(e) => setOtp(e.target.value)}
+                        />
                         <div
-                          style={{ color: Colors.BLACK }}
-                          onClick={() => {
-                            setEditNumber(true);
-                            setContactNumber("");
+                          style={{
+                            display: "flex",
+                            flexDirection: "row",
+                            justifyContent: "space-between",
+                            marginTop: 4,
+                            padding: "0 10px",
+                            color: Colors.BLUE,
+                            fontWeight: "bold",
                           }}
                         >
-                          Entered Wrong Number?
-                        </div>
-                        <div>
                           <div
-                            style={{
-                              color: timer === 0 ? Colors.BLUE : Colors.GRAY,
+                            style={{ color: Colors.BLACK }}
+                            onClick={() => {
+                              setEditNumber(true);
+                              setContactNumber("");
                             }}
-                            onClick={timer === 0 ? sendOTP : null}
                           >
-                            Resend OTP
+                            Entered Wrong Number?
                           </div>
-                          <div style={{ color: Colors.GRAY, fontSize: 13 }}>{timer} sec</div>
+                          <div>
+                            <div
+                              style={{
+                                color: timer === 0 ? Colors.BLUE : Colors.GRAY,
+                              }}
+                              onClick={timer === 0 ? sendOTP : null}
+                            >
+                              Resend OTP
+                            </div>
+                            <div style={{ color: Colors.GRAY, fontSize: 13 }}>{timer} sec</div>
+                          </div>
                         </div>
-                      </div>
-                    </>
-                  ) : null}
-</div>}
-                    {!isRegistered && 
+                      </>
+                    ) : null}
+                  </div>}
+                  {!isRegistered &&
                     <div>
                       <InputGroup
                         icon={
@@ -292,7 +347,6 @@ export default function Login() {
                         value={name}
                         onChange={(e) => setName(e.target.value)}
                         placeholder="Your Name"
-                        disabled={firebaseConfirmation || loading}
                       />
                       <InputGroup
                         icon={<MdOutlineMail size={25} color={Colors.DARK_GRAY} />}
@@ -300,23 +354,22 @@ export default function Login() {
                         type="email"
                         value={email}
                         onChange={(e) => setEmail(e.target.value)}
-                        disabled={firebaseConfirmation || loading}
                       />
                     </div>
-                    }
-                    <div id="captcha-container"></div>
-                    <Btn
+                  }
+                  <div id="captcha-container"></div>
+                  <Btn
                     onClick={
-                      !loading ? (firebaseConfirmation && !editNumber ? submit : sendOTP) : null
+                      handleSubmitBtn
                     }
                     title={
                       firebaseConfirmation && !editNumber ? "Submit" : "Send OTP"
                     }
                     loading={loading}
                   />
-                  <div style={{fontSize:12}} >By continue you agree to MYDGP'S <a href="./terms-and-conditions" >terms of use</a> and <a href="./privacy-policy" >privacy policy</a></div>
+                  <div style={{ fontSize: 12 }} >By continue you agree to MYDGP'S <a href="./terms-and-conditions" >terms of use</a> and <a href="./privacy-policy" >privacy policy</a></div>
                 </form>
-                </div>
+              </div>
             </div>
           </div>
         </div>

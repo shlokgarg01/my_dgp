@@ -7,7 +7,7 @@ import { PackageReducer } from "./reducers/PackageReducer";
 import { PriceReducer } from './reducers/PriceReducer'
 import { ApplyCouponReducer } from "./reducers/CouponReducer";
 import { SavedDataReducer } from "./reducers/DataReducer";
-import { LoginReducer } from "./reducers/LoginReducer";
+import { LoginReducer, RegisterCustomerReducer } from "./reducers/LoginReducer";
 
 const reducer = combineReducers({
   user: UserReducer,
@@ -24,7 +24,8 @@ const reducer = combineReducers({
   coupon: ApplyCouponReducer,
 
   savedData: SavedDataReducer,
-  loginData: LoginReducer
+  loginData: LoginReducer,
+  registerCustomerReducer: RegisterCustomerReducer
 });
 
 const initialState = {};
