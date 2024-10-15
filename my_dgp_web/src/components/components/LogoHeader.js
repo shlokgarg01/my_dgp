@@ -4,7 +4,7 @@ import { IoIosArrowDropleftCircle  } from "react-icons/io";
 import { useNavigate } from "react-router-dom";
 import Colors from "../../utils/Colors.js";
 
-export default function LogoHeader({ showLogo, backAction }) {
+export default function LogoHeader({ showLogo, backAction,heading }) {
   const navigate = useNavigate();
   return (
     <div
@@ -33,6 +33,9 @@ export default function LogoHeader({ showLogo, backAction }) {
           }}
           alt=""
         />
+      )}
+      {heading && (
+        <div style={{flex:1,textAlign:'center',marginLeft:-12}} >{heading}</div>
       )}
     </div>
   );

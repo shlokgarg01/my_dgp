@@ -13,6 +13,7 @@ import PrivacyPolicy from '../src/screens/PrivacyPolicy '
 import RefundPolicy from '../src/screens/RefundPolicy '
 import HelpPage from './screens/HelpPage'
 import Login from './screens/Login'
+import MyBookings from './screens/MyBookings'
 
 
 export default function App() {
@@ -31,6 +32,7 @@ export default function App() {
             <Route exact path="/privacy-policy" element={<PrivacyPolicy/>} />
             <Route exact path="/refund-policy" element={<RefundPolicy />} />
             <Route exact path="/help" element={<HelpPage/>} />
+            <Route exact path="/my-bookings" element={<MyBookings/>} />
             <Route path="*" element={<NotFound />} />
           </Routes>
         </Router>

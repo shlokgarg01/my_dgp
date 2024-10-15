@@ -68,6 +68,9 @@ export default function HamburgerMenu() {
       <Link id="home" className="menu-item" to="/">
         Home       
       </Link>
+      <Link id="home" className="menu-item" to="/my-bookings">
+        My Bookings       
+      </Link>
         <Link id="home" className="menu-item" to="/terms-and-conditions">
           Terms & Conditions
         </Link>
@@ -79,6 +82,9 @@ export default function HamburgerMenu() {
         </Link>
         <Link id="home" className="menu-item" to="/help">
           Help
+        </Link>
+        <Link id="home" className="menu-item" to="/">
+          Logout
         </Link>
         {/* <a id="about" className="menu-item" href="/about">
           About
