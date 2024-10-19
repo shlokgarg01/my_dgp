@@ -246,6 +246,23 @@ exports.getCompletedBookingsOfAUser = catchAsyncErrors(
   }
 );
 
+// fetch all completed bookings of a user
+exports.getBookingsOfCustomer = catchAsyncErrors(
+  async (req, res, next) => {
+    let bookings = await Booking.find({
+      customer: req.query._id
+    })
+      .sort("date")
+      .populate("customer address service subService serviceProvider");
+
+    res.status(200).json({
+      success: true,
+      bookings,
+      bookingsCount: bookings.length,
+    });
+  }
+);
+
 // fetch all current bookings of a user
 exports.getCurrentBookingsOfAUser = catchAsyncErrors(async (req, res, next) => {
   const currentDate = new Date();

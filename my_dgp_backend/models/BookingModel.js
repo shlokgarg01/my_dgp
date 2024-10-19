@@ -12,7 +12,7 @@ const bookingModel = new mongoose.Schema(
     _id: { type: String },
     customer: {
       type: mongoose.Schema.ObjectId,
-      ref: "User",
+      ref: "Customer",
       required: true,
     },
     serviceProvider: {
