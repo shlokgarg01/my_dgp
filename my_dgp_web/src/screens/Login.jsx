@@ -134,6 +134,7 @@ export default function Login() {
   useEffect(() => {
     const storedUser = localStorage.getItem('user');
     if (storedUser) {
+      setOtpLoading(true);
       dispatch(isExisting(storedUser))
       // navigate({
       //   pathname: "/checkout",
@@ -252,14 +253,14 @@ export default function Login() {
               <div style={{ padding: 30 }}>
                 <div
                   style={{
-                    fontSize: 22,
+                    fontSize: 21,
                     fontWeight: "bold",
                     marginBottom: 7,
                     textAlign: "center",
                     paddingTop: 20,
                   }}
                 >
-                  {isRegistered ? 'Enter your mobile number to continue' : 'Welcome !'}
+                  {isRegistered ? 'Login to process your order' : 'Welcome !'}
                 </div>
                 <div
                   style={{
@@ -269,6 +270,7 @@ export default function Login() {
                     paddingLeft: 25,
                     paddingRight: 25,
                     marginBottom: 25,
+                    fontSize:15
                   }}
                 >
                   {isRegistered ? 'A 4-digit OTP will be sent on SMS' : 'We need your name and email id to register'}
