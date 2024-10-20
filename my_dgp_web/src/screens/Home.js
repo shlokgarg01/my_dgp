@@ -375,10 +375,10 @@ export default function Home() {
         {showEyeButton[index] && (
           <DemoContentModal
             onClose={() => toggleShowEyeButton(index)}
-            excessCharge={Math.round(prices.find((price) => price.name === `${serviceName} ${p.name}`).charges)}
+            excessCharge={Math.round(prices.find((price) => price.name === `${serviceName} ${p.name}`)?.charges)}
             price={
               Math.round(prices.find((price) => price.name === `${serviceName} ${p.name}`)
-                .charges *
+                ?.charges *
                 (selectedHours === 0
                   ? parseInt(selectedMinutes.hours) * 60 +
                   parseInt(selectedMinutes.minutes)
@@ -395,8 +395,7 @@ export default function Home() {
       </div>      {loading === false ? (
         <div>
           ₹{" "}
-          {Math.round(prices.find((price) => price.name === `${serviceName} ${p.name}`)
-            .charges *
+          {Math.round(prices.find((price) => price.name === `${serviceName} ${p.name}`)?.charges *
             (selectedHours === 0
               ? parseInt(selectedMinutes.hours) * 60 +
               parseInt(selectedMinutes.minutes)
