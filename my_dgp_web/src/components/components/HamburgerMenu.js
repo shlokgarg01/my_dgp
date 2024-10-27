@@ -13,6 +13,14 @@ export default function HamburgerMenu() {
     return () => window.removeEventListener('resize', handleResize);
   }, []);
 
+  const isLogin = () => {
+    if (localStorage.getItem('userId')) {
+      return true;
+    } else {
+      return false;
+    }
+  }
+
   var styles = {
     bmBurgerButton: {
       position: "fixed",
@@ -58,23 +66,23 @@ export default function HamburgerMenu() {
     },
     bmOverlay: {
       background: "rgba(0, 0, 0, 0.3)",
-      zIndex:1100
+      zIndex: 1100
     },
   };
 
   return (
     <div style={{ zIndex: 10000000 }}>
       <Menu styles={styles}>
-      <Link id="home" className="menu-item" to="/">
-        Home       
-      </Link>
-      <Link id="home" className="menu-item" to="/my-bookings">
-        My Bookings       
-      </Link>
+        <Link id="home" className="menu-item" to="/">
+          Home
+        </Link>
+        {isLogin() && <Link id="home" className="menu-item" to="/my-bookings">
+          My Bookings
+        </Link>}
         <Link id="home" className="menu-item" to="/terms-and-conditions">
           Terms & Conditions
         </Link>
-        <Link id="home" className="menu-item"  to="/privacy-policy">
+        <Link id="home" className="menu-item" to="/privacy-policy">
           Privacy Policy
         </Link>
         <Link id="home" className="menu-item" to="/refund-policy">
@@ -83,9 +91,9 @@ export default function HamburgerMenu() {
         <Link id="home" className="menu-item" to="/help">
           Help
         </Link>
-        <Link id="home" className="menu-item" to="/">
+        {isLogin() && <Link id="home" className="menu-item" to="/">
           Logout
-        </Link>
+        </Link>}
         {/* <a id="about" className="menu-item" href="/about">
           About
         </a>

@@ -50,7 +50,8 @@ export default function Login() {
       setRegistered(loginData?.isRegistered);
       if (loginData?.isRegistered) {
         if (contactNumber && contactNumber != undefined) {
-          localStorage.setItem('user', contactNumber);
+          localStorage.setItem('userNumber', contactNumber);
+          localStorage.setItem('userId', loginData?.user?._id);
         }
         navigate({
           pathname: "/checkout",
@@ -86,7 +87,8 @@ export default function Login() {
     }
     if (registerCustomerReducer?.data?.success) {
       if (contactNumber && contactNumber != undefined) {
-        localStorage.setItem('user', contactNumber);
+        localStorage.setItem('userNumber', contactNumber);
+        localStorage.setItem('userId', loginData?.user?._id);
       }
       navigate({
         pathname: "/checkout",
@@ -132,7 +134,7 @@ export default function Login() {
   }, [dispatch, error, isAuthenticated]);
 
   useEffect(() => {
-    const storedUser = localStorage.getItem('user');
+    const storedUser = localStorage.getItem('userNumber');
     if (storedUser) {
       setOtpLoading(true);
       dispatch(isExisting(storedUser))

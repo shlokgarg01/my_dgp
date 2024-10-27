@@ -13,7 +13,7 @@ const MyBookings = () => {
     };
 
     const fetchBookingData = async () => {
-        const id = '670a2e582c4cce03a30d271c';
+        const id = localStorage.getItem('userId');
         try {
             const response = await fetch(`${BASE_URL}/api/v1/bookings/customer?_id=${id}`, {
                 method: 'GET',
