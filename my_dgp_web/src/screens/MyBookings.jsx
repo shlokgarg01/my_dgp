@@ -45,7 +45,7 @@ const MyBookings = () => {
             <div style={{position:'sticky',top:0,backgroundColor:'white',padding:10}} >
                 <div><HamburgerMenu /></div><div style={{ textAlign: 'center', fontSize: 20, fontWeight: '600' }} >My Bookings</div>
             </div>
-            <div style={{padding:20}} >
+            <div style={{padding:20,height:"93vh",position:"static",overflow:"scroll"}} >
                 <ul style={{ listStyleType: 'none', padding: 0, marginTop: 20 }}>
                     {bookingData?.bookings.map(booking => (
                         <li key={booking.id} style={{ borderRadius: 10, margin: '20px 0', padding: '10px', backgroundColor: Colors.WHITE }}>
