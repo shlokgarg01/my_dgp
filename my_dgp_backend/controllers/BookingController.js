@@ -252,7 +252,7 @@ exports.getBookingsOfCustomer = catchAsyncErrors(
     let bookings = await Booking.find({
       customer: req.query._id
     })
-      .sort("date")
+      .sort("-date")
       .populate("customer address service subService serviceProvider");
 
     res.status(200).json({

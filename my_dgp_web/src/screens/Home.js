@@ -37,6 +37,8 @@ export default function Home() {
   const [subServiceName, setSubServiceName] = useState(
     savedData.subServiceName || ""
   );
+  const [packages,setPackages] = useState();
+  const [selectedPrice,setSelectedPrice] = useState();
   const [demoImages, setDemoImages] = useState();
   const [servicePackage, setPackage] = useState(savedData.servicePackage);
   const [packageName, setPackageName] = useState(savedData.packageName || "");
@@ -129,6 +131,8 @@ export default function Home() {
   useEffect(() => {
    setSubService(null);
    setSubServiceName(null)
+   setPackages(null)
+   setSelectedPrice(null)
   }, [selectedService])
 
   const dateGroup = {
@@ -142,16 +146,6 @@ export default function Home() {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const { services, error, loading } = useSelector((state) => state.services);
-  const {
-    prices,
-    error: priceError,
-    loading: priceLoading,
-  } = useSelector((state) => state.prices);
-  const {
-    packages,
-    error: packageError,
-    loading: packageLoading,
-  } = useSelector((state) => state.packages);
 
   const fetchLiveLocation = (pos) => {
     var crd = pos.coords;
@@ -218,14 +212,14 @@ export default function Home() {
 
   useEffect(() => {
     dispatch(getAllServices());
-    dispatch(getAllPackages());
-    dispatch(getAllPrices());
+    // dispatch(getAllPackages());
+    // dispatch(getAllPrices());
 
     if (error) {
       toast.error(error);
       dispatch(clearErrors());
     }
-  }, [dispatch, error, packageError, priceError]);
+  }, [dispatch, error]);
 
   const handleLocationChange = (newLocation) => setLocation(newLocation);
 
@@ -304,6 +298,7 @@ export default function Home() {
             setDemoImages(subService?.demoLinks)
             setSubServiceName(subService.name);
             setSubService(subService._id);
+            setPackages(subService?.packages)
         }}
         style={{
         ...styles.serviceSliderImageContainer,
@@ -365,6 +360,7 @@ export default function Home() {
         }
         setPackageName(p.name);
         setPackage(p._id);
+        setSelectedPrice(p?.charges)
       }}
     >
       <div style={{ display: 'flex', alignItems: 'center' }}>
@@ -375,10 +371,9 @@ export default function Home() {
         {showEyeButton[index] && (
           <DemoContentModal
             onClose={() => toggleShowEyeButton(index)}
-            excessCharge={Math.round(prices.find((price) => price.name === `${serviceName} ${p.name}`)?.charges)}
+            excessCharge={Math.round(p?.charges)}
             price={
-              Math.round(prices.find((price) => price.name === `${serviceName} ${p.name}`)
-                ?.charges *
+              Math.round(p?.charges *
                 (selectedHours === 0
                   ? parseInt(selectedMinutes.hours) * 60 +
                   parseInt(selectedMinutes.minutes)
@@ -388,14 +383,12 @@ export default function Home() {
             description={p.name == 'Regular' ? 'Provided by a skilled photographer, this budget-friendly package offers reliable service for basic needs without additional frills.' : p.name == 'Standard' ? 'Features an experienced photographer and offers a balanced option between cost and quality, providing a more refined approach and enhanced service.' : 'Utilizes a top-tier photographer with extensive expertise, delivering exceptional service and superior quality. This premium option is ideal for those seeking the highest level of professionalism and are willing to invest more for a top-notch experience.'}
             images={demoImages}
           />
-          // <div className="tooltiptext">
-          //   {`  ${Math.round(prices.find((price) => price.name === `${serviceName} ${p.name}`).charges)} per min`}
-          // </div>
+          
         )}
       </div>      {loading === false ? (
         <div>
           ₹{" "}
-          {Math.round(prices.find((price) => price.name === `${serviceName} ${p.name}`)?.charges *
+          {Math.round(p?.charges *
             (selectedHours === 0
               ? parseInt(selectedMinutes.hours) * 60 +
               parseInt(selectedMinutes.minutes)
@@ -406,9 +399,7 @@ export default function Home() {
   );
 
   const getItemPrice = () => {
-    let charges = prices.find(
-      (price) => price.name === `${serviceName} ${packageName}`
-    )?.charges;
+    let charges = selectedPrice;
     let time = 0;
     if (charges) {
       time =
@@ -574,7 +565,7 @@ export default function Home() {
     );
   };
 
-  return loading || packageLoading || priceLoading ? (
+  return loading ? (
     <LoaderComponent />
   ) : (
     <>
@@ -882,7 +873,13 @@ export default function Home() {
                   </font>
                 </div>
 
-                {packages.map((p, index) => (
+                {/* {packages.map((p, index) => (
+                  <div>
+                    <PricesContent p={p} index={index} isActive={index == 2 ? true : (index == 0 ? isRegularActive : isStandardActive)} />
+                  </div>
+                ))} */}
+                
+                {packages?.map((p, index) => (
                   <div>
                     <PricesContent p={p} index={index} isActive={index == 2 ? true : (index == 0 ? isRegularActive : isStandardActive)} />
                   </div>
