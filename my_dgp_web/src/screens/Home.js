@@ -878,12 +878,14 @@ export default function Home() {
                     <PricesContent p={p} index={index} isActive={index == 2 ? true : (index == 0 ? isRegularActive : isStandardActive)} />
                   </div>
                 ))} */}
-                
+                <div style={styles.packageList}>
                 {packages?.map((p, index) => (
-                  <div>
+                  <div  >
                     <PricesContent p={p} index={index} isActive={index == 2 ? true : (index == 0 ? isRegularActive : isStandardActive)} />
                   </div>
                 ))}
+                </div>
+
               </div>
               {/* Next Button */}
               <button
@@ -1110,6 +1112,10 @@ const styles = {
   packagePricesContainer: {
     padding: 10,
     borderRadius: 7,
+  },
+  packageList:{
+    height:135,
+    overflow:"scroll"
   },
   packagePriceSubContainer: {
     display: "flex",

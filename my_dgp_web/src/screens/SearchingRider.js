@@ -18,6 +18,9 @@ import { FaShieldAlt } from "react-icons/fa";
 import { IoLogoWhatsapp } from "react-icons/io";
 import Loader from "../components/Loader";
 import { CONFIRM_BOOKING_STATUS_SUCCESS, CREATE_BOOKING_REQUEST, CREATE_BOOKING_SUCCESS } from "../constants/BookingsConstants";
+import axios from 'axios';
+import { BASE_URL } from "../config/Axios";
+import { RAZORPAY_KEY_ID } from "../config/Config";
 
 export default function SearchingRider() {
   const navigate = useNavigate();
@@ -168,6 +171,101 @@ export default function SearchingRider() {
   const cancelTheBooking = () => {
     dispatch(cancelBooking(location.state.bookingId));
   };
+
+  const loadRazorpayScript = (src) => {
+    return new Promise((resolve) => {
+      const script = document.createElement("script");
+      script.src = src;
+      script.onload = () => {
+        resolve(true);
+      };
+      script.onerror = () => {
+        resolve(false);
+      };
+      document.body.appendChild(script);
+    });
+  };
+
+  const displayRazorpay = async () => {
+    // setPaymentLoading(true)
+    const res = await loadRazorpayScript(
+      "https://checkout.razorpay.com/v1/checkout.js"
+    );
+    if (!res) {
+      alert("Razorpay SDK failed to load. Are you online?");
+      return;
+    }
+
+    // creating a new order
+    let result;
+    try {
+      result = await axios.post(`${BASE_URL}/api/v1/bookings/createOrder`, {
+        amount: Math.round(booking?.totalPrice/2),
+        service: booking?.service,
+        subService: booking?.subService,
+        package: booking?.package,
+        date: booking?.date,
+      });
+    } catch (e) {
+      console.error("Error in Create Order API - ", e.response.data)
+      toast.error(e.response.data.message);
+      return;
+    }
+
+    // Getting the order details back
+    const { amount, id: order_id, currency } = result.data.order;
+
+    const options = {
+      key: RAZORPAY_KEY_ID,
+      amount: amount.toString(),
+      currency: currency,
+      name: booking?.name,
+      description: "Test Transaction",
+      order_id: order_id,
+      handler: async function (response) {
+        const res = {
+          orderCreationId: order_id,
+          razorpayPaymentId: response.razorpay_payment_id,
+          razorpayOrderId: response.razorpay_order_id,
+          razorpaySignature: response.razorpay_signature,
+        };
+
+        let paymentResponse;
+        try {
+          paymentResponse = await axios.post(
+            `${BASE_URL}/api/v1/bookings/payment/success`,
+            res
+          );
+          if (paymentResponse.data.success)
+            // dispatch(
+            //   createBooking(
+            //     data(response.razorpay_payment_id, Enums.PAYMENT_STATUS.PAID)
+            //   )
+            // );
+            toast.success(paymentResponse.data.message);
+        } catch (error) {
+          console.error('Error in payment success API - ', error.response.data)
+          toast.error(error.response.data.message);
+        }
+      },
+      prefill: {
+        name: booking?.name,
+        email: booking?.email,
+        contact: booking?.contactNumber,
+      },
+      notes: {
+        address: booking?.address,
+      },
+      theme: {
+        color: Colors.PRIMARY,
+      },
+    };
+
+    // setPaymentLoading(false);
+
+    const paymentObject = new window.Razorpay(options);
+    paymentObject.open();
+  };
   
   const tryAgainBooking =async () =>{
     let data = localStorage.getItem("data");
@@ -188,6 +286,80 @@ export default function SearchingRider() {
      setTimeout(() => {
       setBookingId(response?._id)
      }, 20);
+  }
+
+  const OtpView = ()=>{
+    const isPaymentDone = false;
+    return(
+      isPaymentDone ? 
+      <div
+      style={{
+        display: "flex",
+        flexDirection: "row",
+        alignItems: "center",
+        justifyContent: "space-between",
+        marginTop:20,
+      }}
+    >
+      <div style={{ fontSize: 16, marginTop: 10, marginBottom: 10 }}>
+        Start your Service with PIN
+      </div>
+      <div
+        style={{
+          display: "flex",
+          flexDirection: "row",
+          alignItems: "center",
+          justifyContent: "space-between",
+        }}
+      >
+        {booking.otp
+          .toString()
+          .split("")
+          .map((digit, index) => (
+            <div
+              key={index}
+              style={{
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                backgroundColor: Colors.WHITE,
+                marginRight: 3,
+                borderRadius: 4,
+                height: 20,
+                width: 20,
+                fontSize: 16,
+              }}
+            >
+              {digit}
+            </div>
+          ))}
+      </div>
+    </div>:
+      <div
+      style={{
+        display: "flex",
+        flexDirection: "column",
+        alignItems: "center",
+        justifyContent: "flex-end",
+        height:'20vh',
+      }}
+    >
+      <div style={{ fontSize: 16}}>
+        Please Pay Advance Booking amount to get start Booking OTP
+      </div>
+      <div
+        style={{
+         width:'100%'
+            }}
+          >
+            <Btn
+              bgColor={Colors.PRIMARY}
+              onClick={()=>{displayRazorpay()}}
+              title="Pay Now"
+            />
+      </div>
+        </div>
+    )
   }
 
   return loading || tryAgainLoading ? (
@@ -280,49 +452,7 @@ export default function SearchingRider() {
               >
                 Your booking has been confirmed.
               </div>
-              <div
-                style={{
-                  display: "flex",
-                  flexDirection: "row",
-                  alignItems: "center",
-                  justifyContent: "space-between",
-                }}
-              >
-                <div style={{ fontSize: 16, marginTop: 10, marginBottom: 10 }}>
-                  Start your Service with PIN
-                </div>
-                <div
-                  style={{
-                    display: "flex",
-                    flexDirection: "row",
-                    alignItems: "center",
-                    justifyContent: "space-between",
-                  }}
-                >
-                  {booking.otp
-                    .toString()
-                    .split("")
-                    .map((digit, index) => (
-                      <div
-                        key={index}
-                        style={{
-                          display: "flex",
-                          alignItems: "center",
-                          justifyContent: "center",
-                          backgroundColor: Colors.WHITE,
-                          marginRight: 3,
-                          borderRadius: 4,
-                          height: 20,
-                          width: 20,
-                          fontSize: 16,
-                        }}
-                      >
-                        {digit}
-                      </div>
-                    ))}
-                </div>
-              </div>
-
+             
               <div
                 style={{
                   backgroundColor: Colors.WHITE,
@@ -369,6 +499,7 @@ export default function SearchingRider() {
                   </div>
                 </div>
               </div>
+              <OtpView/>
             </div>
             <Btn title="Home" onClick={() => navigate("/")} />
           </>
