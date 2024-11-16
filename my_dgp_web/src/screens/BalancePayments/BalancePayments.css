@@ -1,0 +1,135 @@
+body {
+    font-family: Arial, sans-serif;
+    background-color: #f9f9f9;
+    margin: 0;
+    padding: 0;
+    text-align: center;
+  }
+  
+  .container {
+    max-width: 400px;
+    margin: 50px auto;
+    background: white;
+    border-radius: 8px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    padding: 20px;
+  }
+  
+  .avatar-container {
+    margin: 0 auto;
+    text-align: center;
+  }
+  
+  .profile-pic {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    object-fit: cover;
+  }
+  
+  .status-tag {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    background: white;
+    color: #28a745;
+    padding: 5px 15px;
+    border: 2px solid #28a745;
+    border-radius: 20px;
+    font-size: 16px;
+    font-weight: bold;
+    margin: 15px 0;
+  }
+  
+  .check-icon {
+    font-size: 18px;
+    margin-right: 5px;
+  }
+  
+  .warning {
+    background: #fff5e6;
+    border: 1px solid #ffc107;
+    padding: 10px;
+    margin: 15px 0;
+    font-size: 14px;
+    color: #856404;
+    border-radius: 5px;
+  }
+  
+  .amount-section{
+    margin:50px 0;
+  }
+
+  .amount {
+    font-size: 32px;
+    font-weight: bold;
+    margin: 10px 0;
+  }
+  
+  .note {
+    background: #f8d7da;
+    color: #721c24;
+    padding: 10px;
+    margin: 15px 0;
+    border: 1px solid #f5c6cb;
+    border-radius: 5px;
+    font-size: 14px;
+    text-align: left;
+  }
+  
+  .payment-method {
+    margin: 20px 0;
+    text-align: left;
+  }
+  
+  .payment-option {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    cursor: pointer;
+    padding: 15px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    transition: 0.3s;
+    background: white;
+  }
+  
+  .payment-option:hover {
+    border-color: #007bff;
+    background: #f0f8ff;
+  }
+  
+  .payment-option.selected {
+    border-color: #007bff;
+    background: #dbeaff;
+  }
+  
+  .payment-option input[type="radio"] {
+    margin-right: 10px;
+    cursor: pointer;
+  }
+  
+  .payment-option label {
+    font-size: 16px;
+    font-weight: bold;
+    cursor: pointer;
+  }
+  
+  .btn-pay {
+    background: #3390de;
+    color: white;
+    padding: 15px;
+    font-size: 16px;
+    font-weight: bold;
+    border: none;
+    border-radius: 5px;
+    width: 100%;
+    cursor: pointer;
+    transition: 0.3s;
+    margin-top: 30px;
+  }
+  
+  .btn-pay:hover {
+    background: #218838;
+  }
+  

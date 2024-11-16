@@ -14,6 +14,7 @@ import RefundPolicy from '../src/screens/RefundPolicy '
 import HelpPage from './screens/HelpPage'
 import Login from './screens/Login'
 import MyBookings from './screens/MyBookings'
+import BalancePayments from './screens/BalancePayments/BalancePayments'
 
 
 export default function App() {
@@ -33,6 +34,7 @@ export default function App() {
             <Route exact path="/refund-policy" element={<RefundPolicy />} />
             <Route exact path="/help" element={<HelpPage/>} />
             <Route exact path="/my-bookings" element={<MyBookings/>} />
+            <Route exact path="/balance-payment" element={<BalancePayments/>} />
             <Route path="*" element={<NotFound />} />
           </Routes>
         </Router>
