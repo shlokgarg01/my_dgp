@@ -64,6 +64,14 @@ const bookingModel = new mongoose.Schema(
         required: true,
         default: Enums.PAYMENT_STATUS.NOT_PAID,
       },
+      paymentReceived:{
+        default:0,
+        type:Number
+      },
+      balancePayment:{
+        default:0,
+        type:Number
+      }
     },
     paidAt: {
       type: Date,

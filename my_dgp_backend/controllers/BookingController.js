@@ -488,3 +488,40 @@ exports.paymentSuccess = catchAsyncErrors(async (req, res, next) => {
     paymentId: razorpayPaymentId,
   });
 });
+
+// Update Payment for Booking using Booking ID
+exports.updatePaymentOnBooking = catchAsyncErrors(async (req, res, next) => {
+  const { bookingId, paymentAmount, transactionId } = req.body;
+  // Check if all required fields are provided
+  if (!bookingId || !paymentAmount) {
+    return next(
+      new ErrorHandler("Booking ID &  Payment Amount are required.", 400)
+    );
+  }
+
+  const bookingInfo = await Booking.findById({_id:bookingId});
+
+   // Update booking directly
+   const booking = await Booking.findByIdAndUpdate(
+    bookingId,
+    {
+      $set: {
+        "paymentInfo.paymentReceived": paymentAmount,
+        "paymentInfo.status": "PARTIAL_PAID",
+        "paymentInfo.balancePayment": bookingInfo.totalPrice - paymentAmount  // Calculate balanceAmount
+      }
+    },
+    { new: true, runValidators: true } // Returns updated document
+  );
+
+  if (!booking) {
+    return next(new ErrorHandler(`No booking found with ID: ${bookingId}`, 404));
+  }
+
+  res.status(200).json({
+    success: true,
+    message: "Payment details updated successfully.",
+    booking,
+  });
+});
+
