@@ -471,7 +471,9 @@ exports.paymentSuccess = catchAsyncErrors(async (req, res, next) => {
     razorpayPaymentId,
     razorpayOrderId,
     razorpaySignature,
-    amount, status, bookingId
+    bookingId,
+    amount,
+    status,
   } = req.body;
 
   // Creating our own digest, the format should be like this:

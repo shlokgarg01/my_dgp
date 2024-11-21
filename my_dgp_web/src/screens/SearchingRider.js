@@ -193,7 +193,7 @@ export default function SearchingRider() {
       // console.log(data);
     } catch (error) {
       console.error("Error:", error);
-      setResponse({ error: "An error occurred while updating payment." });
+      // setResponse({ error: "An error occurred while updating payment." });
     }
   };
 
@@ -254,8 +254,8 @@ export default function SearchingRider() {
           razorpayPaymentId: response.razorpay_payment_id,
           razorpayOrderId: response.razorpay_order_id,
           razorpaySignature: response.razorpay_signature,
-          bookingId:booking?._id,
-          amount:Math.round(booking?.totalPrice/2),
+          bookingId: booking?._id,
+          amount: Math.round(booking?.totalPrice/2),
           status:'PARTIAL_PAID'
         };
 
