@@ -41,6 +41,7 @@ export default function SearchingRider() {
   const[bookingId , setBookingId]= useState("")
   const[APIbookingId , setAPIBookingId]= useState("")
   const [isDesktop, setIsDesktop] = useState(window.innerWidth > 768);
+  const [isPaymentDone,setPaymentDone] = useState(false);
 
   useEffect(() => {
     const handleResize = () => setIsDesktop(window.innerWidth > 768);
@@ -172,6 +173,31 @@ export default function SearchingRider() {
     dispatch(cancelBooking(location.state.bookingId));
   };
 
+  const callUpdatePaymentApi = async (bookingId,amount,transactionId) => {
+    const apiUrl = "http://localhost/api/v1/bookings/payment/update";
+    const requestData = {
+      bookingId: bookingId,
+      paymentAmount: amount,
+      transactionId: transactionId
+    };
+
+    try {
+      const res = await fetch(apiUrl, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify(requestData)
+      });
+      const data = await res.json();
+      // console.log(data);
+    } catch (error) {
+      console.error("Error:", error);
+      setResponse({ error: "An error occurred while updating payment." });
+    }
+  };
+
+
   const loadRazorpayScript = (src) => {
     return new Promise((resolve) => {
       const script = document.createElement("script");
@@ -242,7 +268,9 @@ export default function SearchingRider() {
             //     data(response.razorpay_payment_id, Enums.PAYMENT_STATUS.PAID)
             //   )
             // );
-            toast.success(paymentResponse.data.message);
+            callUpdatePaymentApi(booking?._id, Math.round(booking?.totalPrice/2),response.razorpay_payment_id)
+            toast.success('Payment Successful');
+            setPaymentDone(true);
         } catch (error) {
           console.error('Error in payment success API - ', error.response.data)
           toast.error(error.response.data.message);
@@ -289,7 +317,6 @@ export default function SearchingRider() {
   }
 
   const OtpView = ()=>{
-    const isPaymentDone = false;
     return(
       isPaymentDone ? 
       <div
