@@ -254,6 +254,9 @@ export default function SearchingRider() {
           razorpayPaymentId: response.razorpay_payment_id,
           razorpayOrderId: response.razorpay_order_id,
           razorpaySignature: response.razorpay_signature,
+          bookingId:booking?._id,
+          amount:Math.round(booking?.totalPrice/2),
+          status:'PARTIAL_PAID'
         };
 
         let paymentResponse;
@@ -268,7 +271,7 @@ export default function SearchingRider() {
             //     data(response.razorpay_payment_id, Enums.PAYMENT_STATUS.PAID)
             //   )
             // );
-            callUpdatePaymentApi(booking?._id, Math.round(booking?.totalPrice/2),response.razorpay_payment_id)
+            // callUpdatePaymentApi(booking?._id, Math.round(booking?.totalPrice/2),response.razorpay_payment_id)
             toast.success('Payment Successful');
             setPaymentDone(true);
         } catch (error) {

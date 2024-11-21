@@ -22,6 +22,7 @@ const {
   BOOKING_COMPLETE,
   NEW_RIDER_BOOKING,
 } = require("../Data/Messages");
+const { updateBookingPayment } = require("../utils/bookingUtils");
 
 // create a booking
 exports.createBooking = catchAsyncErrors(async (req, res, next) => {
@@ -470,6 +471,7 @@ exports.paymentSuccess = catchAsyncErrors(async (req, res, next) => {
     razorpayPaymentId,
     razorpayOrderId,
     razorpaySignature,
+    amount, status, bookingId
   } = req.body;
 
   // Creating our own digest, the format should be like this:
@@ -482,11 +484,32 @@ exports.paymentSuccess = catchAsyncErrors(async (req, res, next) => {
   if (digest !== razorpaySignature)
     return next(new ErrorHandler("Transaction not legit!", 400));
 
-  res.json({
-    success: true,
-    orderId: razorpayOrderId,
-    paymentId: razorpayPaymentId,
-  });
+  try {
+    if (status === 'PARTIAL_PAID') {
+      // Call the external API for booking payment update
+      await updateBookingPayment({
+        bookingId: bookingId, 
+        paymentAmount: amount,  
+        transactionId: razorpayPaymentId,
+      });
+    }
+
+    // Send success response
+    res.json({
+      success: true,
+      orderId: razorpayOrderId,
+      paymentId: razorpayPaymentId,
+      message: "Payment verified!",
+    });
+  } catch (error) {
+    console.error("Error while updating booking:", error.message);
+    return next(new ErrorHandler("Booking update failed", 500));
+  }
+  // res.json({
+  //   success: true,
+  //   orderId: razorpayOrderId,
+  //   paymentId: razorpayPaymentId,
+  // });
 });
 
 // Update Payment for Booking using Booking ID
@@ -499,10 +522,10 @@ exports.updatePaymentOnBooking = catchAsyncErrors(async (req, res, next) => {
     );
   }
 
-  const bookingInfo = await Booking.findById({_id:bookingId});
+  const bookingInfo = await Booking.findById({ _id: bookingId });
 
-   // Update booking directly
-   const booking = await Booking.findByIdAndUpdate(
+  // Update booking directly
+  const booking = await Booking.findByIdAndUpdate(
     bookingId,
     {
       $set: {
