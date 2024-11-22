@@ -1,8 +1,8 @@
 import axios from 'axios';
 
-export const BASE_URL = "http://localhost"
+export const BASE_URL = "https://my-dgp.onrender.com"
 const axiosInstance = axios.create({
-  baseURL: 'http://localhost'
+  baseURL: 'https://my-dgp.onrender.com'
 });
 
 axiosInstance.interceptors.request.use(async function (config) {
