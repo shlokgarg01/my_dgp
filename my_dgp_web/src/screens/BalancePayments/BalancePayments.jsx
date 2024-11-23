@@ -92,7 +92,7 @@ const BalancePayments = () => {
           razorpayOrderId: response.razorpay_order_id,
           razorpaySignature: response.razorpay_signature,
           bookingId: booking?._id,
-          amount: booking?.paymentInfo?.balancePayment,
+          amount: booking?.totalPrice,
           status:PAYMENT_STATUS.PAID
         };
 

@@ -517,7 +517,7 @@ exports.paymentSuccess = catchAsyncErrors(async (req, res, next) => {
 
 // Update Payment for Booking using Booking ID
 exports.updatePaymentOnBooking = catchAsyncErrors(async (req, res, next) => {
-  const { bookingId, paymentAmount, transactionId } = req.body;
+  const { bookingId, paymentAmount, transactionId,status } = req.body;
   // Check if all required fields are provided
   if (!bookingId || !paymentAmount) {
     return next(
@@ -533,7 +533,7 @@ exports.updatePaymentOnBooking = catchAsyncErrors(async (req, res, next) => {
     {
       $set: {
         "paymentInfo.paymentReceived": paymentAmount,
-        "paymentInfo.status": "PARTIAL_PAID",
+        "paymentInfo.status": status,
         "paymentInfo.balancePayment": bookingInfo.totalPrice - paymentAmount  // Calculate balanceAmount
       }
     },
