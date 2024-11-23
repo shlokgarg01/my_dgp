@@ -493,6 +493,7 @@ exports.paymentSuccess = catchAsyncErrors(async (req, res, next) => {
         bookingId: bookingId, 
         paymentAmount: amount,  
         transactionId: razorpayPaymentId,
+        status:status,
       });
     // }
 

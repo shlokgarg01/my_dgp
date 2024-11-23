@@ -1,11 +1,12 @@
 const https = require("https");
 
-function updateBookingPayment({ bookingId, paymentAmount, transactionId }) {
+function updateBookingPayment({ bookingId, paymentAmount, transactionId,status }) {
   return new Promise((resolve, reject) => {
     const data = JSON.stringify({
       bookingId,
       paymentAmount,
       transactionId,
+      status,
     });
 
     const options = {
