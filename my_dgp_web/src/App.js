@@ -15,6 +15,7 @@ import HelpPage from './screens/HelpPage'
 import Login from './screens/Login'
 import MyBookings from './screens/MyBookings'
 import BalancePayments from './screens/BalancePayments/BalancePayments'
+import AdvancePayments from './screens/BalancePayments/AdvancePayments'
 
 
 export default function App() {
@@ -35,6 +36,7 @@ export default function App() {
             <Route exact path="/help" element={<HelpPage/>} />
             <Route exact path="/my-bookings" element={<MyBookings/>} />
             <Route exact path="/balance-payment" element={<BalancePayments/>} />
+            <Route exact path="/advance-payment" element={<AdvancePayments/>} />
             <Route path="*" element={<NotFound />} />
           </Routes>
         </Router>

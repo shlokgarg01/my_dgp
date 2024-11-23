@@ -8,15 +8,15 @@ import { BASE_URL } from "../../config/Axios";
 import { toast } from "react-custom-alert";
 import { RAZORPAY_KEY_ID } from "../../config/Config";
 import Colors from "../../utils/Colors";
-import { PAYMENT_STATUS } from "../../utils/Enums";
 
-// e.g.http://localhost:3000/balance-payment?id=000788
-const BalancePayments = () => {
-  const dispatch = useDispatch();
+// e.g.http://localhost:3000/advance-payment?id=000788
+const AdvancePayments = () => {
   const [selectedPayment, setSelectedPayment] = useState(true);
   const location = useLocation(); //get url
   const [bookingId,setBookingId] = useState();
+  const dispatch = useDispatch();
   const [isPaymentDone,setPaymentDone] = useState(false);
+
 
   const { status, service_provider, booking } = useSelector(
     (state) => state.confirmedBooking//get booking from id
@@ -34,7 +34,7 @@ const BalancePayments = () => {
   useEffect(() => {
     dispatch(confirmBookingStatus(bookingId)); //get booking from id
   }, [bookingId])
-  
+
   const loadRazorpayScript = (src) => {
     return new Promise((resolve) => {
       const script = document.createElement("script");
@@ -63,7 +63,7 @@ const BalancePayments = () => {
     let result;
     try {
       result = await axios.post(`${BASE_URL}/api/v1/bookings/createOrder`, {
-        amount: booking?.paymentInfo?.balancePayment,
+        amount: Math.round(booking?.totalPrice/2),
         service: booking?.service,
         subService: booking?.subService,
         package: booking?.package,
@@ -83,7 +83,7 @@ const BalancePayments = () => {
       amount: amount.toString(),
       currency: currency,
       name: booking?.name,
-      description: "Transaction",
+      description: "Test Transaction",
       order_id: order_id,
       handler: async function (response) {
         const res = {
@@ -92,8 +92,8 @@ const BalancePayments = () => {
           razorpayOrderId: response.razorpay_order_id,
           razorpaySignature: response.razorpay_signature,
           bookingId: booking?._id,
-          amount: booking?.paymentInfo?.balancePayment,
-          status:PAYMENT_STATUS.PAID
+          amount: Math.round(booking?.totalPrice/2),
+          status:'PARTIAL_PAID'
         };
 
         let paymentResponse;
@@ -102,7 +102,8 @@ const BalancePayments = () => {
             `${BASE_URL}/api/v1/bookings/payment/success`,
             res
           );
-          if (paymentResponse?.data?.success)
+          if (paymentResponse.data.success)
+            
             toast.success('Payment Successful');
             setPaymentDone(true);
         } catch (error) {
@@ -128,10 +129,11 @@ const BalancePayments = () => {
     const paymentObject = new window.Razorpay(options);
     paymentObject.open();
   };
+
   const handlePayment = () => {
     if (selectedPayment) {
-      displayRazorpay()   
-     } else {
+      displayRazorpay()
+        } else {
       alert("Please select the payment option.");
     }
   };
@@ -147,22 +149,21 @@ const BalancePayments = () => {
       </div>
 
       <div className="status-tag">
-        <span className="check-icon">✔</span> Booking Complete
+        <span className="check-icon">✔</span> Rider Reached
       </div>
 
-      <div className="warning">Pay Balance to get photos in 24hrs.</div>
+      <div className="warning">Pay Advance Amount to start booking</div>
 
       <div className="amount-section">
-        <h2>Balance Amount to pay</h2>
+        <h2>Advance Amount to pay</h2>
         {/* <h3>Aakash Saklani</h3> */}
 
         <div className="amount">
-          ₹{booking?.paymentInfo?.balancePayment}
+        ₹{Math.round(booking?.totalPrice/2)}
         </div>
       </div>
       <div className="note">
-        <strong>NOTE:</strong> If you do not make the balance payment within 7
-        days, we are not responsible for your data loss.
+        <strong>NOTE:</strong> Booking Start OTP will not be generated without advance payment.
       </div>
 
       <div className="payment-method">
@@ -191,4 +192,4 @@ const BalancePayments = () => {
   );
 };
 
-export default BalancePayments
+export default AdvancePayments

@@ -487,14 +487,14 @@ exports.paymentSuccess = catchAsyncErrors(async (req, res, next) => {
     return next(new ErrorHandler("Transaction not legit!", 400));
 
   try {
-    if (status === 'PARTIAL_PAID') {
+    // if (status === 'PARTIAL_PAID') { 
       // Call the external API for booking payment update
       await updateBookingPayment({
         bookingId: bookingId, 
         paymentAmount: amount,  
         transactionId: razorpayPaymentId,
       });
-    }
+    // }
 
     // Send success response
     res.json({
