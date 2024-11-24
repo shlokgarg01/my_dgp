@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import "./BalancePayments.css";
-import { useLocation } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { confirmBookingStatus } from "../../actions/BookingActions";
 import axios from "axios";
@@ -17,6 +17,7 @@ const BalancePayments = () => {
   const location = useLocation(); //get url
   const [bookingId,setBookingId] = useState();
   const [isPaymentDone,setPaymentDone] = useState(false);
+  const navigate = useNavigate();
 
   const { status, service_provider, booking } = useSelector(
     (state) => state.confirmedBooking//get booking from id
@@ -104,6 +105,7 @@ const BalancePayments = () => {
           );
           if (paymentResponse?.data?.success)
             toast.success('Payment Successful');
+            navigate("/");
             setPaymentDone(true);
         } catch (error) {
           console.error('Error in payment success API - ', error.response.data)
