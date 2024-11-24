@@ -347,6 +347,7 @@ export default function Home() {
         marginBottom: 10,
         padding: 12,
         fontSize: 14,
+        height:60,
         borderRadius: 7,
         color: isActive ? 'black' : 'grey',
         boxShadow:
@@ -1114,7 +1115,7 @@ const styles = {
     borderRadius: 7,
   },
   packageList:{
-    height:135,
+    height:174,
     overflow:"scroll"
   },
   packagePriceSubContainer: {
