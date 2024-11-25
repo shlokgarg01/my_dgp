@@ -8,14 +8,15 @@ import { BASE_URL } from "../../config/Axios";
 import { toast } from "react-custom-alert";
 import { RAZORPAY_KEY_ID } from "../../config/Config";
 import Colors from "../../utils/Colors";
+import { IoLogoWhatsapp, IoMdCall } from "react-icons/io";
 
 // e.g.http://localhost:3000/advance-payment?id=000788
 const AdvancePayments = () => {
   const [selectedPayment, setSelectedPayment] = useState(true);
   const location = useLocation(); //get url
-  const [bookingId,setBookingId] = useState();
+  const [bookingId, setBookingId] = useState();
   const dispatch = useDispatch();
-  const [isPaymentDone,setPaymentDone] = useState(false);
+  const [isPaymentDone, setPaymentDone] = useState(false);
 
 
   const { status, service_provider, booking } = useSelector(
@@ -26,10 +27,16 @@ const AdvancePayments = () => {
     const queryParams = new URLSearchParams(location.search);
     const bookingIdFromQuery = queryParams.get("id");
 
-    if(bookingIdFromQuery){
+    if (bookingIdFromQuery) {
       setBookingId(bookingIdFromQuery)
     }
   }, [location]); // Run this effect whenever the location changes
+
+  useEffect(() => {
+    if (booking?.paymentInfo?.status === 'PARTIAL_PAID') {
+      setPaymentDone(true);
+    }
+  }, [booking])
 
   useEffect(() => {
     dispatch(confirmBookingStatus(bookingId)); //get booking from id
@@ -63,7 +70,7 @@ const AdvancePayments = () => {
     let result;
     try {
       result = await axios.post(`${BASE_URL}/api/v1/bookings/createOrder`, {
-        amount: Math.round(booking?.totalPrice/2),
+        amount: Math.round(booking?.totalPrice / 2),
         service: booking?.service,
         subService: booking?.subService,
         package: booking?.package,
@@ -92,8 +99,8 @@ const AdvancePayments = () => {
           razorpayOrderId: response.razorpay_order_id,
           razorpaySignature: response.razorpay_signature,
           bookingId: booking?._id,
-          amount: Math.round(booking?.totalPrice/2),
-          status:'PARTIAL_PAID'
+          amount: Math.round(booking?.totalPrice / 2),
+          status: 'PARTIAL_PAID'
         };
 
         let paymentResponse;
@@ -103,9 +110,9 @@ const AdvancePayments = () => {
             res
           );
           if (paymentResponse.data.success)
-            
+
             toast.success('Payment Successful');
-            setPaymentDone(true);
+          setPaymentDone(true);
         } catch (error) {
           console.error('Error in payment success API - ', error.response.data)
           toast.error(error.response.data.message);
@@ -133,62 +140,151 @@ const AdvancePayments = () => {
   const handlePayment = () => {
     if (selectedPayment) {
       displayRazorpay()
-        } else {
+    } else {
       alert("Please select the payment option.");
     }
   };
 
-  return (
-    <div className="container">
-      <div className="avatar-container">
-        <img
-          className="profile-pic"
-          src="https://cdn-icons-png.flaticon.com/512/2922/2922510.png"
-          alt="Generic Male Avatar"
-        />
-      </div>
+  const renderRiderDetails = ()=>{
+    return(
+      <div style={{ fontSize: 16 }}>
+              <div
+                style={{
+                  backgroundColor: Colors.WHITE,
+                  borderRadius: 16,
+                  padding: 10,
+                  boxShadow: "0px 0px 16px lightgray",
+                  marginTop: 16,
+                }}
+              >
+                <div
+                  style={{
+                    display: "flex",
+                    flexDirection: "row",
+                    alignItems: "center",
+                    justifyContent: "space-between",
+                    paddingLeft: 10,
+                    paddingRight: 10,
+                    fontSize: 16,
+                  }}
+                >
+                  <div>{service_provider?.name}</div>
+                  <div
+                    style={{
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "center",
+                    }}
+                  >
+                    <a
+                      target="_blank"
+                      rel="noreferrer"
+                      href={`https://wa.me/+91${service_provider?.contactNumber}`}
+                    >
+                      <IoLogoWhatsapp color={Colors.DARK_GREEN} size={34} />
+                    </a>
+                    <a
+                      href={`tel:+91${service_provider?.contactNumber}`}
+                      style={{
+                        marginLeft: 10,
+                      }}
+                    >
+                      <IoMdCall color={Colors.GRAY} size={25} />
+                    </a>
+                  </div>
+                </div>
+              </div>
+            </div>
+    )
+  }
 
-      <div className="status-tag">
-        <span className="check-icon">✔</span> Rider Reached
-      </div>
-
-      <div className="warning">Pay Advance Amount to start booking</div>
-
-      <div className="amount-section">
-        <h2>Advance Amount to pay</h2>
-        {/* <h3>Aakash Saklani</h3> */}
-
-        <div className="amount">
-        ₹{Math.round(booking?.totalPrice/2)}
-        </div>
-      </div>
-      <div className="note">
-        <strong>NOTE:</strong> Booking Start OTP will not be generated without advance payment.
-      </div>
-
-      <div className="payment-method">
-        <div
-          className={`payment-option ${selectedPayment ? "selected" : ""}`}
-          onClick={() => setSelectedPayment(true)}
-        >
-          <input
-            type="radio"
-            id="single-payment"
-            name="payment"
-            value="Net Banking / UPI / Credit / Debit Cards"
-            checked={selectedPayment}
-            onChange={() => setSelectedPayment(true)}
+  const renderAfterPaymentView = () => {
+    return (
+      <div className="container">
+        <div className="avatar-container">
+          <img
+            className="profile-pic"
+            src="https://cdn-icons-png.flaticon.com/512/2922/2922510.png"
+            alt="Generic Male Avatar"
           />
-          <label htmlFor="single-payment">
-          Net Banking / UPI / Credit / Debit Cards
-          </label>
         </div>
-      </div>
 
-      <button className="btn-pay" onClick={handlePayment}>
-        PAY NOW
-      </button>
-    </div>
+        <div className="status-tag">
+          <span className="check-icon">✔</span>Advance Received
+        </div>
+
+        <div className="warning">Give Start OTP to Rider to start the booking</div>
+        <div className="amount-section">
+          <h2>Booking Start OTP</h2>
+
+          <div className="amount">
+            {booking?.otp}
+          </div>
+        </div>
+        {renderRiderDetails()}
+        <div className="note">
+        <strong>NOTE:</strong> Share OTP only at the start of your booking. We do not ask OTP's on phone call or messages.
+      </div>
+        <button className="btn-pay" onClick={handlePayment}>
+          HOME
+        </button>
+
+      </div>
+    )
+  }
+
+  return (
+    isPaymentDone ? renderAfterPaymentView() :
+      <div className="container">
+        <div className="avatar-container">
+          <img
+            className="profile-pic"
+            src="https://cdn-icons-png.flaticon.com/512/2922/2922510.png"
+            alt="Generic Male Avatar"
+          />
+        </div>
+
+        <div className="status-tag">
+          <span className="check-icon">✔</span> Rider Reached
+        </div>
+
+        <div className="warning">Pay Advance Amount to start booking</div>
+
+        <div className="amount-section">
+          <h2>Advance Amount to pay</h2>
+          {/* <h3>Aakash Saklani</h3> */}
+
+          <div className="amount">
+            ₹{Math.round(booking?.totalPrice / 2)}
+          </div>
+        </div>
+        <div className="note">
+          <strong>NOTE:</strong> Booking Start OTP will not be generated without advance payment.
+        </div>
+
+        <div className="payment-method">
+          <div
+            className={`payment-option ${selectedPayment ? "selected" : ""}`}
+            onClick={() => setSelectedPayment(true)}
+          >
+            <input
+              type="radio"
+              id="single-payment"
+              name="payment"
+              value="Net Banking / UPI / Credit / Debit Cards"
+              checked={selectedPayment}
+              onChange={() => setSelectedPayment(true)}
+            />
+            <label htmlFor="single-payment">
+              Net Banking / UPI / Credit / Debit Cards
+            </label>
+          </div>
+        </div>
+
+        <button className="btn-pay" onClick={handlePayment}>
+          PAY NOW
+        </button>
+      </div>
   );
 };
 
