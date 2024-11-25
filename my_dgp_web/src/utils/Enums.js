@@ -12,7 +12,7 @@ module.exports = {
     NOT_PAID: "NOT_PAID",
   },
   PAYMENT_MODES: {
-    CASH: "Pay Using Cash",
-    ONLINE: "Pay Online"
+    CASH: "Pay at the time of visit",
+    ONLINE: "NetBanking/ UPI/ Credit/Debit Cards"
   }
 };
