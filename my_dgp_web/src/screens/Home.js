@@ -40,6 +40,7 @@ export default function Home() {
   const [packages,setPackages] = useState();
   const [selectedPrice,setSelectedPrice] = useState();
   const [demoImages, setDemoImages] = useState();
+  const [description,setDescription] = useState();
   const [servicePackage, setPackage] = useState(savedData.servicePackage);
   const [packageName, setPackageName] = useState(savedData.packageName || "");
   const [selectedHours, setSelectedHours] = useState(savedData.hours || 0);
@@ -295,7 +296,6 @@ export default function Home() {
     return (
       <div
         onClick={() => {
-            setDemoImages(subService?.demoLinks)
             setSubServiceName(subService.name);
             setSubService(subService._id);
             setPackages(subService?.packages)
@@ -362,6 +362,8 @@ export default function Home() {
         setPackageName(p.name);
         setPackage(p._id);
         setSelectedPrice(p?.charges)
+        setDemoImages(p?.demoLinks ?? [])
+        setDescription(p?.description ?? '')
       }}
     >
       <div style={{ display: 'flex', alignItems: 'center' }}>
@@ -381,7 +383,7 @@ export default function Home() {
                   : selectedHours * 60))
             }
             packageName={`${p.name}`}
-            description={p.name == 'Regular' ? 'Provided by a skilled photographer, this budget-friendly package offers reliable service for basic needs without additional frills.' : p.name == 'Standard' ? 'Features an experienced photographer and offers a balanced option between cost and quality, providing a more refined approach and enhanced service.' : 'Utilizes a top-tier photographer with extensive expertise, delivering exceptional service and superior quality. This premium option is ideal for those seeking the highest level of professionalism and are willing to invest more for a top-notch experience.'}
+            description={description}
             images={demoImages}
           />
           
@@ -882,7 +884,7 @@ export default function Home() {
                 <div style={styles.packageList}>
                 {packages?.map((p, index) => (
                   <div  >
-                    <PricesContent p={p} index={index} isActive={index == 2 ? true : (index == 0 ? isRegularActive : isStandardActive)} />
+                    <PricesContent p={p} index={index} isActive={true} />
                   </div>
                 ))}
                 </div>

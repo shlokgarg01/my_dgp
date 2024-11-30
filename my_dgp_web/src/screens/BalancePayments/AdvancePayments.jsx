@@ -213,7 +213,7 @@ const AdvancePayments = () => {
           <span className="check-icon">✔</span>Advance Received
         </div>
 
-        <div className="warning">Give Start OTP to Rider to start the booking</div>
+        <div className="warning">For starting your booking, please share the OTP to rider upon visit.</div>
         <div className="amount-section">
           <h2>Booking Start OTP</h2>
 
@@ -223,7 +223,7 @@ const AdvancePayments = () => {
         </div>
         {renderRiderDetails()}
         <div className="note">
-        <strong>NOTE:</strong> Share OTP only at the start of your booking. We do not ask OTP's on phone call or messages.
+        <strong>NOTE: </strong>We do not ask OTP on phone call or messages.
       </div>
         <button className="btn-pay" onClick={handlePayment}>
           HOME
