@@ -1,0 +1,72 @@
+.feedback-star {
+  font-size: 2rem;
+  cursor: pointer;
+  margin: 0 5px;
+  color: gray;
+  transition: color 0.2s ease-in-out;
+  border-color: transparent;
+}
+
+.feedback-star.highlighted {
+  color: gold; /* Highlight on hover or selection */
+}
+
+.feedback-container {
+  text-align: center;
+  padding: 20px;
+  background: #fff;
+  border-radius: 8px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+  max-width: 400px;
+  margin: auto;
+}
+
+.feedback-title {
+  font-size: 1.5rem;
+  font-weight: bold;
+  margin-top: 20px;
+}
+
+.feedback-subtitle {
+  font-size: 1rem;
+  margin-top: 10px;
+  color: gray;
+}
+
+.feedback-textarea-container {
+  margin: 20px 0;
+}
+
+.feedback-textarea {
+  width: 100%;
+  height: 80px;
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  font-size: 1rem;
+  border-radius: 10px  ;
+}
+
+.feedback-buttons {
+  margin-top: 10px;
+}
+
+.feedback-button {
+  background: #ffd700;
+  border: none;
+  padding: 10px 20px;
+  color: #fff;
+  font-size: 1rem;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background 0.3s ease;
+}
+
+.feedback-button:hover {
+  background: #e6c200;
+}
+
+.feedback-thankyou {
+  font-size: 1.5rem;
+  color: green;
+}
