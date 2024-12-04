@@ -90,7 +90,7 @@ export default function FeedbackComponent() {
             }}
           >
             <button className="feedback-button">Home</button>
-            <button className="feedback-button">gallary</button>
+            <button className="feedback-button">gallary </button>
           </div>
         </div>
       )}
