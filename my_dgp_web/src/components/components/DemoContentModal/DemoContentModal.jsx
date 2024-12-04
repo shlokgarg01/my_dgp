@@ -10,7 +10,7 @@ const images = Array.from({ length: 12 }, (_, index) => ({
   src: `https://picsum.photos/200?random=${index}`,
 }));
 
-const DemoContentModal = ({ excessCharge, onClose,price,packageName,description,images }) => {
+const DemoContentModal = ({ excessCharge, onClose,price,packageName,description,images,style }) => {
   const [isSheetOpen, setIsSheetOpen] = useState(true); // Bottom sheet initially open
 
   return (
@@ -20,6 +20,7 @@ const DemoContentModal = ({ excessCharge, onClose,price,packageName,description,
         onClose={() => setIsSheetOpen(false)}
         detent="content-height"
         disableDrag={true}
+        style={style}
       >
         <Sheet.Container>
           <Sheet.Header />

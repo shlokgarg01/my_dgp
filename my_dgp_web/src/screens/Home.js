@@ -27,6 +27,7 @@ import HamburgerMenu from "../components/components/HamburgerMenu";
 import { saveData } from "../actions/DataActions";
 import axios from "axios";
 import DemoContentModal from "../components/components/DemoContentModal/DemoContentModal";
+import FeedbackComponent from "./Feedback/FeedbackComponent";
 
 export default function Home() {
   const { savedData } = useSelector((state) => state.savedData);
@@ -373,6 +374,7 @@ export default function Home() {
         </div>
         {showEyeButton[index] && (
           <DemoContentModal
+          style={isDesktop && {width:'50%'}}
             onClose={() => toggleShowEyeButton(index)}
             excessCharge={Math.round(p?.charges)}
             price={
@@ -915,6 +917,7 @@ export default function Home() {
           onClose={() => setIsBottomSheetOpen(false)}
           detent="content-height"
           disableDrag={true}
+          style={isDesktop && {width:'50%'}}
         >
           <Sheet.Container>
             <Sheet.Header />
@@ -1082,6 +1085,23 @@ export default function Home() {
                   }}
                 />
               </div>
+            </Sheet.Content>
+          </Sheet.Container>
+          <Sheet.Backdrop />
+        </Sheet>
+
+
+        <Sheet
+          isOpen={false}
+          onClose={() => setIsBottomSheetOpen(false)}
+          detent="content-height"
+          disableDrag={true}
+          style={isDesktop && {width:'50%'}}
+        >
+          <Sheet.Container>
+            <Sheet.Header />
+            <Sheet.Content>
+             <FeedbackComponent/>
             </Sheet.Content>
           </Sheet.Container>
           <Sheet.Backdrop />
