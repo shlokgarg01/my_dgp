@@ -43,10 +43,10 @@ export default function Home() {
   const [description,setDescription] = useState();
   const [servicePackage, setPackage] = useState(savedData.servicePackage);
   const [packageName, setPackageName] = useState(savedData.packageName || "");
-  const [selectedHours, setSelectedHours] = useState(savedData.hours || 0);
+  const [selectedHours, setSelectedHours] = useState(savedData.hours || 1);
   const [selectedMinutes, setselectedMinutes] = useState({
-    hours: savedData.hours || "00",
-    minutes: savedData.minutes || "01",
+    hours: savedData.hours || "01",
+    minutes: savedData.minutes || "00",
   });
   const [isMinutesSheetOpen, setIsMinutesSheetOpen] = useState(false);
   const [address, setAddress] = useState(savedData.address);
@@ -386,7 +386,6 @@ export default function Home() {
             description={description}
             images={demoImages}
           />
-          
         )}
       </div>      {loading === false ? (
         <div>
@@ -778,7 +777,7 @@ export default function Home() {
                   }}
                 >
                   {/* + - minutes component */}
-                  <div
+                  {/* <div
                     style={{
                       backgroundColor: Colors.WHITE,
                       marginTop: 0,
@@ -849,7 +848,7 @@ export default function Home() {
                         +
                       </div>
                     </div>
-                  </div>
+                  </div> */}
 
                   {Array.from({ length: 12 }, (_, index) => index + 1).map(
                     (item, index) => (
