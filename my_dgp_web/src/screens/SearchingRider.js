@@ -356,12 +356,12 @@ export default function SearchingRider() {
                     display: "flex",
                     alignItems: "center",
                     justifyContent: "center",
-                    backgroundColor: Colors.WHITE,
+                    backgroundColor: Colors.LIGHT_GRAY,
                     marginRight: 3,
                     borderRadius: 4,
-                    height: 20,
-                    width: 20,
-                    fontSize: 16,
+                    height: 24,
+                    width: 24,
+                    fontSize: 20,
                   }}
                 >
                   {digit}
