@@ -911,7 +911,7 @@ export default function Home() {
           )}
 
 <Sheet
-          isOpen={true}
+          isOpen={window.localStorage.getItem("feedback")}
           onClose={() => setIsBottomSheetOpen(false)}
           detent="content-height"
           disableDrag={true}
