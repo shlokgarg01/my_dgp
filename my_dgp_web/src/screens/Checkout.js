@@ -253,7 +253,7 @@ export default function Checkout() {
   );
 
   return (
-    <div className="container" style={{ padding: 0 }}>
+    <div style={{ padding: 0 }}>
       {loading ? (
         <LoaderComponent />
       ) : (
