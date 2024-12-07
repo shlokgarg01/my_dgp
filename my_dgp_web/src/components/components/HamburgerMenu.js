@@ -2,6 +2,9 @@ import { slide as Menu } from "react-burger-menu";
 import React, { useState, useEffect } from 'react';
 import Colors from "../../utils/Colors";
 import { Link } from "react-router-dom";
+import { RiHome7Line, RiLogoutBoxRLine } from "react-icons/ri";
+import { PiClockClockwiseDuotone } from "react-icons/pi";
+import { BiSupport } from "react-icons/bi";
 
 export default function HamburgerMenu() {
 
@@ -19,6 +22,17 @@ export default function HamburgerMenu() {
     } else {
       return false;
     }
+  }
+
+  const renderDivider = () => {
+    return (
+      <div style={{
+        width: '100%',
+        height: '1px',
+        backgroundColor: Colors.LIGHT_GRAY,
+        margin: '10px 0'
+      }}></div>
+    )
   }
 
   var styles = {
@@ -48,7 +62,7 @@ export default function HamburgerMenu() {
     },
     bmMenu: {
       background: Colors.WHITE,
-      padding: "2.5em 1.5em 0",
+      padding: "2em 1em 0",
       fontSize: "1.15em",
     },
     bmMorphShape: {
@@ -60,7 +74,7 @@ export default function HamburgerMenu() {
     },
     bmItem: {
       textDecoration: 'none',
-      color: Colors.PRIMARY,
+      color: Colors.DARK_GRAY,
       marginTop: 10
       // display: "inline-block",
     },
@@ -74,32 +88,25 @@ export default function HamburgerMenu() {
     <div style={{ zIndex: 10000000 }}>
       <Menu styles={styles}>
         <Link id="home" className="menu-item" to="/">
-          Home
+          <RiHome7Line color={Colors.PRIMARY} /> Home
         </Link>
+        {renderDivider()}
         {isLogin() && <Link id="home" className="menu-item" to="/my-bookings">
-          My Bookings
+          <PiClockClockwiseDuotone color={Colors.PRIMARY} /> My Bookings
         </Link>}
-        <Link id="home" className="menu-item" to="/terms-and-conditions">
-          Terms & Conditions
-        </Link>
-        <Link id="home" className="menu-item" to="/privacy-policy">
-          Privacy Policy
-        </Link>
-        <Link id="home" className="menu-item" to="/refund-policy">
-          Refund Policy
-        </Link>
+        {renderDivider()}
+
         <Link id="home" className="menu-item" to="/help">
-          Help
+          <BiSupport color={Colors.PRIMARY} /> Help
         </Link>
+        {renderDivider()}
+
         {isLogin() && <Link id="home" className="menu-item" to="/">
-          Logout
+          <RiLogoutBoxRLine color={Colors.PRIMARY} /> Logout
         </Link>}
-        {/* <a id="about" className="menu-item" href="/about">
-          About
-        </a>
-        <a id="contact" className="menu-item" href="/contact">
-          Contact Us
-        </a> */}
+
+        {renderDivider()}
+
       </Menu>
     </div>
   );
