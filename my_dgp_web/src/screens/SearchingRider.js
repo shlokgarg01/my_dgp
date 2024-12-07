@@ -81,8 +81,14 @@ export default function SearchingRider() {
         if (status === Enums.BOOKING_STATUS.ACCEPTED) {
           clearTimeout(fetchDataTimeout);
           toast.success("Booking Confirmed");
-          const data =  localStorage.removeItem("data")
-          localStorage.setItem("feedback",data);
+          // const data =  localStorage.removeItem("data")
+          const feedbackData = {
+            customerId:booking?.customer,
+            bookingId:booking?._id,
+            booking:booking,
+            serviceProvider:service_provider
+          }
+          localStorage.setItem("feedback",JSON.stringify(feedbackData));
           sendAdvanceMsg(service_provider?.name, Math.round(booking?.totalPrice / 2), `${window.location.origin}/payment/${booking?._id}`, contactNumber)
         }
       } catch (error) {
