@@ -21,6 +21,7 @@ import { CONFIRM_BOOKING_STATUS_SUCCESS, CREATE_BOOKING_REQUEST, CREATE_BOOKING_
 import axios from 'axios';
 import { BASE_URL } from "../config/Axios";
 import { RAZORPAY_KEY_ID } from "../config/Config";
+import { sendAdvanceMsg, sendAdvanceStartOtpMsg, sendBalanceMsg } from "../utils/whatsappMsg";
 
 export default function SearchingRider() {
   const navigate = useNavigate();
@@ -34,14 +35,15 @@ export default function SearchingRider() {
     (state) => state.cancelledBooking
   );
 
-  
+
   const [showDropdown, setShowDropdown] = useState(false);
   const [tryAgain, setTryAgain] = useState(false);
-  const [tryAgainLoading,setTryAgainLoading] = useState(false);
-  const[bookingId , setBookingId]= useState("")
-  const[APIbookingId , setAPIBookingId]= useState("")
+  const [tryAgainLoading, setTryAgainLoading] = useState(false);
+  const [bookingId, setBookingId] = useState("")
+  const [APIbookingId, setAPIBookingId] = useState("")
   const [isDesktop, setIsDesktop] = useState(window.innerWidth > 768);
-  const [isPaymentDone,setPaymentDone] = useState(false);
+  const [isPaymentDone, setPaymentDone] = useState(false);
+  const contactNumber = localStorage.getItem('userNumber')
 
   useEffect(() => {
     const handleResize = () => setIsDesktop(window.innerWidth > 768);
@@ -63,11 +65,11 @@ export default function SearchingRider() {
     let fetchDataTimeout;
     const fetchData = async () => {
       try {
-        if(bookingId.length){
+        if (bookingId.length) {
           dispatch(confirmBookingStatus(bookingId));
           setAPIBookingId(bookingId)
         }
-        else{
+        else {
           dispatch(confirmBookingStatus(location.state.bookingId));
           setAPIBookingId(location.state.bookingId)
         }
@@ -79,6 +81,7 @@ export default function SearchingRider() {
         if (status === Enums.BOOKING_STATUS.ACCEPTED) {
           clearTimeout(fetchDataTimeout);
           toast.success("Booking Confirmed");
+          sendAdvanceMsg(service_provider?.name, Math.round(booking?.totalPrice / 2), `${window.location.origin}/payment/${booking?._id}`, contactNumber)
         }
       } catch (error) {
         console.error("Error fetching data:", error);
@@ -92,9 +95,9 @@ export default function SearchingRider() {
         return (prevPercentage + 1) % 101;
       });
     }, 25);
-  
 
-    if (isCancelled || status === Enums.BOOKING_STATUS.CANCELLED ) {
+
+    if (isCancelled || status === Enums.BOOKING_STATUS.CANCELLED) {
       // debugger
       if (isCancelled) {
         toast.success("Booking Cancelled");
@@ -106,21 +109,21 @@ export default function SearchingRider() {
         // toast.error(
         //   "No service provider is available to accept. Please book after sometime."
         // );
-      clearInterval(interval);
+        clearInterval(interval);
       clearTimeout(fetchDataTimeout);
-     // navigate("/");
-     if(bookingId.length){
-     if(bookingId == APIbookingId)
-        setTryAgain(true);
-     else
-        setTryAgain(false);
+      // navigate("/");
+      if (bookingId.length) {
+        if (bookingId == APIbookingId)
+          setTryAgain(true);
+        else
+          setTryAgain(false);
       }
       else
         setTryAgain(true)
       //  alert(APIbookingId)
       //  alert(`${bookingId} data`)
       //  alert(`${location.state.bookingId} location.state.bookingId`)
-      }
+    }
 
     return () => {
       clearInterval(interval);
@@ -173,7 +176,7 @@ export default function SearchingRider() {
     dispatch(cancelBooking(location.state.bookingId));
   };
 
-  const callUpdatePaymentApi = async (bookingId,amount,transactionId) => {
+  const callUpdatePaymentApi = async (bookingId, amount, transactionId) => {
     const apiUrl = "http://localhost/api/v1/bookings/payment/update";
     const requestData = {
       bookingId: bookingId,
@@ -226,7 +229,7 @@ export default function SearchingRider() {
     let result;
     try {
       result = await axios.post(`${BASE_URL}/api/v1/bookings/createOrder`, {
-        amount: Math.round(booking?.totalPrice/2),
+        amount: Math.round(booking?.totalPrice / 2),
         service: booking?.service,
         subService: booking?.subService,
         package: booking?.package,
@@ -255,8 +258,8 @@ export default function SearchingRider() {
           razorpayOrderId: response.razorpay_order_id,
           razorpaySignature: response.razorpay_signature,
           bookingId: booking?._id,
-          amount: Math.round(booking?.totalPrice/2),
-          status:'PARTIAL_PAID'
+          amount: Math.round(booking?.totalPrice / 2),
+          status: 'PARTIAL_PAID'
         };
 
         let paymentResponse;
@@ -273,7 +276,8 @@ export default function SearchingRider() {
             // );
             // callUpdatePaymentApi(booking?._id, Math.round(booking?.totalPrice/2),response.razorpay_payment_id)
             toast.success('Payment Successful');
-            setPaymentDone(true);
+          setPaymentDone(true);
+          sendAdvanceStartOtpMsg(contactNumber,booking?.otp)
         } catch (error) {
           console.error('Error in payment success API - ', error.response.data)
           toast.error(error.response.data.message);
@@ -297,97 +301,97 @@ export default function SearchingRider() {
     const paymentObject = new window.Razorpay(options);
     paymentObject.open();
   };
-  
-  const tryAgainBooking =async () =>{
+
+  const tryAgainBooking = async () => {
     let data = localStorage.getItem("data");
     let parsedData = JSON.parse(data)
     dispatch({ type: CONFIRM_BOOKING_STATUS_SUCCESS, payload: parsedData });
 
-   // console.log( JSON.parse(data))
+    // console.log( JSON.parse(data))
     setTryAgain(false)
     setTryAgainLoading(true);
     setTimeout(() => {
       setTryAgainLoading(false);
     }, 4000);
-   // alert(status)
+    // alert(status)
     const response = await dispatch(createBooking(parsedData));
-    
+
     console.log('Booking created successfully:', response?._id);
-    if(response?._id)
-     setTimeout(() => {
-      setBookingId(response?._id)
-     }, 20);
+    if (response?._id)
+      setTimeout(() => {
+        setBookingId(response?._id)
+      }, 20);
   }
 
-  const OtpView = ()=>{
-    return(
-      isPaymentDone ? 
-      <div
-      style={{
-        display: "flex",
-        flexDirection: "row",
-        alignItems: "center",
-        justifyContent: "space-between",
-        marginTop:20,
-      }}
-    >
-      <div style={{ fontSize: 16, marginTop: 10, marginBottom: 10 }}>
-        Start your Service with PIN
-      </div>
-      <div
-        style={{
-          display: "flex",
-          flexDirection: "row",
-          alignItems: "center",
-          justifyContent: "space-between",
-        }}
-      >
-        {booking.otp
-          .toString()
-          .split("")
-          .map((digit, index) => (
-            <div
-              key={index}
-              style={{
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-                backgroundColor: Colors.WHITE,
-                marginRight: 3,
-                borderRadius: 4,
-                height: 20,
-                width: 20,
-                fontSize: 16,
-              }}
-            >
-              {digit}
-            </div>
-          ))}
-      </div>
-    </div>:
-      <div
-      style={{
-        display: "flex",
-        flexDirection: "column",
-        alignItems: "center",
-        justifyContent: "flex-end",
-        height:'20vh',
-      }}
-    >
-      <div style={{ fontSize: 16}}>
-        Please Pay Advance Booking amount to get start Booking OTP
-      </div>
-      <div
-        style={{
-         width:'100%'
+  const OtpView = () => {
+    return (
+      isPaymentDone ?
+        <div
+          style={{
+            display: "flex",
+            flexDirection: "row",
+            alignItems: "center",
+            justifyContent: "space-between",
+            marginTop: 20,
+          }}
+        >
+          <div style={{ fontSize: 16, marginTop: 10, marginBottom: 10 }}>
+            Start your Service with PIN
+          </div>
+          <div
+            style={{
+              display: "flex",
+              flexDirection: "row",
+              alignItems: "center",
+              justifyContent: "space-between",
+            }}
+          >
+            {booking.otp
+              .toString()
+              .split("")
+              .map((digit, index) => (
+                <div
+                  key={index}
+                  style={{
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    backgroundColor: Colors.WHITE,
+                    marginRight: 3,
+                    borderRadius: 4,
+                    height: 20,
+                    width: 20,
+                    fontSize: 16,
+                  }}
+                >
+                  {digit}
+                </div>
+              ))}
+          </div>
+        </div> :
+        <div
+          style={{
+            display: "flex",
+            flexDirection: "column",
+            alignItems: "center",
+            justifyContent: "flex-end",
+            height: '20vh',
+          }}
+        >
+          <div style={{ fontSize: 16 }}>
+            Please Pay Advance Booking amount to get start Booking OTP
+          </div>
+          <div
+            style={{
+              width: '100%'
             }}
           >
             <Btn
               bgColor={Colors.PRIMARY}
-              onClick={()=>{displayRazorpay()}}
+              onClick={() => { displayRazorpay() }}
               title="Pay Now"
             />
-      </div>
+          </div>
         </div>
     )
   }
@@ -395,7 +399,7 @@ export default function SearchingRider() {
   return loading || tryAgainLoading ? (
     <Loader />
   ) : (
-    <div style={{  textAlign: "center", padding: 10 }}>
+    <div style={{ textAlign: "center", padding: 10 }}>
       {/* Map Component */}
       <div>
         <MapComponent
@@ -409,20 +413,20 @@ export default function SearchingRider() {
         />
       </div>
 
-        <div style={{
-          backgroundColor: 'white',
-          zIndex: 1000,
-          position: 'absolute',
-          bottom: 0, 
-          right:isDesktop?'50%':0,
-          left:0,
-          padding: 10,
-          height: 460,
-          display:'flex',
-          flexDirection:'column',
-          justifyContent:'space-between'
-        }}>
-          
+      <div style={{
+        backgroundColor: 'white',
+        zIndex: 1000,
+        position: 'absolute',
+        bottom: 0,
+        right: isDesktop ? '50%' : 0,
+        left: 0,
+        padding: 10,
+        height: 460,
+        display: 'flex',
+        flexDirection: 'column',
+        justifyContent: 'space-between'
+      }}>
+
         <div
           style={{
             display: "flex",
@@ -445,7 +449,7 @@ export default function SearchingRider() {
             Icon={FaShieldAlt}
             width={100}
           />
-           {/* <div className="dropdown-container">
+          {/* <div className="dropdown-container">
       <button className="dropdown-button" onClick={toggleDropdown}>SOS Options</button>
       <div className={`dropdown-content ${showDropdown ? 'show' : ''}`}>
         <div className="dropdown-item">
@@ -482,7 +486,7 @@ export default function SearchingRider() {
               >
                 Your booking has been confirmed.
               </div>
-             
+
               <div
                 style={{
                   backgroundColor: Colors.WHITE,
@@ -529,67 +533,67 @@ export default function SearchingRider() {
                   </div>
                 </div>
               </div>
-              <OtpView/>
+              <OtpView />
             </div>
             <Btn title="Home" onClick={() => navigate("/")} />
           </>
         ) : (
           <>
-          <div>
-            <div
-              style={{
-                fontSize: 20,
-                fontWeight: "600",
-                marginTop: 20,
-                marginBottom: 20,
-              }}
-            >
-                         {!tryAgain ?  `Contacting People Nearby...` : `Oops !! No service provider found ! Please try again !`}
-            </div>
-
-            <div
-              style={{
-                width: "100%",
-                height: "10px",
-                backgroundColor: Colors.MEDIUM_GRAY,
-              }}
-            >
-              {!tryAgain ? 
+            <div>
               <div
                 style={{
-                  width: `${loadingPercentage}%`,
-                  height: "100%",
-                  backgroundColor: Colors.GREEN,
+                  fontSize: 20,
+                  fontWeight: "600",
+                  marginTop: 20,
+                  marginBottom: 20,
                 }}
-              ></div> :"" }
-            </div>
-            {!tryAgain ?
-            <img
-              src={SearchRider}
-              style={{
-                height: 200,
-                width: 200,
-                borderRadius: 100,
-                // marginBottom: 25
-              }}
-              alt=""
-            /> :"" }
+              >
+                {!tryAgain ? `Contacting People Nearby...` : `Oops !! No service provider found ! Please try again !`}
+              </div>
+
+              <div
+                style={{
+                  width: "100%",
+                  height: "10px",
+                  backgroundColor: Colors.MEDIUM_GRAY,
+                }}
+              >
+                {!tryAgain ?
+                  <div
+                    style={{
+                      width: `${loadingPercentage}%`,
+                      height: "100%",
+                      backgroundColor: Colors.GREEN,
+                    }}
+                  ></div> : ""}
+              </div>
+              {!tryAgain ?
+                <img
+                  src={SearchRider}
+                  style={{
+                    height: 200,
+                    width: 200,
+                    borderRadius: 100,
+                    // marginBottom: 25
+                  }}
+                  alt=""
+                /> : ""}
             </div>
 
             <div style={{}}>
-            {/* Tryagain Button */}
-            {tryAgain && <Btn
-              bgColor={Colors.PRIMARY}
-              onClick={tryAgainBooking}
-              title="Try Again"
-              noMargin={true}
-            />}
-            {/* Cancel Button */}
-            <Btn
-              bgColor={Colors.RED}
-              onClick={cancelTheBooking}
-              title="Cancel"
-            />
+              {/* Tryagain Button */}
+              {tryAgain && <Btn
+                bgColor={Colors.PRIMARY}
+                onClick={tryAgainBooking}
+                title="Try Again"
+                noMargin={true}
+              />}
+              {/* Cancel Button */}
+              <Btn
+                bgColor={Colors.RED}
+                onClick={cancelTheBooking}
+                title="Cancel"
+              />
             </div>
           </>
         )}
