@@ -1,18 +1,42 @@
 import React, { useState } from "react";
+import { Rating } from "react-simple-star-rating";
 import "./FeedbackComponent.css";
+import axios from "axios";
+import { BASE_URL } from "../../config/Axios";
+import { useNavigate } from "react-router-dom";
 
 export default function FeedbackComponent() {
   const [ratingGiven, setRatingGiven] = useState(false);
-  const [selectedStars, setSelectedStars] = useState(0); // Persist user selection
-  const [hoverStars, setHoverStars] = useState(0); // Temporarily highlight stars on hover
+  const [selectedStars, setSelectedStars] = useState(0); 
+  const [textArea, setTextArea] = useState("")
 
-  const handleStarClick = (stars) => {
-    setSelectedStars(stars); // Save the selected stars
+  const navigate = useNavigate()
+
+  // Callback function when the user clicks a star
+  const handleRatingChange = (newRating) => {
+    setSelectedStars(newRating); // Update the selected rating
   };
 
-  const handleRatingSubmit = () => {
+  // Handle rating submission
+  const handleRatingSubmit = async() => {
     if (selectedStars > 0) {
-      setRatingGiven(true);
+      setRatingGiven(true); // Mark the rating as given
+      const payload={
+        stars:selectedStars,
+        comment:textArea?.trim(),
+        givenBy:"Customer",
+        bookingId:"002255",
+        booking:"ds4555asd6454",
+        customer:"asad65654fas7588544",
+        rider:"5446saf4a454fas"
+      }
+
+      try{
+        const request = await axios.post(`${BASE_URL}/api/v1/reviews/create`,payload);
+        const response =  request;
+        console.log(response)
+      }
+      catch(e){console.error(e)}
     } else {
       alert("Please select a rating before submitting!");
     }
@@ -22,29 +46,28 @@ export default function FeedbackComponent() {
     <div className="feedback-container">
       {!ratingGiven ? (
         <div>
-          <div>
+          <div style={{textAlign:"center"}}>
             <img
               src="https://via.placeholder.com/120"
               style={{ borderRadius: "100px" }}
+              alt="User"
             />
           </div>
 
           <p className="feedback-title">We are glad you enjoyed your ride</p>
-          <div className="feedback-stars">
-            {[1, 2, 3, 4, 5].map((star) => (
-              <span
-                key={star}
-                className={`feedback-star ${
-                  star <= (hoverStars || selectedStars) ? "highlighted" : ""
-                }`}
-                onMouseEnter={() => setHoverStars(star)} // Highlight stars on hover
-                onMouseLeave={() => setHoverStars(0)} // Reset hover on mouse leave
-                onClick={() => handleStarClick(star)} // Persist selection on click
-              >
-                ⭐
-              </span>
-            ))}
+
+          <div className="feedback-stars" style={{textAlign:"center"}} >
+            <Rating
+              ratingValue={selectedStars} // Set the current rating value
+              onClick={handleRatingChange} // Callback function to handle rating change
+              size={40} // Adjust the size of the stars
+              fillColor={"#ffd700"} // Color of the filled stars
+              emptyColor={"#e4e5e9"} // Color of the empty stars
+              allowHover={true} // Allow hover to highlight stars
+              transitionSpeed={0.3} // Speed of the transition effect
+            />
           </div>
+
           <div
             style={{
               borderBottom: "2px dotted black",
@@ -52,14 +75,16 @@ export default function FeedbackComponent() {
               margin: "20px 0",
             }}
           ></div>
+
           <p className="feedback-subtitle">
-            We will share your valuable feedback with our dedicated team
+            We will share your feedback with our dedicated team 
           </p>
 
           <div className="feedback-textarea-container">
             <textarea
               placeholder="Tell us more..."
               className="feedback-textarea"
+              onChange={(e)=>setTextArea(e?.target?.value)}
             />
           </div>
 
@@ -80,7 +105,7 @@ export default function FeedbackComponent() {
           </p>
 
           <p className="feedback-thankyou">
-            We will share your valuable feedback with our deticated team
+            We will share your valuable feedback with our dedicated team .
           </p>
           <div
             style={{
@@ -89,8 +114,8 @@ export default function FeedbackComponent() {
               alignItems: "center",
             }}
           >
-            <button className="feedback-button">Home</button>
-            <button className="feedback-button">gallary </button>
+            <button className="feedback-button" onClick={()=>navigate("/")}>Home</button>
+            <button className="feedback-button" onClick={()=>navigate("/")}>Gallery</button>
           </div>
         </div>
       )}
