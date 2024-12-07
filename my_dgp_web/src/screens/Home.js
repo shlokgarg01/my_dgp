@@ -920,7 +920,7 @@ export default function Home() {
           <Sheet.Container>
             <Sheet.Header />
             <Sheet.Content>
-             <FeedbackComponent name={"Akshay Saklani"}/>
+             <FeedbackComponent/>
             </Sheet.Content>
           </Sheet.Container>
           <Sheet.Backdrop />

@@ -6,10 +6,11 @@ import { BASE_URL } from "../../config/Axios";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-custom-alert";
 
-export default function FeedbackComponent({name}) {
+export default function FeedbackComponent() {
   const [ratingGiven, setRatingGiven] = useState(false);
   const [selectedStars, setSelectedStars] = useState(0); 
   const [textArea, setTextArea] = useState("")
+  const data = JSON.parse(localStorage.getItem("feedback"))
 
   const navigate = useNavigate()
 
@@ -22,7 +23,6 @@ export default function FeedbackComponent({name}) {
   const handleRatingSubmit = async() => {
     if (selectedStars > 0) {
       setRatingGiven(true); // Mark the rating as given
-      const data = localStorage.getItem("feedback")
       const payload={
         stars:selectedStars,
         comment:textArea?.trim(),
@@ -43,7 +43,7 @@ export default function FeedbackComponent({name}) {
     } else {
       alert("Please select a rating before submitting!");
     }
-  };
+  };  
 
   return (
     <div className="feedback-container">
@@ -51,13 +51,14 @@ export default function FeedbackComponent({name}) {
         <div>
           <div style={{textAlign:"center"}}>
             <img
-              src="https://via.placeholder.com/120" width={"80px"} height={"80px"}
+              src={`data:image/jpeg;base64,${data?.serviceProvider?.avatar}`}    
+                         width={"80px"} height={"80px"}
               style={{ borderRadius: "100px" }}
               alt="User"
             />
           </div>
 
-          <p className="feedback-title">How was your ride with {name} ?</p>
+          <p className="feedback-title">How was your ride with {data?.serviceProvider?.name} ?</p>
 
           <div className="feedback-stars" style={{textAlign:"center"}} >
             <Rating
