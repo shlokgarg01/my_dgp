@@ -7,7 +7,8 @@ const getAvailableServiceProviders = async (date, service, subService, package) 
     role: Enums.USER_ROLES.SERVICE_PROVIDER,
     // service, ==> not filtering on the basis of service/category due to both or combos. Can be done if combo not required.
     // packages: { $elemMatch: { $eq: package } },
-    subServices: {$elemMatch: { $eq: subService }},
+    // subServices: {$elemMatch: { $eq: subService }},
+    subServices: {$elemMatch: { $eq: package }}, // temp fix
     status: Enums.SERVICE_PROVIDER_STATUS.ACTIVE,
   }).sort("createdAt");
 
