@@ -48,13 +48,13 @@ export default function FeedbackComponent({name}) {
         <div>
           <div style={{textAlign:"center"}}>
             <img
-              src="https://via.placeholder.com/120"
+              src="https://via.placeholder.com/120" width={"80px"} height={"80px"}
               style={{ borderRadius: "100px" }}
               alt="User"
             />
           </div>
 
-          <p className="feedback-title">We are glad you enjoyed your ride with {name}</p>
+          <p className="feedback-title">How was your ride with {name} ?</p>
 
           <div className="feedback-stars" style={{textAlign:"center"}} >
             <Rating
@@ -70,14 +70,14 @@ export default function FeedbackComponent({name}) {
 
           <div
             style={{
-              borderBottom: "2px dotted black",
+              borderBottom: "2px dotted #8080804a",
               width: "100%",
               margin: "20px 0",
             }}
           ></div>
 
           <p className="feedback-subtitle">
-            We will share your feedback with our dedicated team 
+          Great, What did you like the most 😍? 
           </p>
 
           <div className="feedback-textarea-container">
@@ -91,7 +91,7 @@ export default function FeedbackComponent({name}) {
           <div className="feedback-buttons">
             <button
               className="feedback-button"
-              style={{ borderRadius: "25px", color: "black", width: "100%" }}
+              style={{ borderRadius: "25px", color: "white", width: "100%" }}
               onClick={handleRatingSubmit}
             >
               Submit
@@ -100,13 +100,17 @@ export default function FeedbackComponent({name}) {
         </div>
       ) : (
         <div>
+          <div style={{ fontSize: '2em',textAlign:"center" }}>
+          <span >🤩</span>
+          </div>
           <p className="feedback-title">
-            Thank you for your {selectedStars}-star rating!
+            {/* Thank you for your {selectedStars}-star rating! */}
+            We are gald you enjoyed your ride
           </p>
 
           <p style={{textAlign:"center",color:"grey"}}>
             We will share your valuable feedback with our dedicated team .
-          </p>
+          </p>  
           <div
             style={{
               display: "flex",
@@ -115,7 +119,7 @@ export default function FeedbackComponent({name}) {
               boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)',padding:'6px 0px'
             }}
           >
-            <button className="feedback-button" onClick={()=>navigate("/")}>Home</button>
+            <button style={{width:"100%"}} className="feedback-button" onClick={()=>navigate("/")}>Home</button>
           </div>
         </div>
       )}
