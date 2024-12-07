@@ -909,6 +909,22 @@ export default function Home() {
               </button>
             </>
           )}
+
+<Sheet
+          isOpen={true}
+          onClose={() => setIsBottomSheetOpen(false)}
+          detent="content-height"
+          disableDrag={true}
+          className="app-content"
+        >
+          <Sheet.Container>
+            <Sheet.Header />
+            <Sheet.Content>
+             <FeedbackComponent name={"Akshay"}/>
+            </Sheet.Content>
+          </Sheet.Container>
+          <Sheet.Backdrop />
+        </Sheet>
         </div>
 
 
@@ -1091,21 +1107,7 @@ export default function Home() {
         </Sheet>
 
 
-        <Sheet
-          isOpen={false}
-          onClose={() => setIsBottomSheetOpen(false)}
-          detent="content-height"
-          disableDrag={true}
-          style={isDesktop && {width:'50%'}}
-        >
-          <Sheet.Container>
-            <Sheet.Header />
-            <Sheet.Content>
-             <FeedbackComponent/>
-            </Sheet.Content>
-          </Sheet.Container>
-          <Sheet.Backdrop />
-        </Sheet>
+
       </div >
     </>
   );

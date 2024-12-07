@@ -5,7 +5,7 @@ import axios from "axios";
 import { BASE_URL } from "../../config/Axios";
 import { useNavigate } from "react-router-dom";
 
-export default function FeedbackComponent() {
+export default function FeedbackComponent({name}) {
   const [ratingGiven, setRatingGiven] = useState(false);
   const [selectedStars, setSelectedStars] = useState(0); 
   const [textArea, setTextArea] = useState("")
@@ -54,17 +54,17 @@ export default function FeedbackComponent() {
             />
           </div>
 
-          <p className="feedback-title">We are glad you enjoyed your ride</p>
+          <p className="feedback-title">We are glad you enjoyed your ride with {name}</p>
 
           <div className="feedback-stars" style={{textAlign:"center"}} >
             <Rating
-              ratingValue={selectedStars} // Set the current rating value
-              onClick={handleRatingChange} // Callback function to handle rating change
-              size={40} // Adjust the size of the stars
-              fillColor={"#ffd700"} // Color of the filled stars
-              emptyColor={"#e4e5e9"} // Color of the empty stars
-              allowHover={true} // Allow hover to highlight stars
-              transitionSpeed={0.3} // Speed of the transition effect
+              ratingValue={selectedStars} 
+              onClick={handleRatingChange} 
+              size={40} 
+              fillColor={"#ffd700"}
+              emptyColor={"#e4e5e9"} 
+              allowHover={true} 
+              transitionSpeed={0.3} 
             />
           </div>
 
@@ -104,7 +104,7 @@ export default function FeedbackComponent() {
             Thank you for your {selectedStars}-star rating!
           </p>
 
-          <p className="feedback-thankyou">
+          <p style={{textAlign:"center",color:"grey"}}>
             We will share your valuable feedback with our dedicated team .
           </p>
           <div
@@ -112,10 +112,10 @@ export default function FeedbackComponent() {
               display: "flex",
               justifyContent: "space-around",
               alignItems: "center",
+              boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)',padding:'6px 0px'
             }}
           >
             <button className="feedback-button" onClick={()=>navigate("/")}>Home</button>
-            <button className="feedback-button" onClick={()=>navigate("/")}>Gallery</button>
           </div>
         </div>
       )}

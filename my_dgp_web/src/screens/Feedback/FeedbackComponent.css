@@ -1,6 +1,6 @@
 .feedback-container {
-  width: 400px;
-  margin: 0 auto;
+  /* width: 400px;
+  margin: 0 auto; */
   padding: 20px;
   border-radius: 8px;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
@@ -39,7 +39,7 @@
 
 .feedback-button {
   padding: 10px 20px;
-  background-color: #FF9800;
+  background-color: #3390de;
   color: black;
   border: none;
   border-radius: 4px;
@@ -47,5 +47,5 @@
 }
 
 .feedback-button:hover {
-  background-color: #b3b000;
+  background-color: #0f81de;
 }
