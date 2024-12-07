@@ -9,6 +9,7 @@ import { toast } from "react-custom-alert";
 import { RAZORPAY_KEY_ID } from "../../config/Config";
 import Colors from "../../utils/Colors";
 import { IoLogoWhatsapp, IoMdCall } from "react-icons/io";
+import { sendAdvanceStartOtpMsg } from "../../utils/whatsappMsg";
 
 // e.g.http://localhost:3000/advance-payment?id=000788
 const AdvancePayments = () => {
@@ -113,6 +114,8 @@ const AdvancePayments = () => {
 
             toast.success('Payment Successful');
           setPaymentDone(true);
+          sendAdvanceStartOtpMsg(localStorage.getItem('userNumber')
+            , booking?.otp)
         } catch (error) {
           console.error('Error in payment success API - ', error.response.data)
           toast.error(error.response.data.message);
@@ -145,56 +148,56 @@ const AdvancePayments = () => {
     }
   };
 
-  const renderRiderDetails = ()=>{
-    return(
+  const renderRiderDetails = () => {
+    return (
       <div style={{ fontSize: 16 }}>
-              <div
+        <div
+          style={{
+            backgroundColor: Colors.WHITE,
+            borderRadius: 16,
+            padding: 10,
+            boxShadow: "0px 0px 16px lightgray",
+            marginTop: 16,
+          }}
+        >
+          <div
+            style={{
+              display: "flex",
+              flexDirection: "row",
+              alignItems: "center",
+              justifyContent: "space-between",
+              paddingLeft: 10,
+              paddingRight: 10,
+              fontSize: 16,
+            }}
+          >
+            <div>{service_provider?.name}</div>
+            <div
+              style={{
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+              }}
+            >
+              <a
+                target="_blank"
+                rel="noreferrer"
+                href={`https://wa.me/+91${service_provider?.contactNumber}`}
+              >
+                <IoLogoWhatsapp color={Colors.DARK_GREEN} size={34} />
+              </a>
+              <a
+                href={`tel:+91${service_provider?.contactNumber}`}
                 style={{
-                  backgroundColor: Colors.WHITE,
-                  borderRadius: 16,
-                  padding: 10,
-                  boxShadow: "0px 0px 16px lightgray",
-                  marginTop: 16,
+                  marginLeft: 10,
                 }}
               >
-                <div
-                  style={{
-                    display: "flex",
-                    flexDirection: "row",
-                    alignItems: "center",
-                    justifyContent: "space-between",
-                    paddingLeft: 10,
-                    paddingRight: 10,
-                    fontSize: 16,
-                  }}
-                >
-                  <div>{service_provider?.name}</div>
-                  <div
-                    style={{
-                      display: "flex",
-                      alignItems: "center",
-                      justifyContent: "center",
-                    }}
-                  >
-                    <a
-                      target="_blank"
-                      rel="noreferrer"
-                      href={`https://wa.me/+91${service_provider?.contactNumber}`}
-                    >
-                      <IoLogoWhatsapp color={Colors.DARK_GREEN} size={34} />
-                    </a>
-                    <a
-                      href={`tel:+91${service_provider?.contactNumber}`}
-                      style={{
-                        marginLeft: 10,
-                      }}
-                    >
-                      <IoMdCall color={Colors.GRAY} size={25} />
-                    </a>
-                  </div>
-                </div>
-              </div>
+                <IoMdCall color={Colors.GRAY} size={25} />
+              </a>
             </div>
+          </div>
+        </div>
+      </div>
     )
   }
 
@@ -223,8 +226,8 @@ const AdvancePayments = () => {
         </div>
         {renderRiderDetails()}
         <div className="note">
-        <strong>NOTE: </strong>We do not ask OTP on phone call or messages.
-      </div>
+          <strong>NOTE: </strong>We do not ask OTP on phone call or messages.
+        </div>
         <button className="btn-pay" onClick={handlePayment}>
           HOME
         </button>
