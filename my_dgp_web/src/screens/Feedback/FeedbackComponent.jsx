@@ -4,6 +4,7 @@ import "./FeedbackComponent.css";
 import axios from "axios";
 import { BASE_URL } from "../../config/Axios";
 import { useNavigate } from "react-router-dom";
+import { toast } from "react-custom-alert";
 
 export default function FeedbackComponent({name}) {
   const [ratingGiven, setRatingGiven] = useState(false);
@@ -21,20 +22,22 @@ export default function FeedbackComponent({name}) {
   const handleRatingSubmit = async() => {
     if (selectedStars > 0) {
       setRatingGiven(true); // Mark the rating as given
+      const data = localStorage.getItem("feedback")
       const payload={
         stars:selectedStars,
         comment:textArea?.trim(),
         givenBy:"Customer",
-        bookingId:"002255",
-        booking:"645c3199e7b32d3f830d6e72",
-        customer:"645c3199e7b32d3f830d6e72",
-        rider:"645c3199e7b32d3f830d6e72"
+        bookingId:data?.bookingId,
+        booking:data?.booking?.address,
+        customer:data?.customerId,
+        rider:data?.serviceProvider?._id
       }
 
       try{
         const request = await axios.post(`${BASE_URL}/api/v1/reviews/create`,payload);
         const response =  request;
-        console.log(response)
+        console.log(response);
+        localStorage.removeItem("feedback")
       }
       catch(e){console.error(e)}
     } else {
