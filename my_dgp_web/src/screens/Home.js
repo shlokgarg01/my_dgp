@@ -718,7 +718,7 @@ export default function Home() {
                         Select service duration
                       </div>
                       <div style={{ color: Colors.GRAY, fontSize: 12 }}>
-                        min. 1 minute to maximum time as you wish
+                        min. 1 hour to maximum time as you wish
                       </div>
                     </div>
                   </div>
