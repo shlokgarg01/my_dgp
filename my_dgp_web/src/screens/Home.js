@@ -16,7 +16,7 @@ import { Hours, AmPm, Minutes, Months, Quaters } from "../utils/Data/Date";
 import { toast } from "react-custom-alert";
 import { IoMdAlarm, IoMdClose } from "react-icons/io";
 import { FaInfoCircle } from 'react-icons/fa';
-
+import { confirmBookingStatus } from "../actions/BookingActions";
 import {
   MdOutlineAddAPhoto,
   MdOutlineVideocam,
@@ -28,6 +28,7 @@ import { saveData } from "../actions/DataActions";
 import axios from "axios";
 import DemoContentModal from "../components/components/DemoContentModal/DemoContentModal";
 import FeedbackComponent from "./Feedback/FeedbackComponent";
+import Enums from "../utils/Enums";
 
 export default function Home() {
   const { savedData } = useSelector((state) => state.savedData);
@@ -62,7 +63,12 @@ export default function Home() {
   const [isStandardActive, setStandardActive] = useState(false);
   const [showEyeButton, setShowEyeButton] = useState({});
   const [isDesktop, setIsDesktop] = useState(window.innerWidth > 768);
-  const currentTime = () => {
+  const { status, service_provider, booking } = useSelector(
+    (state) => state.confirmedBooking//get booking from id
+  );
+  const [isFeedbackVisible,setIsFeedbackVisible] = useState(false)
+
+    const currentTime = () => {
     const now = new Date();
 
     // Get current hour in 12-hour format
@@ -292,6 +298,16 @@ export default function Home() {
       />
     </div>
   );
+
+  useEffect(() => {
+    if(JSON.parse(localStorage.getItem("feedback"))?.bookingId){
+      dispatch(confirmBookingStatus(JSON.parse(localStorage.getItem("feedback"))?.bookingId));
+    }
+    },[])
+
+    useEffect(() => {
+      setIsFeedbackVisible(booking?.status === Enums.BOOKING_STATUS.COMPLETED)
+    },[booking])
 
   const SubServiceSlider = ({ subService }) => {
     return (
@@ -911,8 +927,8 @@ export default function Home() {
           )}
 
 <Sheet
-          isOpen={window.localStorage.getItem("feedback")}
-          onClose={() => setIsBottomSheetOpen(false)}
+          isOpen={isFeedbackVisible}
+          onClose={() => setIsFeedbackVisible(false)}
           detent="content-height"
           disableDrag={true}
           className="app-content"
@@ -920,7 +936,7 @@ export default function Home() {
           <Sheet.Container>
             <Sheet.Header />
             <Sheet.Content>
-             <FeedbackComponent/>
+             <FeedbackComponent setIsFeedbackVisible={setIsFeedbackVisible}/>
             </Sheet.Content>
           </Sheet.Container>
           <Sheet.Backdrop />

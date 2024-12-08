@@ -6,7 +6,7 @@ import { BASE_URL } from "../../config/Axios";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-custom-alert";
 
-export default function FeedbackComponent() {
+export default function FeedbackComponent({setIsFeedbackVisible}) {
   const [ratingGiven, setRatingGiven] = useState(false);
   const [selectedStars, setSelectedStars] = useState(0); 
   const [textArea, setTextArea] = useState("")
@@ -149,7 +149,7 @@ export default function FeedbackComponent() {
               boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)',padding:'6px 0px'
             }}
           >
-            <button style={{width:"100%"}} className="feedback-button" onClick={()=>navigate("/")}>Home</button>
+            <button style={{width:"100%"}} className="feedback-button" onClick={()=>setIsFeedbackVisible(false)}>Home</button>
           </div>
         </div>
       )}

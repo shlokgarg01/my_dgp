@@ -6,7 +6,7 @@ exports.createReview = async (req, res, next) => {
         const { stars, comment, givenBy, customer, rider, booking, bookingId } = req.body;
 
         // Validate required fields
-        if (!stars || !comment || !givenBy || !customer || !booking || !bookingId) {
+        if (!stars || !givenBy || !customer || !booking || !bookingId) {
             return res.status(400).json({
                 success: false,
                 message: 'All required fields must be provided.',
