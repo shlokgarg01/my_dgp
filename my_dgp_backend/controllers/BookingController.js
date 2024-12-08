@@ -426,20 +426,20 @@ exports.getPendingBookingAmount = catchAsyncErrors(async (req, res, next) => {
 exports.createOrder = catchAsyncErrors(async (req, res, next) => {
   const { service, subService, package, date, amount } = req.body;
   // get all available Service Providers
-  let allServiceProviders = await getAvailableServiceProviders(
-    date,
-    service,
-    subService,
-    package
-  );
-  if (allServiceProviders.length === 0) {
-    return next(
-      new ErrorHandler(
-        "No service provider is available on the selected date. Please select a new date",
-        400
-      )
-    );
-  }
+  // let allServiceProviders = await getAvailableServiceProviders(
+  //   date,
+  //   service,
+  //   subService,
+  //   package
+  // );
+  // if (allServiceProviders.length === 0) {
+  //   return next(
+  //     new ErrorHandler(
+  //       "No service provider is available on the selected date. Please select a new date",
+  //       400
+  //     )
+  //   );
+  // }
 
   const instance = new Razorpay({
     key_id: process.env.RAZORPAY_KEY_ID,
