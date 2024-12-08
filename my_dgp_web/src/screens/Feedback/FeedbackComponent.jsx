@@ -45,6 +45,23 @@ export default function FeedbackComponent() {
     }
   };  
 
+  const getRatingText = (stars) => {
+    switch (stars) {
+      case 5:
+        return "Excellent!";
+      case 4:
+        return "Very Good!";
+      case 3:
+        return "Good";
+      case 2:
+        return "Fair";
+      case 1:
+        return "Poor";
+      default:
+        return "";
+    }
+  };
+
   return (
     <div className="feedback-container">
       {!ratingGiven ? (
@@ -58,7 +75,7 @@ export default function FeedbackComponent() {
             />
           </div>
 
-          <p className="feedback-title">How was your ride with {data?.serviceProvider?.name} ?</p>
+          <p className="feedback-title">How was your experience with {data?.serviceProvider?.name} ?</p>
 
           <div className="feedback-stars" style={{textAlign:"center"}} >
             <Rating
@@ -70,6 +87,11 @@ export default function FeedbackComponent() {
               allowHover={true} 
               transitionSpeed={0.3} 
             />
+            {selectedStars > 0 && (
+              <p style={{ marginTop: "10px", fontWeight: "bold", color: "#666" }}>
+                {getRatingText(selectedStars)}
+              </p>
+            )}
           </div>
 
           <div
@@ -80,8 +102,12 @@ export default function FeedbackComponent() {
             }}
           ></div>
 
-          <p className="feedback-subtitle">
-          Great, What did you like the most 😍? 
+<p className="feedback-subtitle">
+            {selectedStars >= 4 
+              ? "Great! What did you like the most? 😊"
+              : selectedStars >= 3 
+                ? "What could have been better? 🤔"
+                : "We're sorry to hear that. Please tell us what went wrong 😔"}
           </p>
 
           <div className="feedback-textarea-container">
@@ -109,7 +135,7 @@ export default function FeedbackComponent() {
           </div>
           <p className="feedback-title">
             {/* Thank you for your {selectedStars}-star rating! */}
-            We are gald you enjoyed your ride
+            Thanks for sharing your feedback!
           </p>
 
           <p style={{textAlign:"center",color:"grey"}}>

@@ -55,7 +55,7 @@ exports.createBooking = catchAsyncErrors(async (req, res, next) => {
   if (allServiceProviders.length === 0) {
     return next(
       new ErrorHandler(
-        "No service provider is available on the selected date. Please select a new date",
+        "No service provider is available right now. Please try again later.",
         400
       )
     );
