@@ -344,7 +344,7 @@ export default function SearchingRider() {
           }}
         >
           <div style={{ fontSize: 16, marginTop: 10, marginBottom: 10 }}>
-            Start your Service with PIN
+            Start your booking with OTP:
           </div>
           <div
             style={{

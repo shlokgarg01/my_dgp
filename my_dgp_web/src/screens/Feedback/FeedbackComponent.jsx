@@ -50,9 +50,9 @@ export default function FeedbackComponent({setIsFeedbackVisible}) {
       case 5:
         return "Excellent!";
       case 4:
-        return "Very Good!";
+        return "Good!";
       case 3:
-        return "Good";
+        return "Ok Ok !";
       case 2:
         return "Fair";
       case 1:
@@ -103,11 +103,13 @@ export default function FeedbackComponent({setIsFeedbackVisible}) {
           ></div>
 
 <p className="feedback-subtitle">
-            {selectedStars >= 4 
+            {selectedStars >= 5 
               ? "Great! What did you like the most? 😊"
-              : selectedStars >= 3 
+              : selectedStars >= 4 
                 ? "What could have been better? 🤔"
-                : "We're sorry to hear that. Please tell us what went wrong 😔"}
+                : selectedStars >= 3 
+                ? "How we can improve? 😔"
+                  : "We're sorry to hear that. Please tell us what went wrong 😔"}
           </p>
 
           <div className="feedback-textarea-container">

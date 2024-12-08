@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import "./BalancePayments.css";
-import { useLocation } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { confirmBookingStatus } from "../../actions/BookingActions";
 import axios from "axios";
@@ -18,6 +18,7 @@ const AdvancePayments = () => {
   const [bookingId, setBookingId] = useState();
   const dispatch = useDispatch();
   const [isPaymentDone, setPaymentDone] = useState(false);
+  const navigate = useNavigate();
 
 
   const { status, service_provider, booking } = useSelector(
@@ -216,7 +217,7 @@ const AdvancePayments = () => {
           <span className="check-icon">✔</span>Advance Received
         </div>
 
-        <div className="warning">For starting your booking, please share the OTP to rider upon visit.</div>
+        <div className="warning">To start your booking, please share the OTP to our representative upon visit.</div>
         <div className="amount-section">
           <h2>Booking Start OTP</h2>
 
@@ -228,7 +229,7 @@ const AdvancePayments = () => {
         <div className="note">
           <strong>NOTE: </strong>We do not ask OTP on phone call or messages.
         </div>
-        <button className="btn-pay" onClick={handlePayment}>
+        <button className="btn-pay" onClick={()=>navigate("/")}>
           HOME
         </button>
 
