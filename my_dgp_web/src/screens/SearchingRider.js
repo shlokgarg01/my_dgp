@@ -89,7 +89,7 @@ export default function SearchingRider() {
             serviceProvider:service_provider
           }
           localStorage.setItem("feedback",JSON.stringify(feedbackData));
-          sendAdvanceMsg(service_provider?.name, Math.round(booking?.totalPrice / 2), `${window.location.origin}/payment/${booking?._id}`, contactNumber)
+          sendAdvanceMsg(service_provider?.name, Math.round(booking?.totalPrice / 2), `${window.location.origin}/advance-payment?${booking?._id}`, contactNumber)
         }
       } catch (error) {
         console.error("Error fetching data:", error);
