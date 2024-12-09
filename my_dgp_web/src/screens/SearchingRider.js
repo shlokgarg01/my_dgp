@@ -571,7 +571,7 @@ export default function SearchingRider() {
                     style={{
                       width: `${loadingPercentage}%`,
                       height: "100%",
-                      backgroundColor: Colors.GREEN,
+                      backgroundColor: Colors.PRIMARY,
                     }}
                   ></div> : ""}
               </div>

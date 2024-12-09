@@ -102,14 +102,12 @@ export default function FeedbackComponent({setIsFeedbackVisible}) {
             }}
           ></div>
 
-<p className="feedback-subtitle">
-            {selectedStars >= 5 
-              ? "Great! What did you like the most? 😊"
-              : selectedStars >= 4 
-                ? "What could have been better? 🤔"
-                : selectedStars >= 3 
-                ? "How we can improve? 😔"
-                  : "We're sorry to hear that. Please tell us what went wrong 😔"}
+          <p className="feedback-subtitle">
+          {selectedStars == 1 ? "What felt bad? Please tell us how we can improve" 
+            :selectedStars == 2 ? "Thanks for your feedback! What can we do better next time?"
+            :selectedStars == 3 ? "Thanks for sharing! What would make it better?"
+            :selectedStars == 4 ? "Glad you liked it! How can we make it prefect next time?"
+            : "You're my star, and we'll keep trying to impress you"}
           </p>
 
           <div className="feedback-textarea-container">
