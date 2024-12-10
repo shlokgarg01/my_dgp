@@ -83,7 +83,7 @@ const HelpPage = () => {
               style={styles.button}
               onClick={handleCall}
             >
-              Call: 8076255278
+              Call: 7827343931
             </button>
             <button
               style={styles.button}
