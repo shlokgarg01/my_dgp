@@ -106,8 +106,8 @@ export default function FeedbackComponent({setIsFeedbackVisible}) {
           {selectedStars == 1 ? "What felt bad? Please tell us how we can improve" 
             :selectedStars == 2 ? "Thanks for your feedback! What can we do better next time?"
             :selectedStars == 3 ? "Thanks for sharing! What would make it better?"
-            :selectedStars == 4 ? "Glad you liked it! How can we make it prefect next time?"
-            : "You're my star, and we'll keep trying to impress you"}
+            :selectedStars == 4 ? "Glad you liked it! How can we make it prefect next time? 😊"
+            : "Great! What did you like the most? 😊"}
           </p>
 
           <div className="feedback-textarea-container">
