@@ -446,14 +446,14 @@ export default function SearchingRider() {
           <SOS
             text="WhatsApp"
             color={Colors.DARK_GREEN}
-            link="https://wa.me/+918595703734"
+            link="https://wa.me/+918076255278"
             Icon={IoLogoWhatsapp}
             width={160}
           />
           <SOS
             text="SOS"
             color={Colors.RED}
-            link="tel:+918595703734"
+            link="tel:+917827343931"
             Icon={FaShieldAlt}
             width={100}
           />
@@ -464,7 +464,7 @@ export default function SearchingRider() {
           <SOS
             text="WhatsApp"
             color={Colors.DARK_GREEN}
-            link="https://wa.me/+918595703734"
+            link="https://wa.me/+917827343931"
             Icon={IoLogoWhatsapp}
             width={160}
           />
@@ -473,7 +473,7 @@ export default function SearchingRider() {
           <SOS
             text="SOS"
             color={Colors.RED}
-            link="tel:+918595703734"
+            link="tel:+917827343931"
             Icon={FaShieldAlt}
             width={100}
           />

@@ -8,7 +8,7 @@ const HelpPage = () => {
 
   // Function to handle calling functionality
   const handleCall = () => {
-    window.open('tel:+918595703734');
+    window.open('tel:+917827343931');
   };
 
   // Function to handle opening WhatsApp
