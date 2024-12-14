@@ -19,6 +19,16 @@ const accountDetailsSchema = new mongoose.Schema({
     required: false,
     default: '',
   },
+  upiID: {
+    type: String,
+    required: false,
+    default: '',
+  },
+  upiName: {
+    type: String,
+    required: false,
+    default: '',
+  },
 });
 
 const equipmentItemsSchema = new mongoose.Schema({
