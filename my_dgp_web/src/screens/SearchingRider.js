@@ -383,23 +383,14 @@ export default function SearchingRider() {
             flexDirection: "column",
             alignItems: "center",
             justifyContent: "flex-end",
-            height: '20vh',
+            flex:1,
+            height: '10vh',
           }}
         >
           <div style={{ fontSize: 16 }}>
             Please Pay Advance Booking amount to get start Booking OTP
           </div>
-          <div
-            style={{
-              width: '100%'
-            }}
-          >
-            <Btn
-              bgColor={Colors.PRIMARY}
-              onClick={() => { displayRazorpay() }}
-              title="Pay Now"
-            />
-          </div>
+         
         </div>
     )
   }
@@ -543,6 +534,11 @@ export default function SearchingRider() {
               </div>
               <OtpView />
             </div>
+            {!isPaymentDone && <Btn
+              bgColor={Colors.PRIMARY}
+              onClick={() => { displayRazorpay() }}
+              title="Pay Now"
+            />}
             <Btn title="Home" onClick={() => navigate("/")} />
           </>
         ) : (
