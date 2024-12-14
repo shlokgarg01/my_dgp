@@ -8,6 +8,7 @@ const Enums = require("../utils/Enums");
 const { generateOTP } = require("../helpers/UserHelpers");
 const { sendEmail } = require("../helpers/Notifications");
 const { BOOKING_OTP, BOOKING_ACCEPTANCE } = require("../Data/Messages");
+const { sendWhatsAppCancellationMessage } = require("../services/whatsappApi");
 
 // get all booking requests
 exports.getAllBookingRequests = catchAsyncErrors(async (req, res, next) => {
@@ -139,6 +140,14 @@ exports.cancelBookingRequest = catchAsyncErrors(async (req, res, next) => {
     console.log(
       `Razorpay refund response for booking id ${booking_id} is ${razorpayResponse}`
     );
+  }
+
+  // Send WhatsApp message after successful cancellation
+  try {
+    const bookingDetails = 'Arial videographer (21/12/24)'
+    await sendWhatsAppCancellationMessage(booking.contactNumber, bookingDetails); 
+  } catch (error) {
+    console.error('Failed to send WhatsApp message:', error);
   }
 
   if (booking_request) {
