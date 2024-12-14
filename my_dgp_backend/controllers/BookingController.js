@@ -280,7 +280,9 @@ exports.getCurrentBookingsOfAUser = catchAsyncErrors(async (req, res, next) => {
     status: {
       $nin: [Enums.BOOKING_STATUS.COMPLETED, Enums.BOOKING_STATUS.CANCELLED],
     },
-  }).populate("customer address service subService")
+  })
+  .select("+otp") 
+  .populate("customer address service subService")
 
   res.status(200).json({
     success: true,
