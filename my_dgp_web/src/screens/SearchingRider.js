@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import Colors from "../utils/Colors";
 import SearchRider from "../images/search_rider.png";
@@ -44,6 +44,7 @@ export default function SearchingRider() {
   const [isDesktop, setIsDesktop] = useState(window.innerWidth > 768);
   const [isPaymentDone, setPaymentDone] = useState(false);
   const contactNumber = localStorage.getItem('userNumber')
+  const isFirstRender = useRef(true);
 
   useEffect(() => {
     const handleResize = () => setIsDesktop(window.innerWidth > 768);
@@ -55,6 +56,34 @@ export default function SearchingRider() {
   const toggleDropdown = () => {
     setShowDropdown(!showDropdown);
   };
+
+useEffect(() => {
+  if (isFirstRender.current) {
+    isFirstRender.current = false;
+    return;
+  }
+  if (status === Enums.BOOKING_STATUS.ACCEPTED && booking && service_provider) {
+  
+    toast.success("Booking Confirmed");
+    
+    // Prepare and store feedback data
+    const feedbackData = {
+      customerId: booking.customer,
+      bookingId: booking._id,
+      booking: booking,
+      serviceProvider: service_provider
+    };
+    localStorage.setItem("feedback", JSON.stringify(feedbackData));
+    
+    // Send advance message
+    sendAdvanceMsg(
+      service_provider.name, 
+      Math.round(booking.totalPrice / 2), 
+      `${window.location.origin}/advance-payment?${booking._id}`, 
+      contactNumber
+    );
+  }
+}, [status]);
 
   useEffect(() => {
     if (error) {
@@ -80,16 +109,6 @@ export default function SearchingRider() {
 
         if (status === Enums.BOOKING_STATUS.ACCEPTED) {
           clearTimeout(fetchDataTimeout);
-          toast.success("Booking Confirmed");
-          // const data =  localStorage.removeItem("data")
-          const feedbackData = {
-            customerId:booking?.customer,
-            bookingId:booking?._id,
-            booking:booking,
-            serviceProvider:service_provider
-          }
-          localStorage.setItem("feedback",JSON.stringify(feedbackData));
-          sendAdvanceMsg(service_provider?.name, Math.round(booking?.totalPrice / 2), `${window.location.origin}/advance-payment?${booking?._id}`, contactNumber)
         }
       } catch (error) {
         console.error("Error fetching data:", error);

@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { clearErrors, createBooking } from "../actions/BookingActions";
@@ -38,6 +38,7 @@ export default function Checkout() {
   const [couponCode, setCouponCode] = useState(savedData.couponCode || "");
   const [couponDiscount, setCouponDiscount] = useState(savedData.couponDiscount || 0);
   const [totalPrice, setTotalPrice] = useState(savedData.totalPrice || params.get("totalPrice"));
+  const isFirstRender = useRef(true);
 
   const updatePrices = () => {
     setTotalPrice(finalPrice);
@@ -62,7 +63,7 @@ export default function Checkout() {
       updatePrices();
     }
 
-    if (success) {
+    if (success && !isFirstRender.current) {
       dispatch(clearData())
       navigate("/searchingRider", {
         state: {
@@ -71,6 +72,7 @@ export default function Checkout() {
         },
       });
     }
+    isFirstRender.current = false;
     // eslint-disable-next-line
   }, [dispatch, error, success, couponError, couponSuccess]);
 
