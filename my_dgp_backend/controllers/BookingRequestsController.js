@@ -150,7 +150,9 @@ exports.cancelBookingRequest = catchAsyncErrors(async (req, res, next) => {
       year: '2-digit'
     });
     const bookingDetails = `${booking.service?.name} ${booking?.subService?.name} ${booking?.subService?.packages?.name} (${formattedDate})`
-    await sendWhatsAppCancellationMessage(booking.contactNumber, bookingDetails); 
+    if(booking.status === Enums.BOOKING_STATUS.ACCEPTED) {
+      await sendWhatsAppCancellationMessage(booking.contactNumber, bookingDetails); 
+    }
   } catch (error) {
     console.error('Failed to send WhatsApp message:', error);
   }

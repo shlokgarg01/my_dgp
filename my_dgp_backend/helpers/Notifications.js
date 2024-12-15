@@ -1,51 +1,60 @@
 const https = require("https");
 const nodemailer = require("nodemailer");
+const admin = require('firebase-admin');
+const serviceAccount = require('../config/firebase-service.json');
+
+if (!admin.apps.length) {
+  admin.initializeApp({
+    credential: admin.credential.cert(serviceAccount)
+  });
+}
 
 const sendRiderPushNotifications = async (fcm_tokens, message) => {
   try {
-    const SERVER_KEY = process.env.FCM_SERVER_KEY;
-
-    for (index in fcm_tokens) {
-      const body = JSON.stringify({
-        to: fcm_tokens[index],
+    // Create message payload
+    const messages = fcm_tokens.map(token => ({
+      notification: {
+        title: "You have a new booking request.",
+        body: message
+      },
+      android: {
         notification: {
-          title: "You have a new booking request.",
-          body: message,
           sound: "gio_resotone.mp3",
-          android_channel_id: "callNotificationChannel",
-        },
-        content_available: true,
-        priority: "high",
-      });
+          channelId: "callNotificationChannel"
+        }
+      },
+      apns: {
+        payload: {
+          aps: {
+            sound: "gio_resotone.mp3"
+          }
+        }
+      },
+      token: token
+    }));
 
-      const options = {
-        hostname: "fcm.googleapis.com",
-        path: "/fcm/send",
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          "Authorization": `key=${SERVER_KEY}`,
-        },
-      };
+    // Send messages in batches of 500
+    const chunks = [];
+    for (let i = 0; i < messages.length; i += 500) {
+      chunks.push(messages.slice(i, i + 500));
+    }
 
-      const api = https.request(options, (response) => {
-        response.on('end', () => {
-          console.log("Push Notification Sent", response);
-        });
-      });
-
-      api.on('error', (error) => {
-        console.error("Error while sending push notification to rider", error)
-      });
-
-      api.write(body);
-      api.end()
+    for (const chunk of chunks) {
+      const responses = await Promise.all(
+        chunk.map(message => 
+          admin.messaging().send(message)
+        )
+      );
+      
+      console.log('Successfully sent messages:', responses.length);
     }
 
   } catch (error) {
     console.error("Could not send push notification to rider", error);
+    throw error; // Re-throw to handle it in the calling function if needed
   }
 };
+
 
 const transporter = nodemailer.createTransport({
   service: "gmail",
