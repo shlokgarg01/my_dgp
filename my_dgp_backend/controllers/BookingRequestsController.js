@@ -144,7 +144,12 @@ exports.cancelBookingRequest = catchAsyncErrors(async (req, res, next) => {
 
   // Send WhatsApp message after successful cancellation
   try {
-    const bookingDetails = 'Arial videographer (21/12/24)'
+    const formattedDate = new Date(booking?.date).toLocaleDateString('en-GB', { 
+      day: '2-digit',
+      month: '2-digit',
+      year: '2-digit'
+    });
+    const bookingDetails = `${booking.service?.name} ${booking?.subService?.name} ${booking?.subService?.packages?.name} (${formattedDate})`
     await sendWhatsAppCancellationMessage(booking.contactNumber, bookingDetails); 
   } catch (error) {
     console.error('Failed to send WhatsApp message:', error);
