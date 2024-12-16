@@ -457,7 +457,8 @@ export default function Home() {
     console.log(date1)
     console.log(date2)
     if (date1 < date2) {
-      toast.error("You can't book on a previous date and time.");
+      setDate({ ...date, hour: addHour(currentTime().hour) }) 
+      // toast.error("You can't book on a previous date and time.");
       return false;
     }
     return true
@@ -478,9 +479,10 @@ export default function Home() {
     let finalDate = `${date.date.slice(7, 11)}-${Months.find((month) => month.abr === date.date.slice(0, 3)).value
       }-${date.date.slice(4, 6)}`;
 
-    const checktime = compareTimes(date, currentTime())
-    if (!checktime)
-      return
+    // const checktime = compareTimes(date, currentTime())
+    // if (!checktime)
+    //   return
+    compareTimes(date, currentTime())
 
     let res = {
       service: selectedService,
