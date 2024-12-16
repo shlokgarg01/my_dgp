@@ -43,6 +43,11 @@ export default function Login() {
   const { loginData } = useSelector((state) => state.loginData);
   const [isRegistered, setRegistered] = useState(true);
   const registerCustomerReducer = useSelector((state) => state.registerCustomerReducer);
+  const [isChecked, setIsChecked] = useState(false); // State to track checkbox status
+
+  const handleCheckboxChange = () => {
+    setIsChecked(prevState => !prevState); // Toggle checkbox state
+  };
 
   //register action
   useEffect(() => {
@@ -362,6 +367,21 @@ export default function Login() {
                     </div>
                   }
                   <div id="captcha-container"></div>
+
+                  <div style={{ fontSize: 12 , marginTop:"10px",display: "flex",flexDirection:"row",justifyContent:"flex-start",gap:"22px",aligniItems:"center"}}>
+      <input
+        type="checkbox"
+        id="agree-checkbox"
+        checked={isChecked}
+        onChange={handleCheckboxChange}
+      />
+      <label htmlFor="agree-checkbox">
+        By continuing, you agree to MYDGP'S{' '}
+        <a href="./terms-and-conditions">terms of use</a> and{' '}
+        <a href="./privacy-policy">privacy policy</a>
+      </label>
+    </div>
+                
                   <Btn
                     onClick={
                       handleSubmitBtn
@@ -370,8 +390,11 @@ export default function Login() {
                       firebaseConfirmation && !editNumber ? "Submit" : "Send OTP"
                     }
                     loading={loading}
-                  />
-                  <div style={{ fontSize: 12 }} >By continue you agree to MYDGP'S <a href="./terms-and-conditions" >terms of use</a> and <a href="./privacy-policy" >privacy policy</a></div>
+                    disabled={!isChecked}
+                  /> 
+
+                  {/* <div style={{ fontSize: 12 }} >By continue you agree to MYDGP'S <a href="./terms-and-conditions" >terms of use</a> and <a href="./privacy-policy" >privacy policy</a></div> */}
+               
                 </form>
               </div>
             </div>
