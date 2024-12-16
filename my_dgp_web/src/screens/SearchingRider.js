@@ -155,6 +155,7 @@ useEffect(() => {
     return () => {
       clearInterval(interval);
       clearTimeout(fetchDataTimeout);
+      setTryAgain(false)
     };
   }, [
     dispatch,

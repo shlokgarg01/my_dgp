@@ -51,18 +51,6 @@ export default function Checkout() {
       dispatch(clearErrors());
     }
 
-    if (couponError) {
-      toast.error(couponError);
-      setCouponCode("");
-      dispatch(clearErrors());
-    }
-
-    if (couponSuccess) {
-      toast.success("Coupon Applied");
-      dispatch(saveData({ coupon: couponCode, couponDiscount }))
-      updatePrices();
-    }
-
     if (success && !isFirstRender.current) {
       dispatch(clearData())
       navigate("/searchingRider", {
@@ -74,7 +62,22 @@ export default function Checkout() {
     }
     isFirstRender.current = false;
     // eslint-disable-next-line
-  }, [dispatch, error, success, couponError, couponSuccess]);
+  }, [dispatch, error, success]);
+
+  
+  useEffect(() => {
+    if (couponSuccess) {
+      toast.success("Coupon Applied");
+      dispatch(saveData({ coupon: couponCode, couponDiscount }))
+      updatePrices();
+    }
+    if (couponError) {
+      toast.error(couponError);
+      setCouponCode("");
+      dispatch(clearErrors());
+    }
+  }, [couponSuccess,couponError])
+  
 
   const data = (paymentId = null, paymentStatus = null) => ({
     service: params.get("service"),
