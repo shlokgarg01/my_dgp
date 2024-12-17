@@ -68,22 +68,22 @@ const transporter = nodemailer.createTransport({
 });
 
 const sendEmail = async (email_ids, subject, message, html) => {
-  try {
-    const mail_options = {
-      from: {
-        name: "My DGP",
-        address: process.env.NODEMAILER_EMAIL,
-      },
-      to: email_ids.join(","),
-      subject,
-      text: message,
-      html: html,
-    };
-    let mail_sent = await transporter.sendMail(mail_options);
-    console.log("Email sent.", mail_sent.envelope);
-  } catch (error) {
-    console.log("Cannot send email.", error, "Params - ", email_ids, subject);
-  }
+  // try {
+  //   const mail_options = {
+  //     from: {
+  //       name: "My DGP",
+  //       address: process.env.NODEMAILER_EMAIL,
+  //     },
+  //     to: email_ids.join(","),
+  //     subject,
+  //     text: message,
+  //     html: html,
+  //   };
+  //   let mail_sent = await transporter.sendMail(mail_options);
+  //   console.log("Email sent.", mail_sent.envelope);
+  // } catch (error) {
+  //   console.log("Cannot send email.", error, "Params - ", email_ids, subject);
+  // }
 };
 
 module.exports = { sendRiderPushNotifications, sendEmail };
