@@ -3,7 +3,7 @@ import Colors from "../../utils/Colors";
 import "../../styles/ComponentStyles.css";
 import { ReactComponent as Loader } from "./Spinner.svg";
 
-export default function Btn({ title, onClick, loading, smallButton, bgColor, noMargin, leftMargin = false, btnHeight = 40 ,  disabled = false}) {
+export default function Btn({ title, onClick, loading, smallButton, bgColor, noMargin, leftMargin = false, btnHeight = 40 ,  disabled = false,...rest}) {
   return (
     <button
       onClick={onClick}
@@ -22,6 +22,7 @@ export default function Btn({ title, onClick, loading, smallButton, bgColor, noM
         fontSize: 20,
       }}
       disabled={disabled || loading}
+      {...rest}
     >
       {loading ? <Loader className="spinner" /> : title}
     </button>

@@ -40,6 +40,7 @@ export default function App() {
             <Route exact path="/balance-payment" element={<BalancePayments/>} />
             <Route exact path="/aboutus" element={<AboutMydgp/>} />
             <Route exact path="/service-agreement" element={<ServiceAgreement/>} />
+            <Route exact path="/advance-payment" element={<AdvancePayments/>} />
             <Route path="*" element={<NotFound />} />
           </Routes>
         </Router>

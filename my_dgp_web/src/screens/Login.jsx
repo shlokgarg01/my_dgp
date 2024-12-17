@@ -254,7 +254,13 @@ export default function Login() {
         <div>
           <div className="subContainer" style={{ height: "100%" }}>
             <div>
-              <div style={{ backgroundColor: Colors.PRIMARY, paddingBottom: 10, paddingTop: 20 }} >
+              <div
+                style={{
+                  backgroundColor: Colors.PRIMARY,
+                  paddingBottom: 10,
+                  paddingTop: 20,
+                }}
+              >
                 <LogoHeader showLogo={true} />
               </div>
               <div style={{ padding: 30 }}>
@@ -267,7 +273,7 @@ export default function Login() {
                     paddingTop: 20,
                   }}
                 >
-                  {isRegistered ? 'Login to process your order' : 'Welcome !'}
+                  {isRegistered ? "Login to process your order" : "Welcome !"}
                 </div>
                 <div
                   style={{
@@ -277,74 +283,86 @@ export default function Login() {
                     paddingLeft: 25,
                     paddingRight: 25,
                     marginBottom: 25,
-                    fontSize:15
+                    fontSize: 15,
                   }}
                 >
-                  {isRegistered ? 'A 4-digit OTP will be sent on SMS' : 'We need your name and email id to register'}
+                  {isRegistered
+                    ? "A 4-digit OTP will be sent on SMS"
+                    : "We need your name and email id to register"}
                 </div>
 
                 <form
                   onSubmit={(e) => e.preventDefault()}
                   style={{ textAlign: "center" }}
                 >
-                  {isRegistered && <div>
-                    <InputGroup
-                      icon={<FaPhone size={25} color={Colors.DARK_GRAY} />}
-                      placeholder="Contact Number"
-                      type="number"
-                      value={contactNumber}
-                      onChange={(e) => setContactNumber(e.target.value)}
-                      disabled={!editNumber && (firebaseConfirmation || loading)}
-                      maxLength="10"
-                    />
-                    {firebaseConfirmation && !editNumber ? (
-                      <>
-                        <InputGroup
-                          icon={
-                            <AiOutlineLogin size={25} color={Colors.DARK_GRAY} />
-                          }
-                          placeholder="Enter the OTP"
-                          type="number"
-                          value={otp}
-                          maxLength="6"
-                          onChange={(e) => setOtp(e.target.value)}
-                        />
-                        <div
-                          style={{
-                            display: "flex",
-                            flexDirection: "row",
-                            justifyContent: "space-between",
-                            marginTop: 4,
-                            padding: "0 10px",
-                            color: Colors.BLUE,
-                            fontWeight: "bold",
-                          }}
-                        >
+                  {isRegistered && (
+                    <div>
+                      <InputGroup
+                        icon={<FaPhone size={25} color={Colors.DARK_GRAY} />}
+                        placeholder="Contact Number"
+                        type="number"
+                        value={contactNumber}
+                        onChange={(e) => setContactNumber(e.target.value)}
+                        disabled={
+                          !editNumber && (firebaseConfirmation || loading)
+                        }
+                        maxLength="10"
+                      />
+                      {firebaseConfirmation && !editNumber ? (
+                        <>
+                          <InputGroup
+                            icon={
+                              <AiOutlineLogin
+                                size={25}
+                                color={Colors.DARK_GRAY}
+                              />
+                            }
+                            placeholder="Enter the OTP"
+                            type="number"
+                            value={otp}
+                            maxLength="6"
+                            onChange={(e) => setOtp(e.target.value)}
+                          />
                           <div
-                            style={{ color: Colors.BLACK }}
-                            onClick={() => {
-                              setEditNumber(true);
-                              setContactNumber("");
+                            style={{
+                              display: "flex",
+                              flexDirection: "row",
+                              justifyContent: "space-between",
+                              marginTop: 4,
+                              padding: "0 10px",
+                              color: Colors.BLUE,
+                              fontWeight: "bold",
                             }}
                           >
-                            Entered Wrong Number?
-                          </div>
-                          <div>
                             <div
-                              style={{
-                                color: timer === 0 ? Colors.BLUE : Colors.GRAY,
+                              style={{ color: Colors.BLACK }}
+                              onClick={() => {
+                                setEditNumber(true);
+                                setContactNumber("");
                               }}
-                              onClick={timer === 0 ? sendOTP : null}
                             >
-                              Resend OTP
+                              Entered Wrong Number?
                             </div>
-                            <div style={{ color: Colors.GRAY, fontSize: 13 }}>{timer} sec</div>
+                            <div>
+                              <div
+                                style={{
+                                  color:
+                                    timer === 0 ? Colors.BLUE : Colors.GRAY,
+                                }}
+                                onClick={timer === 0 ? sendOTP : null}
+                              >
+                                Resend OTP
+                              </div>
+                              <div style={{ color: Colors.GRAY, fontSize: 13 }}>
+                                {timer} sec
+                              </div>
+                            </div>
                           </div>
-                        </div>
-                      </>
-                    ) : null}
-                  </div>}
-                  {!isRegistered &&
+                        </>
+                      ) : null}
+                    </div>
+                  )}
+                  {!isRegistered && (
                     <div>
                       <InputGroup
                         icon={
@@ -358,44 +376,56 @@ export default function Login() {
                         placeholder="Your Name"
                       />
                       <InputGroup
-                        icon={<MdOutlineMail size={25} color={Colors.DARK_GRAY} />}
+                        icon={
+                          <MdOutlineMail size={25} color={Colors.DARK_GRAY} />
+                        }
                         placeholder="Email id"
                         type="email"
                         value={email}
                         onChange={(e) => setEmail(e.target.value)}
                       />
                     </div>
-                  }
+                  )}
                   <div id="captcha-container"></div>
 
-                  <div style={{ fontSize: 12 , marginTop:"10px",display: "flex",flexDirection:"row",justifyContent:"flex-start",gap:"5px",aligniItems:"center"}}>
-      <input 
-      style={{marginTop:"-5px"}}
-        type="checkbox"
-        id="agree-checkbox"
-        checked={isChecked}
-        onChange={handleCheckboxChange }
-      />
-      <label htmlFor="agree-checkbox">
-        By continuing, you agree to MYDGP'S{' '}
-        <a href="./terms-and-conditions">terms of use</a> and{' '}
-        <a href="./privacy-policy">privacy policy</a>
-      </label>
-    </div>
-                
+                  <div
+                    style={{
+                      fontSize: 12,
+                      marginTop: "10px",
+                      display: "flex",
+                      flexDirection: "row",
+                      justifyContent: "flex-start",
+                      gap: "5px",
+                      aligniItems: "flex-start",
+                      textAlign: "left",
+                    }}
+                  >
+                    <input
+                      type="checkbox"
+                      id="agree-checkbox"
+                      checked={isChecked}
+                      onChange={handleCheckboxChange}
+                    />
+                    <label htmlFor="agree-checkbox">
+                      By continuing, you agree to MYDGP'S{" "}
+                      <a href="./terms-and-conditions">terms of use</a> and{" "}
+                      <a href="./privacy-policy">privacy policy</a>
+                    </label>
+                  </div>
+
                   <Btn
-                    onClick={
-                      handleSubmitBtn
-                    }
+                    onClick={handleSubmitBtn}
                     title={
-                      firebaseConfirmation && !editNumber ? "Submit" : "Send OTP"
+                      firebaseConfirmation && !editNumber
+                        ? "Submit"
+                        : "Send OTP"
                     }
                     loading={loading}
                     disabled={!isChecked}
-                  /> 
+                    bgColor={isChecked ? Colors.PRIMARY : Colors.GRAY}
+                  />
 
                   {/* <div style={{ fontSize: 12 }} >By continue you agree to MYDGP'S <a href="./terms-and-conditions" >terms of use</a> and <a href="./privacy-policy" >privacy policy</a></div> */}
-               
                 </form>
               </div>
             </div>

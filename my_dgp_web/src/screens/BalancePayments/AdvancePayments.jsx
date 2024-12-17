@@ -10,6 +10,7 @@ import { RAZORPAY_KEY_ID } from "../../config/Config";
 import Colors from "../../utils/Colors";
 import { IoLogoWhatsapp, IoMdCall } from "react-icons/io";
 import { sendAdvanceStartOtpMsg } from "../../utils/whatsappMsg";
+import Btn from "../../components/components/Btn";
 
 // e.g.http://localhost:3000/advance-payment?id=000788
 const AdvancePayments = () => {
@@ -19,30 +20,35 @@ const AdvancePayments = () => {
   const dispatch = useDispatch();
   const [isPaymentDone, setPaymentDone] = useState(false);
   const navigate = useNavigate();
+  const [isChecked, setIsChecked] = useState(false); // State to track checkbox status
 
 
   const { status, service_provider, booking } = useSelector(
-    (state) => state.confirmedBooking//get booking from id
+    (state) => state.confirmedBooking //get booking from id
   );
+  
+  const handleCheckboxChange = () => {
+    setIsChecked(prevState => !prevState); // Toggle checkbox state
+  };
 
   useEffect(() => {
     const queryParams = new URLSearchParams(location.search);
     const bookingIdFromQuery = queryParams.get("id");
 
     if (bookingIdFromQuery) {
-      setBookingId(bookingIdFromQuery)
+      setBookingId(bookingIdFromQuery);
     }
   }, [location]); // Run this effect whenever the location changes
 
   useEffect(() => {
-    if (booking?.paymentInfo?.status === 'PARTIAL_PAID') {
+    if (booking?.paymentInfo?.status === "PARTIAL_PAID") {
       setPaymentDone(true);
     }
-  }, [booking])
+  }, [booking]);
 
   useEffect(() => {
     dispatch(confirmBookingStatus(bookingId)); //get booking from id
-  }, [bookingId])
+  }, [bookingId]);
 
   const loadRazorpayScript = (src) => {
     return new Promise((resolve) => {
@@ -79,7 +85,7 @@ const AdvancePayments = () => {
         date: booking?.date,
       });
     } catch (e) {
-      console.error("Error in Create Order API - ", e.response.data)
+      console.error("Error in Create Order API - ", e.response.data);
       toast.error(e.response.data.message);
       return;
     }
@@ -102,7 +108,7 @@ const AdvancePayments = () => {
           razorpaySignature: response.razorpay_signature,
           bookingId: booking?._id,
           amount: Math.round(booking?.totalPrice / 2),
-          status: 'PARTIAL_PAID'
+          status: "PARTIAL_PAID",
         };
 
         let paymentResponse;
@@ -111,14 +117,14 @@ const AdvancePayments = () => {
             `${BASE_URL}/api/v1/bookings/payment/success`,
             res
           );
-          if (paymentResponse.data.success)
-
-            toast.success('Payment Successful');
+          if (paymentResponse.data.success) toast.success("Payment Successful");
           setPaymentDone(true);
-          sendAdvanceStartOtpMsg(localStorage.getItem('userNumber')
-            , booking?.otp)
+          sendAdvanceStartOtpMsg(
+            localStorage.getItem("userNumber"),
+            booking?.otp
+          );
         } catch (error) {
-          console.error('Error in payment success API - ', error.response.data)
+          console.error("Error in payment success API - ", error.response.data);
           toast.error(error.response.data.message);
         }
       },
@@ -143,7 +149,7 @@ const AdvancePayments = () => {
 
   const handlePayment = () => {
     if (selectedPayment) {
-      displayRazorpay()
+      displayRazorpay();
     } else {
       alert("Please select the payment option.");
     }
@@ -199,8 +205,8 @@ const AdvancePayments = () => {
           </div>
         </div>
       </div>
-    )
-  }
+    );
+  };
 
   const renderAfterPaymentView = () => {
     return (
@@ -217,79 +223,106 @@ const AdvancePayments = () => {
           <span className="check-icon">✔</span>Advance Received
         </div>
 
-        <div className="warning">To start your booking, please share the OTP to our representative upon visit.</div>
+        <div className="warning">
+          To start your booking, please share the OTP to our representative upon
+          visit.
+        </div>
         <div className="amount-section">
           <h2>Booking Start OTP</h2>
 
-          <div className="amount">
-            {booking?.otp}
-          </div>
+          <div className="amount">{booking?.otp}</div>
         </div>
         {renderRiderDetails()}
         <div className="note">
           <strong>NOTE: </strong>We do not ask OTP on phone call or messages.
         </div>
-        <button className="btn-pay" onClick={()=>navigate("/")}>
+        <button className="btn-pay" onClick={() => navigate("/")}>
           HOME
         </button>
-
       </div>
-    )
-  }
+    );
+  };
 
-  return (
-    isPaymentDone ? renderAfterPaymentView() :
-      <div className="container">
-        <div className="avatar-container">
-          <img
-            className="profile-pic"
-            src="https://cdn-icons-png.flaticon.com/512/2922/2922510.png"
-            alt="Generic Male Avatar"
+  return isPaymentDone ? (
+    renderAfterPaymentView()
+  ) : (
+    <div className="container">
+      <div className="avatar-container">
+        <img
+          className="profile-pic"
+          src="https://cdn-icons-png.flaticon.com/512/2922/2922510.png"
+          alt="Generic Male Avatar"
+        />
+      </div>
+
+      <div className="status-tag">
+        <span className="check-icon">✔</span> Rider Reached
+      </div>
+
+      <div className="warning">Pay Advance Amount to start booking</div>
+
+      <div className="amount-section">
+        <h2>Advance Amount to pay</h2>
+        {/* <h3>Aakash Saklani</h3> */}
+
+        <div className="amount">₹{Math.round(booking?.totalPrice / 2)}</div>
+      </div>
+      <div className="note">
+        <strong>NOTE:</strong> Booking Start OTP will not be generated without
+        advance payment.
+      </div>
+
+      <div className="payment-method">
+        <div
+          className={`payment-option ${selectedPayment ? "selected" : ""}`}
+          onClick={() => setSelectedPayment(true)}
+        >
+          <input
+            type="radio"
+            id="single-payment"
+            name="payment"
+            value="Net Banking / UPI / Credit / Debit Cards"
+            checked={selectedPayment}
+            onChange={() => setSelectedPayment(true)}
           />
+          <label htmlFor="single-payment">
+            Net Banking / UPI / Credit / Debit Cards
+          </label>
         </div>
-
-        <div className="status-tag">
-          <span className="check-icon">✔</span> Rider Reached
-        </div>
-
-        <div className="warning">Pay Advance Amount to start booking</div>
-
-        <div className="amount-section">
-          <h2>Advance Amount to pay</h2>
-          {/* <h3>Aakash Saklani</h3> */}
-
-          <div className="amount">
-            ₹{Math.round(booking?.totalPrice / 2)}
-          </div>
-        </div>
-        <div className="note">
-          <strong>NOTE:</strong> Booking Start OTP will not be generated without advance payment.
-        </div>
-
-        <div className="payment-method">
-          <div
-            className={`payment-option ${selectedPayment ? "selected" : ""}`}
-            onClick={() => setSelectedPayment(true)}
-          >
-            <input
-              type="radio"
-              id="single-payment"
-              name="payment"
-              value="Net Banking / UPI / Credit / Debit Cards"
-              checked={selectedPayment}
-              onChange={() => setSelectedPayment(true)}
-            />
-            <label htmlFor="single-payment">
-              Net Banking / UPI / Credit / Debit Cards
-            </label>
-          </div>
-        </div>
-
-        <button className="btn-pay" onClick={handlePayment}>
-          PAY NOW
-        </button>
       </div>
+
+      <div
+        style={{
+          fontSize: 12,
+          marginTop: "10px",
+          display: "flex",
+          flexDirection: "row",
+          justifyContent: "flex-start",
+          gap: "5px",
+          aligniItems: "flex-start",
+          textAlign: "left",
+        }}
+      >
+        <input
+          type="checkbox"
+          id="agree-checkbox"
+          checked={isChecked}
+          onChange={handleCheckboxChange}
+        />
+        <label htmlFor="agree-checkbox">
+          By continuing, you agree to MYDGP'S{" "}
+          <a href="./service-agreement">Service agreement</a> and{" "}
+          <a href="./refund-policy">Refund policy</a>
+        </label>
+      </div>
+
+      <Btn  onClick={handlePayment}
+       disabled={!isChecked}
+       bgColor={isChecked ? Colors.PRIMARY : Colors.GRAY}
+        title="PAY NOW"
+      />
+    </div>
   );
 };
 
-export default AdvancePayments
+export default AdvancePayments;
