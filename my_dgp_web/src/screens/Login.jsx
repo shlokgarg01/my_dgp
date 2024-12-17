@@ -368,12 +368,13 @@ export default function Login() {
                   }
                   <div id="captcha-container"></div>
 
-                  <div style={{ fontSize: 12 , marginTop:"10px",display: "flex",flexDirection:"row",justifyContent:"flex-start",gap:"22px",aligniItems:"center"}}>
-      <input
+                  <div style={{ fontSize: 12 , marginTop:"10px",display: "flex",flexDirection:"row",justifyContent:"flex-start",gap:"5px",aligniItems:"center"}}>
+      <input 
+      style={{marginTop:"-5px"}}
         type="checkbox"
         id="agree-checkbox"
         checked={isChecked}
-        onChange={handleCheckboxChange}
+        onChange={handleCheckboxChange }
       />
       <label htmlFor="agree-checkbox">
         By continuing, you agree to MYDGP'S{' '}

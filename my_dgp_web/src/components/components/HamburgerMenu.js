@@ -4,7 +4,7 @@ import Colors from "../../utils/Colors";
 import { Link } from "react-router-dom";
 import { RiHome7Line, RiLogoutBoxRLine } from "react-icons/ri";
 import { PiClockClockwiseDuotone } from "react-icons/pi";
-import { BiSupport } from "react-icons/bi";
+import { BiSupport ,BiMessage    } from "react-icons/bi";
 
 export default function HamburgerMenu() {
 
@@ -96,6 +96,9 @@ export default function HamburgerMenu() {
         </Link>}
         {renderDivider()}
 
+        <Link id="home" className="menu-item" to="/aboutus">
+          <BiMessage color={Colors.PRIMARY} /> About Us
+        </Link>
         <Link id="home" className="menu-item" to="/help">
           <BiSupport color={Colors.PRIMARY} /> Help
         </Link>
