@@ -89,27 +89,24 @@ export default function HamburgerMenu() {
       <Menu styles={styles}>
         <Link id="home" className="menu-item" to="/">
           <RiHome7Line color={Colors.PRIMARY} /> Home
+          {renderDivider()}
         </Link>
-        {renderDivider()}
-        {isLogin() && <Link id="home" className="menu-item" to="/my-bookings">
-          <PiClockClockwiseDuotone color={Colors.PRIMARY} /> My Bookings
-        </Link>}
-        {renderDivider()}
-
         <Link id="home" className="menu-item" to="/aboutus">
           <BiMessage color={Colors.PRIMARY} /> About Us
+          {renderDivider()}
         </Link>
+        {isLogin() && <Link id="home" className="menu-item" to="/my-bookings">
+          <PiClockClockwiseDuotone color={Colors.PRIMARY} /> My Bookings
+          {renderDivider()}
+        </Link>}
         <Link id="home" className="menu-item" to="/help">
           <BiSupport color={Colors.PRIMARY} /> Help
+          {renderDivider()}
         </Link>
-        {renderDivider()}
-
         {isLogin() && <Link id="home" className="menu-item" to="/">
           <RiLogoutBoxRLine color={Colors.PRIMARY} /> Logout
+          {renderDivider()}
         </Link>}
-
-        {renderDivider()}
-
       </Menu>
     </div>
   );
