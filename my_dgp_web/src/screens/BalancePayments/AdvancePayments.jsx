@@ -119,10 +119,10 @@ const AdvancePayments = () => {
           );
           if (paymentResponse.data.success) toast.success("Payment Successful");
           setPaymentDone(true);
-          sendAdvanceStartOtpMsg(
-            localStorage.getItem("userNumber"),
-            booking?.otp
-          );
+          sendAdvanceStartOtpMsg({
+            contactNumber: localStorage.getItem("userNumber"),
+            otp: booking?.otp
+          });
         } catch (error) {
           console.error("Error in payment success API - ", error.response.data);
           toast.error(error.response.data.message);

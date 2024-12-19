@@ -57,6 +57,12 @@ export default function SearchingRider() {
     setShowDropdown(!showDropdown);
   };
 
+  const formatDate = (dateString) => {
+    const date = new Date(dateString);
+    const options = { day: 'numeric', month: 'short', year: 'numeric' };
+    return date.toLocaleDateString('en-GB', options); 
+};
+
 useEffect(() => {
   if (isFirstRender.current) {
     isFirstRender.current = false;
@@ -76,12 +82,16 @@ useEffect(() => {
     localStorage.setItem("feedback", JSON.stringify(feedbackData));
     
     // Send advance message
-    sendAdvanceMsg(
-      service_provider.name, 
-      Math.round(booking.totalPrice / 2), 
-      `${window.location.origin}/advance-payment?${booking._id}`, 
-      contactNumber
-    );
+    sendAdvanceMsg({
+      advanceAmount: Math.round(booking.totalPrice / 2),
+      riderName: service_provider.name,
+      bookingId: booking._id,
+      date: formatDate(booking?.date),
+      duration: `${booking?.hours} hours ${booking?.minutes} minutes`,
+      serviceName: booking?.service?.name,
+      amount: booking?.totalPrice,
+      contactNumber: contactNumber
+    });
   }
 }, [status]);
 
@@ -305,7 +315,10 @@ useEffect(() => {
             // callUpdatePaymentApi(booking?._id, Math.round(booking?.totalPrice/2),response.razorpay_payment_id)
             toast.success('Payment Successful');
           setPaymentDone(true);
-          sendAdvanceStartOtpMsg(contactNumber,booking?.otp)
+          sendAdvanceStartOtpMsg({
+            contactNumber: contactNumber,
+            otp: booking?.otp
+          })
         } catch (error) {
           console.error('Error in payment success API - ', error.response.data)
           toast.error(error.response.data.message);
