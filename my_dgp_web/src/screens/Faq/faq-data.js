@@ -1,5 +1,4 @@
-{
-  "FAQs": [
+export const FAQDATA= [
     {
       "heading": "Discover MYDGP",
       "content": [
@@ -391,4 +390,3 @@
       ]
     }
   ]
-}

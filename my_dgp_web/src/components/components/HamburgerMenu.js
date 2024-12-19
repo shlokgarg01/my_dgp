@@ -103,6 +103,10 @@ export default function HamburgerMenu() {
           <BiSupport color={Colors.PRIMARY} /> Help
           {renderDivider()}
         </Link>
+        <Link id="home" className="menu-item" to="/faq">
+          <BiSupport color={Colors.PRIMARY} /> FAQ
+          {renderDivider()}
+        </Link>
         {isLogin() && <Link id="home" className="menu-item" to="/">
           <RiLogoutBoxRLine color={Colors.PRIMARY} /> Logout
           {renderDivider()}
