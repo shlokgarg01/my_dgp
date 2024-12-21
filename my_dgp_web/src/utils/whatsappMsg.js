@@ -19,7 +19,6 @@ const sendWhatsAppMessage = async (requestBody) => {
   }
 };
 
-
 export const sendAdvanceMsg = async ({
   advanceAmount,
   riderName,
@@ -66,6 +65,10 @@ export const sendAdvanceMsg = async ({
             {
               type: "text",
               text: serviceName
+            },
+            {
+              type: "text",
+              text: ''
             },
             {
               type: "text",

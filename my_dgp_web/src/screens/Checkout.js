@@ -57,6 +57,7 @@ export default function Checkout() {
         state: {
           bookingId: booking._id,
           coordinates: { lat: params.get("lat"), lng: params.get("lng") },
+          selectedServiceName: `${params.get("subServiceName")} ${params.get("packageName")}`
         },
       });
     }

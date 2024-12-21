@@ -88,7 +88,7 @@ useEffect(() => {
       bookingId: booking._id,
       date: formatDate(booking?.date),
       duration: `${booking?.hours} hours ${booking?.minutes} minutes`,
-      serviceName: booking?.service?.name,
+      serviceName: location?.selectedServiceName,
       amount: booking?.totalPrice,
       contactNumber: contactNumber
     });
