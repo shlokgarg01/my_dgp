@@ -68,7 +68,7 @@ export const sendAdvanceMsg = async ({
             },
             {
               type: "text",
-              text: ''
+              text: ' '
             },
             {
               type: "text",
