@@ -1,5 +1,5 @@
 const https = require("https");
-const { BASE_URL } = require("../../my_dgp_web/src/config/Axios");
+import { BASE_URL } from '../config/Axios';
 
 function updateBookingPayment({ bookingId, paymentAmount, transactionId,status }) {
   const baseUrl = BASE_URL;
