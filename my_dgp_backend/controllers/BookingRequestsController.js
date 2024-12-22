@@ -8,7 +8,6 @@ const Enums = require("../utils/Enums");
 const { generateOTP } = require("../helpers/UserHelpers");
 const { sendEmail } = require("../helpers/Notifications");
 const { BOOKING_OTP, BOOKING_ACCEPTANCE } = require("../Data/Messages");
-const { sendWhatsAppCancellationMessage } = require("../services/whatsappApi");
 
 // get all booking requests
 exports.getAllBookingRequests = catchAsyncErrors(async (req, res, next) => {
@@ -140,21 +139,6 @@ exports.cancelBookingRequest = catchAsyncErrors(async (req, res, next) => {
     console.log(
       `Razorpay refund response for booking id ${booking_id} is ${razorpayResponse}`
     );
-  }
-
-  // Send WhatsApp message after successful cancellation
-  try {
-    const formattedDate = new Date(booking?.date).toLocaleDateString('en-GB', { 
-      day: '2-digit',
-      month: '2-digit',
-      year: '2-digit'
-    });
-    const bookingDetails = `${booking.service?.name} ${booking?.subService?.name} ${booking?.subService?.packages?.name} (${formattedDate})`
-    if(booking.status === Enums.BOOKING_STATUS.ACCEPTED) {
-      await sendWhatsAppCancellationMessage(booking.contactNumber, bookingDetails); 
-    }
-  } catch (error) {
-    console.error('Failed to send WhatsApp message:', error);
   }
 
   if (booking_request) {
