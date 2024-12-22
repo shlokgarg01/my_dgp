@@ -1,6 +1,11 @@
 const https = require("https");
+const { BASE_URL } = require("../../my_dgp_web/src/config/Axios");
 
 function updateBookingPayment({ bookingId, paymentAmount, transactionId,status }) {
+  const baseUrl = BASE_URL;
+  const url = new URL(baseUrl);
+  const hostname = url.hostname;
+
   return new Promise((resolve, reject) => {
     const data = JSON.stringify({
       bookingId,
@@ -10,7 +15,7 @@ function updateBookingPayment({ bookingId, paymentAmount, transactionId,status }
     });
 
     const options = {
-    hostname: 'my-dgp.onrender.com',
+    hostname: hostname,
     port: 443,
     path: '/api/v1/bookings/payment/update',
     method: 'POST',

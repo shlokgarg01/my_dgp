@@ -282,7 +282,7 @@ exports.getCurrentBookingsOfAUser = catchAsyncErrors(async (req, res, next) => {
     },
   })
   .select("+otp") 
-  .populate("customer address service subService")
+  .populate("customer address service subService serviceProvider")
 
   res.status(200).json({
     success: true,
