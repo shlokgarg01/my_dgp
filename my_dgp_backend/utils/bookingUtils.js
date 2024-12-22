@@ -1,11 +1,7 @@
 const https = require("https");
-import { BASE_URL } from '../config/Axios';
 
 function updateBookingPayment({ bookingId, paymentAmount, transactionId,status }) {
-  const baseUrl = BASE_URL;
-  const url = new URL(baseUrl);
-  const hostname = url.hostname;
-
+  const hostname = req.hostname;
   return new Promise((resolve, reject) => {
     const data = JSON.stringify({
       bookingId,
