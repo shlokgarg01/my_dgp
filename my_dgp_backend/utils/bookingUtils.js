@@ -10,8 +10,8 @@ function updateBookingPayment({ bookingId, paymentAmount, transactionId,status }
     });
 
     const options = {
-    hostname: 'mydgp.in',
-    port: 80, //443
+    hostname: 'my-dgp.onrender.com',
+    port: 443,
     path: '/api/v1/bookings/payment/update',
     method: 'POST',
     headers: {
