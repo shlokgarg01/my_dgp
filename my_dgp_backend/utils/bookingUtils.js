@@ -1,7 +1,6 @@
 const https = require("https");
 
 function updateBookingPayment({ bookingId, paymentAmount, transactionId,status }) {
-  const hostname = req.hostname;
   return new Promise((resolve, reject) => {
     const data = JSON.stringify({
       bookingId,
@@ -12,7 +11,7 @@ function updateBookingPayment({ bookingId, paymentAmount, transactionId,status }
 
     const options = {
     hostname: 'mydgp.in',
-    port: 443,
+    port: 80, //443
     path: '/api/v1/bookings/payment/update',
     method: 'POST',
     headers: {
