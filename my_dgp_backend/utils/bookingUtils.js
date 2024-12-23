@@ -11,7 +11,7 @@ function updateBookingPayment({ bookingId, paymentAmount, transactionId,status }
     });
 
     const options = {
-    hostname: hostname,
+    hostname: 'mydgp.in',
     port: 443,
     path: '/api/v1/bookings/payment/update',
     method: 'POST',
