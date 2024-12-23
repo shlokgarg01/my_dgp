@@ -508,7 +508,9 @@ exports.paymentSuccess = catchAsyncErrors(async (req, res, next) => {
     });
   } catch (error) {
     console.error("Error while updating booking:", error.message);
-    return next(new ErrorHandler("Booking update failed", 500));
+    // return next(new ErrorHandler("Booking update failed", 500));
+
+    return next(new ErrorHandler(error?.message, 500));
   }
   // res.json({
   //   success: true,
