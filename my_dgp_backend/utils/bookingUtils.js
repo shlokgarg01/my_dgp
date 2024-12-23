@@ -1,47 +1,22 @@
-const https = require("https");
+const axios = require("axios"); // Import Axios
 
-function updateBookingPayment({ bookingId, paymentAmount, transactionId,status }) {
+function updateBookingPayment({ bookingId, paymentAmount, transactionId, status }) {
   return new Promise((resolve, reject) => {
-    const data = JSON.stringify({
+    const data = {
       bookingId,
       paymentAmount,
       transactionId,
       status,
-    });
+    };
 
-    const options = {
-    hostname: 'my-dgp.onrender.com',
-    port: 443,
-    path: '/api/v1/bookings/payment/update',
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-      'Content-Length': data.length,
-    },
-  };
-
-    const req = https.request(options, (res) => {
-      let responseData = "";
-
-      res.on("data", (chunk) => {
-        responseData += chunk;
+    // Use Axios to make the POST request
+    axios.post('https://mydgp.in/api/v1/bookings/payment/update', data)
+      .then(response => {
+        resolve(response.data);
+      })
+      .catch(error => {
+        reject(new Error(`Request failed: ${error.message}`));
       });
-
-      res.on("end", () => {
-        if (res.statusCode >= 200 && res.statusCode < 300) {
-          resolve(JSON.parse(responseData));
-        } else {
-          reject(new Error(`Request failed with status code ${res.statusCode}`));
-        }
-      });
-    });
-
-    req.on("error", (error) => {
-      reject(error);
-    });
-
-    req.write(data);
-    req.end();
   });
 }
 
