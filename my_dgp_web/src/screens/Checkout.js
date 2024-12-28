@@ -34,7 +34,7 @@ export default function Checkout() {
     success: couponSuccess,
   } = useSelector((state) => state.coupon);
 
-  const [paymentMode, setPaymentMode] = useState(Enums.PAYMENT_MODES.ONLINE);
+  const [paymentMode, setPaymentMode] = useState(Enums.PAYMENT_MODES.CASH);
   const [couponCode, setCouponCode] = useState(savedData.couponCode || "");
   const [couponDiscount, setCouponDiscount] = useState(savedData.couponDiscount || 0);
   const [totalPrice, setTotalPrice] = useState(savedData.totalPrice || params.get("totalPrice"));
@@ -395,8 +395,8 @@ export default function Checkout() {
             </div>
           </div>
 
-          <div>
-            {/* Payment Mode Radio Button */}
+{/* payment options */}
+          {/* <div>
             <div
               style={{
                 display: "flex",
@@ -445,7 +445,8 @@ export default function Checkout() {
                 {Enums.PAYMENT_MODES.ONLINE}
               </label>
             </div>
-          </div>
+          </div> */}
+          
           <div >
             {paymentLoading && <LoaderComponent />}
             <Btn onClick={submit} title="Submit & Proceed" />
