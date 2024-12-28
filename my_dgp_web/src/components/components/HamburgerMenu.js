@@ -35,6 +35,11 @@ export default function HamburgerMenu() {
     )
   }
 
+  const handleLogout = () => {
+    localStorage.clear();
+    window.location.href = '/'; 
+}
+
   var styles = {
     bmBurgerButton: {
       position: "fixed",
@@ -107,7 +112,7 @@ export default function HamburgerMenu() {
           <BiSupport color={Colors.PRIMARY} /> FAQ
           {renderDivider()}
         </Link>
-        {isLogin() && <Link id="home" className="menu-item" to="/">
+        {isLogin() && <Link id="home" className="menu-item" to="/" onClick={handleLogout}>
           <RiLogoutBoxRLine color={Colors.PRIMARY} /> Logout
           {renderDivider()}
         </Link>}
