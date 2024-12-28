@@ -29,6 +29,7 @@ import axios from "axios";
 import DemoContentModal from "../components/components/DemoContentModal/DemoContentModal";
 import FeedbackComponent from "./Feedback/FeedbackComponent";
 import Enums from "../utils/Enums";
+import { loginViaOTP } from "../actions/UserActions";
 
 export default function Home() {
   const { savedData } = useSelector((state) => state.savedData);
@@ -135,6 +136,19 @@ export default function Home() {
     };
   }, []);
 
+  useEffect(() => {
+    const isLogin = () => {
+      if (localStorage.getItem('userId')) {
+        return true;
+      } else {
+        return false;
+      }
+    }
+    if(isLogin()){
+      dispatch(loginViaOTP({contactNumber:localStorage.getItem('userNumber')}))
+    }
+  }, [])
+  
   //unselects sub category when category changes
   useEffect(() => {
    setSubService(null);
