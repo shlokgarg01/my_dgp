@@ -1,4 +1,4 @@
-let ENV = process.env;
+const ENV = process.env;
 
 module.exports = {
   type: "service_account",

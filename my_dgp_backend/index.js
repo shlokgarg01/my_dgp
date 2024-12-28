@@ -23,7 +23,7 @@ const PriceRoutes = require('./routes/PriceRoutes.js')
 const CouponRoutes = require('./routes/CouponRoutes')
 const DeliveryRoutes = require('./routes/DeliveryRoutes')
 const ReviewRoutes = require('./routes/ReviewRoutes')
-
+const DriveApiRoutes = require('./routes/DriveApiRoutes')
 
 app.use(morgan("combined"));
 
@@ -81,6 +81,8 @@ app.use('/api/v1', PriceRoutes)
 app.use('/api/v1', CouponRoutes)
 app.use('/api/v1', DeliveryRoutes)
 app.use('/api/v1', ReviewRoutes)
+app.use('/api/v1', DriveApiRoutes)
+
 
 // This is the static frontend file. Whenever any change in frontend is made, u need to generate build file & then run server again.
 // IMPORTANT - make sure that this static frontend route is after all the backend routes otherwise all API calls will fail.
