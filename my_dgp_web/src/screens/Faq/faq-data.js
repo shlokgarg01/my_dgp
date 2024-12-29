@@ -328,64 +328,52 @@ export const FAQDATA= [
       "heading": "Troubleshooting",
       "content": [
         {
-          "question": "What is MYDGP?",
-          "answer": "MYDGP is a comprehensive digital platform offering a variety of services and solutions for individuals and businesses. We aim to empower users by providing easy access to communication, technology, and business services in an affordable and user-friendly way."
+          "question": "I am unable to log into my MYDGP account. What should I do?",
+          "answer": "If you are unable to log in, please check the following:\n\nMake sure you are entering the correct Phone Number, Name and email.\nEnsure your internet connection is stable.\nIf the issue persists, please contact our customer support team at info@mydgp.in or call +91 78273 43931."
         },
         {
-          "question": "How can I get started with MYDGP?",
-          "answer": "To get started, simply visit our website MYDGP.in or download the MYDGP app. Create an account using your email and personal details, and start exploring the wide range of services we offer."
+          "question": "Why is the MYDGP app not opening on my phone?",
+          "answer": "This issue could be caused by:\n\nInsufficient memory or storage on your device. Try clearing some space and restarting your phone.\nOutdated app version. Visit the App Store (for iOS) or Google Play Store (for Android) and check for updates.\nPoor internet connection. Ensure you're connected to a reliable network.\nIf none of these solve the issue, reinstall the app and try again or contact support."
         },
         {
-          "question": "Is MYDGP available on all devices?",
-          "answer": "Yes, MYDGP is accessible on both desktop and mobile devices. You can access our services via our website on a desktop or use the MYDGP app on your smartphone (available on Android and iOS)."
+          "question": "The MYDGP website is loading very slowly. What can I do?",
+          "answer": "Try the following steps to improve loading speed:\n\nClear your browser cache and cookies.\nCheck your internet connection for speed and stability.\nTry accessing the website from a different browser or device.\nIf the issue persists, our technical team is available to assist you. Please reach out to us via email at info@mydgp.in."
         },
         {
-          "question": "How do I create an account on MYDGP?",
-          "answer": "follow these simple steps:\n\nGo to the MYDGP website at MYDGP.in or open the MYDGP app on your mobile device.\n\nChoose a Service:\nSelect any service that interests you or that you wish to use.\nClick 'Proceed':\n\nAfter choosing the service, click on the Proceed button to move forward.\n\nProvide Your Details:\nYou will be asked to provide essential details like:\nPhone number: Enter your phone number.\nOTP Verification: You will receive a One-Time Password (OTP) on your phone to verify your number.\nEnter Additional Information:\nAfter verifying your phone number, you will need to enter your name and email address to complete the registration process."
+          "question": "I made a payment, but I haven't received confirmation. What should I do?",
+          "answer": "If you have made a payment but have not received confirmation:\n\nCheck your internet connection to ensure the transaction was successfully processed.\nLook for any confirmation emails or SMS that may have been sent.\nCheck your bank or payment service provider to confirm if the transaction was completed.\nIf you still haven’t received confirmation, please contact customer support immediately with the transaction details."
         },
         {
-          "question": "Can I access MYDGP services without an account?",
-          "answer": "No, you need to create an login account to access MYDGP's services. This helps us personalize your experience and ensure secure transactions."
+          "question": "My account is showing incorrect billing information. How can I fix this?",
+          "answer": "To resolve any incorrect billing information:\n\nLog in to your MYDGP account and review your billing details under the 'Account Settings' section.\nUpdate your payment information or billing address if necessary.\nIf the issue persists, contact our support team at info@mydgp.in for assistance."
         },
         {
-          "question": "How do I reset my password?",
-          "answer": "There is no need to reset any password. Simply verify your phone number and enter the OTP to log in."
+          "question": "How do I fix the “Network Error” message when using the MYDGP app?",
+          "answer": "Network errors can be caused by:\n\nPoor or unstable internet connection. Try switching between Wi-Fi and mobile data to see if that resolves the issue.\nThe app may require an update. Check the App Store or Google Play Store for the latest version.\nIf the problem continues, reinstall the app or contact support at info@mydgp.in."
         },
         {
-          "question": "Are there any tutorials or guides available for new users?",
-          "answer": "Yes, we offer tutorials and guides within the MYDGP app and on our website. You can find step-by-step instructions on how to use our services, make transactions, and navigate the platform."
+          "question": "I am facing issues with notifications. Why am I not receiving them?",
+          "answer": "If you’re not receiving notifications from MYDGP, try these steps:\n\nEnsure that notifications are enabled for the MYDGP app in your phone settings.\nCheck if 'Do Not Disturb' mode is turned on or if any battery-saving settings are blocking notifications.\nReinstall the app to ensure proper notification settings.\nIf notifications still don’t work, please reach out to customer support."
         },
         {
-          "question": "How can I access customer support?",
-          "answer": "For any assistance, you can contact our customer support team via email at info@mydgp.in or call +91 78273 43931. Our support team is available to help you with any questions or issues you may have."
+          "question": "My device is not compatible with MYDGP app. What can I do?",
+          "answer": "MYDGP app is available on both Android and iOS. However, if your device doesn’t meet the system requirements:\n\nEnsure that you’re running the latest version of the operating system.\nCheck the app store for your device to see if the app is compatible with your current version.\nIf your device is still incompatible, you may access MYDGP services via our website."
         },
         {
-          "question": "What are the benefits of using MYDGP?",
-          "answer": "MYDGP offers a user-friendly interface, affordable services, and personalized solutions. We provide a seamless digital experience, allowing users to access a variety of services with just a few clicks, saving time and enhancing productivity."
+          "question": "The MYDGP app keeps crashing. How can I fix it?",
+          "answer": "App crashes can occur for several reasons. Here's what you can do:\n\nEnsure your app is updated to the latest version.\nClear the app's cache (in settings on your device).\nRestart your device to resolve any temporary glitches.\nIf the app continues to crash, try reinstalling it, or contact support for further assistance."
         },
         {
-          "question": "How can I manage my account settings?",
-          "answer": "You can manage your account settings by logging into your MYDGP account on the website or app. From there, you can update your personal details, change your password, manage privacy settings, and more."
+          "question": "How do I resolve issues with uploading documents on MYDGP?",
+          "answer": "If you’re unable to upload documents:\n\nEnsure the file size doesn’t exceed the limit specified on the platform.\nCheck that the file format is supported (e.g., PDF, JPEG).\nTry uploading the document from a different browser or device.\nIf you're still facing issues, reach out to our customer service team with your problem details."
         },
         {
-          "question": "Can I access MYDGP services in any country?",
-          "answer": "MYDGP is primarily available in India, but we are working on expanding our services to other countries. Please check our website for the latest updates on international availability."
+          "question": "Why is my payment being declined?",
+          "answer": "Payment declines can happen due to:\n\nInsufficient funds in your account or issues with your payment method.\nIncorrect card or payment details entered.\nYour bank or payment provider rejecting the transaction.\nCheck your payment details and try again. If the issue persists, contact your payment provider or reach out to MYDGP support for further assistance."
         },
         {
-          "question": "How can I update my personal information?",
-          "answer": "To update your personal information, log into your MYDGP account and go to the account settings section. You can edit your details such as name, email address, phone number, and mailing address."
-        },
-        {
-          "question": "Does MYDGP offer any discounts or promotions?",
-          "answer": "Yes, we frequently offer discounts and promotions on various services. Keep an eye on our website and app for the latest offers, or subscribe to our newsletter for updates."
-        },
-        {
-          "question": "How do I navigate through the MYDGP platform?",
-          "answer": "Our platform is designed to be intuitive and easy to navigate. You can use the menu to explore different services, access your account, and manage your settings. If you need assistance, refer to the in-app guides or contact customer support."
-        },
-        {
-          "question": "How can I provide feedback on MYDGP?",
-          "answer": "We value your feedback! You can submit your feedback directly through the MYDGP app or website by filling out a feedback form. You can also contact us via email at info@mydgp.in."
+          "question": "I am unable to find a service I’m looking for on MYDGP. How can I get help?",
+          "answer": "If you can’t find a service on MYDGP:\n\nCheck the 'Services' section for a list of available options.\nIf the service is unavailable, please contact our support team for further guidance or suggestions."
         }
       ]
     }

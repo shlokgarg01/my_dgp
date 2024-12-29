@@ -53,7 +53,6 @@ export default function AboutMydgp() {
                 <p>Your privacy is important to us, and we are here to answer any questions or address concerns regarding our privacy practices. For any inquiries, please contact us using the following methods:</p>
                 <ul>
                     <li>Email: <a href="mailto:info@mydgp.in">info@mydgp.in</a></li>
-                    <li>Customer Support: +91 78273 43931</li>
                 </ul>
 
                 <h2>Our Commitment to Privacy and Security</h2>
