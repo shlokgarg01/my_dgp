@@ -50,7 +50,7 @@ const MyBookings = () => {
                     {bookingData?.bookings.map(booking => (
                         <li key={booking.id} style={{ borderRadius: 10, margin: '20px 0', padding: '10px', backgroundColor: Colors.WHITE }}>
                             <h3 style={{ fontSize: 16, fontWeight: '600' }} >{booking?.service?.name} for {booking?.subService?.name} </h3>
-                            <div style={{ fontWeight: '300', fontSize: 14 }} >{formatDate(booking.date)} • {booking?.status?.charAt(0).toUpperCase() + booking?.status?.slice(1).toLowerCase()} </div>
+                            <div style={{ fontWeight: '300', fontSize: 14 }} > {booking?._id} • {formatDate(booking.date)} • {booking?.status?.charAt(0).toUpperCase() + booking?.status?.slice(1).toLowerCase()} </div>
                             <div style={{ fontWeight: '300', fontSize: 14 }} >₹{booking.totalPrice.toFixed(2)}</div>
                         </li>
                     ))}
