@@ -16,7 +16,7 @@ exports.createDeliveryRequest = catchAsyncErrors(async (req, res) => {
 
         // Call the API to create a folder and get the fileUrl
         const protocol = req.secure ? 'https' : 'http'; // Determine the protocol dynamically
-        const folderResponse = await axios.post(`${protocol}://${req.hostname}/api/v1/drive/createFolder`, {
+        const folderResponse = await axios.post(`https://mydgp.in/api/v1/drive/createFolder`, {
             folderName: _id
         });
 
