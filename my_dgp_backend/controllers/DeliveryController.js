@@ -2,19 +2,27 @@ const DeliveryRequest = require("../models/DeliveryModel");
 const catchAsyncErrors = require("../middleware/CatchAsyncErrors");
 const ErrorHandler = require("../utils/errorHandler");
 const Enums = require("../utils/Enums")
+const axios = require('axios');
 
 // create delivery request
 exports.createDeliveryRequest = catchAsyncErrors(async (req, res) => {
     try {
-        const { _id, deliveryUrl, contactNumber, isApproved } = req.body;
+        const { _id, contactNumber, isApproved } = req.body;
 
         // Check if _id is provided and is a string
         if (!_id || typeof _id !== 'string') {
             return res.status(400).json({ error: 'Invalid or missing _id' });
         }
 
-        // Create and save the new request
-        const newRequest = new DeliveryRequest({ _id, deliveryUrl, contactNumber, isApproved });
+        // Call the API to create a folder and get the fileUrl
+        const folderResponse = await axios.post(`http://${req.hostname}/api/v1/drive/createFolder`, {
+            folderName: _id
+        });
+
+        const fileUrl = folderResponse.data.fileUrl;
+
+        // Create and save the new request with the retrieved fileUrl
+        const newRequest = new DeliveryRequest({ _id, deliveryUrl: fileUrl, contactNumber, isApproved });
         await newRequest.save();
         res.status(201).json(newRequest);
     } catch (error) {
