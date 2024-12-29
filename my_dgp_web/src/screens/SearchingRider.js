@@ -71,6 +71,8 @@ useEffect(() => {
   if (status === Enums.BOOKING_STATUS.ACCEPTED && booking && service_provider) {
   
     toast.success("Booking Confirmed");
+
+    callCreateDeliveryRequestApi(booking);
     
     // Prepare and store feedback data
     const feedbackData = {
@@ -94,6 +96,36 @@ useEffect(() => {
     });
   }
 }, [status]);
+
+const callCreateDeliveryRequestApi = async (booking) => {
+  const apiUrl = `${BASE_URL}/api/v1/deliveryRequests/create`;
+  const deliveryData = {
+    _id: booking?._id,
+    contactNumber,
+    isApproved: false,
+  };
+  try {
+    const response = await fetch(apiUrl, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "Access-Control-Allow-Origin": "*", 
+        "Authorization":JSON.parse(localStorage.getItem('token')),
+      },
+      body: JSON.stringify(deliveryData),
+    });
+
+    if (!response.ok) {
+      throw new Error(`Error: ${response.statusText}`);
+    }
+
+    const data = await response.json();
+    console.log("Delivery request created successfully:", data);
+    return data;
+  } catch (error) {
+    console.error("Error creating delivery request:", error);
+  }
+};
 
   useEffect(() => {
     if (error) {
