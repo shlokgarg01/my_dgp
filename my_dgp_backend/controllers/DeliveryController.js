@@ -20,7 +20,8 @@ exports.createDeliveryRequest = catchAsyncErrors(async (req, res) => {
             folderName: _id
         });
 
-        const fileUrl = folderResponse.data.fileUrl;
+        const folderId = folderResponse.data.folderId;
+        const fileUrl =  `drive/folders/${folderId}`
 
         // Create and save the new request with the retrieved fileUrl
         const newRequest = new DeliveryRequest({ _id, deliveryUrl: fileUrl, contactNumber, isApproved });
