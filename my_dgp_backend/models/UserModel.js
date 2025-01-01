@@ -93,14 +93,14 @@ const userSchema = new mongoose.Schema(
   {
     name: {
       type: String,
-      required: [true, "Please enter your name"],
+      // required: [true, "Please enter your name"],
       maxLength: [40, "Name cannot exceed 40 characters"],
     },
     email: {
       type: String,
       required: false,
       default: "dummyemail@mydgp.com",
-      validate: [validator.isEmail, "Please enter a valid email"],
+      // validate: [validator.isEmail, "Please enter a valid email"],
     },
     contactNumber: {
       type: String,
