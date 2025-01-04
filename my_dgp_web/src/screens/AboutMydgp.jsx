@@ -15,6 +15,7 @@ export default function AboutMydgp() {
                 <p><strong>Business Entity:</strong> Multipurpose Technology & Service Communication Solutions</p>
                 <p><strong>Headquarters:</strong> UTWZ6C, West Delhi, India - 110059</p>
                 <p><strong>Email:</strong> <a href="mailto:info@mydgp.in">info@mydgp.in</a></p>
+                <p><strong>Customer Support:</strong> +91 78273 43931</p>
 
                 <h2>Our Vision</h2>
                 <p>At MYDGP, we are driven by the vision of creating a comprehensive and affordable digital platform that empowers people and businesses to interact seamlessly. We aim to provide a wide range of accessible services through innovative technology solutions, fostering an inclusive digital space where users can engage, communicate, and grow. Our mission is to make digital services not only affordable but also easily accessible to all, bringing people closer through advanced yet user-friendly solutions.</p>
@@ -53,6 +54,7 @@ export default function AboutMydgp() {
                 <p>Your privacy is important to us, and we are here to answer any questions or address concerns regarding our privacy practices. For any inquiries, please contact us using the following methods:</p>
                 <ul>
                     <li>Email: <a href="mailto:info@mydgp.in">info@mydgp.in</a></li>
+                    <li>Customer Support: +91 78273 43931</li>
                 </ul>
 
                 <h2>Our Commitment to Privacy and Security</h2>
