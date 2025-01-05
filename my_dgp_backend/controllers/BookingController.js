@@ -23,6 +23,7 @@ const {
   NEW_RIDER_BOOKING,
 } = require("../Data/Messages");
 const { updateBookingPayment } = require("../utils/bookingUtils");
+const { sendWhatsAppBalanceMessage } = require("../utils/whatsappMsgs");
 
 // create a booking
 exports.createBooking = catchAsyncErrors(async (req, res, next) => {
@@ -195,6 +196,11 @@ exports.updateBookingStatus = catchAsyncErrors(async (req, res, next) => {
         "Booking Completed",
         BOOKING_COMPLETE
       );
+    }
+
+    //send balance whatsapp msg
+    if(newStatus === Enums.BOOKING_STATUS.COMPLETED){
+      sendWhatsAppBalanceMessage(booking?.customer.contactNumber,booking?.paymentInfo?.balancePayment,booking._id)
     }
 
     // updating rider amount for redemption
