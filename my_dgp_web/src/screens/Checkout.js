@@ -212,7 +212,7 @@ export default function Checkout() {
   };
 
   const applyCoupon = () => {
-    dispatch(applyCouponToBooking(couponCode, params.get("totalPrice")));
+    dispatch(applyCouponToBooking(couponCode, params.get("totalPrice"),params.get("contactNumber"),params.get("servicePackage")));
   };
 
   const removeCoupon = () => {

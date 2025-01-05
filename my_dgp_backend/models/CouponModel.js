@@ -20,6 +20,14 @@ const couponSchema = new mongoose.Schema(
       type: Number,
       default: 0,
     },
+    validContactNumbers:{
+      type: Array,
+      default:[],
+    },
+    validPackageId:{
+      type: Array,
+      default:[],
+    },
     expires: {
       type: Date,
       default: Date.now() + 100 * 24 * 60 * 60 * 1000, // default expiry is 100 days from now (in milliseconds)

@@ -87,7 +87,7 @@ exports.deleteCoupon = catchAsyncErrors(async (req, res, next) => {
 
 // validate a coupon
 exports.validateCoupon = catchAsyncErrors(async (req, res, next) => {
-  let { code, cartValue } = req.body;
+  let { code, cartValue, contactNumber,packageId } = req.body;
   code = code.toLowerCase();
   const coupon = await Coupon.findOne({ code });
 
@@ -109,6 +109,19 @@ exports.validateCoupon = catchAsyncErrors(async (req, res, next) => {
         400
       )
     );
+  }
+  //checks valid contact numbers or everyone
+  if (coupon.validContactNumbers &&
+    coupon.validContactNumbers.length > 0 &&
+    !coupon.validContactNumbers.includes(contactNumber)) {
+    return next(new ErrorHandler("Coupon is invalid.", 400));
+  }
+
+  //package specific handling
+  if (coupon.validPackageId &&
+    coupon.validPackageId.length > 0 &&
+    !coupon.validPackageId.includes(packageId)) {
+    return next(new ErrorHandler("Coupon is invalid.", 400));
   }
 
   let discount = 0,
