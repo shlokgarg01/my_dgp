@@ -24,6 +24,8 @@ const CouponRoutes = require('./routes/CouponRoutes')
 const DeliveryRoutes = require('./routes/DeliveryRoutes')
 const ReviewRoutes = require('./routes/ReviewRoutes')
 const DriveApiRoutes = require('./routes/DriveApiRoutes')
+const AppUpdateRoutes = require('./routes/AppUpdateRoutes')
+
 
 app.use(morgan("combined"));
 
@@ -82,6 +84,8 @@ app.use('/api/v1', CouponRoutes)
 app.use('/api/v1', DeliveryRoutes)
 app.use('/api/v1', ReviewRoutes)
 app.use('/api/v1', DriveApiRoutes)
+app.use('/api/v1', AppUpdateRoutes)
+
 
 
 // This is the static frontend file. Whenever any change in frontend is made, u need to generate build file & then run server again.
