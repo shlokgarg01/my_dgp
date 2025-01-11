@@ -422,11 +422,12 @@ exports.getPendingBookingAmount = catchAsyncErrors(async (req, res, next) => {
       },
       { new: true, runValidators: true, useFindAndModify: false }
     );
-    let curBooking = await Booking.findOne({ _id: req.params.id }).populate(
-      "customer"
-    )
-    sendWhatsAppBalanceMessage(curBooking.customer.contactNumber,curBooking?.paymentInfo?.balancePayment,curBooking._id)
   }
+// UPDATES EXTRA CHARGES FOR EXTRA DURATION
+  let curBooking = await Booking.findOne({ _id: req.params.id }).populate(
+    "customer"
+  )
+  sendWhatsAppBalanceMessage(curBooking.customer.contactNumber,curBooking?.paymentInfo?.balancePayment,curBooking._id)
 
   return res.status(200).json({
     success: true,
