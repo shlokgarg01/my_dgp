@@ -2,6 +2,7 @@ const axios = require('axios'); // Import axios
 
 // Function to send WhatsApp message
 const sendWhatsAppBalanceMessage = async (contactNumber, balAmount, bookingId) => {
+    balAmount = parseFloat(balAmount).toFixed(2);
 
     const messageData = {
         messaging_product: "whatsapp",

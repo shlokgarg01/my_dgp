@@ -198,11 +198,6 @@ exports.updateBookingStatus = catchAsyncErrors(async (req, res, next) => {
       );
     }
 
-    //send balance whatsapp msg
-    if(newStatus === Enums.BOOKING_STATUS.COMPLETED){
-      sendWhatsAppBalanceMessage(booking?.customer.contactNumber,booking?.paymentInfo?.balancePayment,booking._id)
-    }
-
     // updating rider amount for redemption
     if (newStatus === Enums.BOOKING_STATUS.CLOSED) {
       // Updating total Earnings on the User
@@ -383,7 +378,7 @@ exports.confirmBookingStatus = catchAsyncErrors(async (req, res, next) => {
 */
 exports.getPendingBookingAmount = catchAsyncErrors(async (req, res, next) => {
   let booking = await Booking.findOne({ _id: req.params.id }).populate(
-    "package service"
+    "customer package service"
   );
   if (!booking) {
     return next(new ErrorHandler("No such booking found", 400));
@@ -410,18 +405,27 @@ exports.getPendingBookingAmount = catchAsyncErrors(async (req, res, next) => {
       { new: true, runValidators: true, useFindAndModify: false }
     ).populate("customer");
   } else {
-    let price = await Price.findOne({
-      name: `${booking.service.name} ${booking.package.name}`,
-    });
+    // let price = await Price.findOne({
+    //   name: `${booking.service.name} ${booking.package.name}`,
+    // });
+    let price = booking.itemsPrice/expectedTimeInMinutes
     charges =
-      Math.abs(timeTakenInMinutes - expectedTimeInMinutes) * price.charges;
+      Math.abs(timeTakenInMinutes - expectedTimeInMinutes) * price;
 
     // updating the charges on the booking
     booking = await Booking.findByIdAndUpdate(
       req.params.id,
-      { overtimePrice: charges },
+      { 
+        overtimePrice: charges,
+        "paymentInfo.balancePayment": booking.paymentInfo.balancePayment + charges,
+        status: Enums.BOOKING_STATUS.COMPLETED
+      },
       { new: true, runValidators: true, useFindAndModify: false }
     );
+    let curBooking = await Booking.findOne({ _id: req.params.id }).populate(
+      "customer"
+    )
+    sendWhatsAppBalanceMessage(curBooking.customer.contactNumber,curBooking?.paymentInfo?.balancePayment,curBooking._id)
   }
 
   return res.status(200).json({
