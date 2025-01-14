@@ -51,7 +51,8 @@ exports.createBooking = catchAsyncErrors(async (req, res, next) => {
     date,
     service,
     subService,
-    package
+    package,
+    coordinates
   );
   if (allServiceProviders.length === 0) {
     return next(
