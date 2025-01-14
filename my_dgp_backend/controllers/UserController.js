@@ -206,3 +206,32 @@ exports.updateDutyStatus = catchAsyncErrors(async (req, res, next) => {
     user,
   });
 });
+
+// update last active location by contact number
+exports.updateLastActiveLocation = catchAsyncErrors(async (req, res, next) => {
+  const { contactNumber, latitude, longitude } = req.body;
+
+  // Validate contact number, latitude, and longitude
+  if (!contactNumber || !latitude || !longitude) {
+    return next(new ErrorHandler("Contact Number, Latitude, and Longitude are required.", 400));
+  }
+
+  const user = await User.findOneAndUpdate(
+    { contactNumber },
+    { lastActiveLocation: { latitude, longitude } },
+    {
+      new: true,
+      runValidators: true,
+      useFindAndModify: false,
+    }
+  );
+
+  if (!user) {
+    return next(new ErrorHandler("User not found.", 404));
+  }
+
+  res.status(200).json({
+    success: true,
+    message:'Location Updated',
+  });
+});

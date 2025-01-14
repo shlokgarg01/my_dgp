@@ -10,6 +10,7 @@ const {
   updateDutyStatus,
   updateFCMTokem,
   updateProfilePicture,
+  updateLastActiveLocation,
 } = require("../controllers/UserController");
 const { isAuthenticatedUser } = require("../middleware/Auth");
 const router = express.Router();
@@ -28,5 +29,6 @@ router.route("/me/update").put(isAuthenticatedUser, updateProfile);
 router.route("/me/updatephoto").post(isAuthenticatedUser, upload.any(), updateProfilePicture);
 router.route("/me/update_status").put(isAuthenticatedUser, updateDutyStatus);
 router.route("/me/update_fcm").put(isAuthenticatedUser, updateFCMTokem);
+router.route("/me/updateLastLocation").patch(isAuthenticatedUser,updateLastActiveLocation)
 
 module.exports = router;

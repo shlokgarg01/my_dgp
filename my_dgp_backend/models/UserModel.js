@@ -167,6 +167,16 @@ const userSchema = new mongoose.Schema(
       type: Boolean,
       default: false
     },
+    lastActiveLocation:{
+      latitude:{
+        type: String,
+        required: false,
+      },
+      longitude:{
+        type: String,
+        required: false,
+      }
+    },
     resetPasswordToken: String,
     resetPasswordExpire: Date,
   },
