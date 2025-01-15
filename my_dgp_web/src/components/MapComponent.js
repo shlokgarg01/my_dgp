@@ -102,7 +102,7 @@ const MapComponent = ({
     return randomCoordinates;
   };
 
-  let updateCoordinatesAndBikeCoordinates = (coordinates) => {
+  let updateCoordinatesAndBikeCoordinates = (coordinates) => {    
     let bikeCordinates = generateRandomCoordinates(coordinates);
     setBikeLocations(bikeCordinates);
     handleLocationChange(coordinates);
@@ -194,6 +194,7 @@ const MapComponent = ({
       dragend: () => {
         fetchAddress(position[0], position[1])
         setCurrentLocation(true)
+        handleLocationChange([position[0], position[1]])
       },
       drag: (e) => {
         isEditable && setPosition([e.target.getCenter().lat, e.target.getCenter().lng]);
