@@ -417,7 +417,9 @@ exports.getPendingBookingAmount = catchAsyncErrors(async (req, res, next) => {
     booking = await Booking.findByIdAndUpdate(
       req.params.id,
       { 
-        overtimePrice: charges,
+        "overtimeDetails.overtimePrice": charges,
+        "overtimeDetails.overtimeHours": Math.floor(timeTakenInMinutes / 60),
+        "overtimeDetails.overtimeMinutes": timeTakenInMinutes % 60,
         "paymentInfo.balancePayment": booking.paymentInfo.balancePayment + charges,
         status: Enums.BOOKING_STATUS.COMPLETED
       },
@@ -427,7 +429,7 @@ exports.getPendingBookingAmount = catchAsyncErrors(async (req, res, next) => {
     //add redeem amount based on overtime.
     await Redeem.findOneAndUpdate(
       { serviceProvider: req.user._id },
-      { $inc: { amountToBeRedeemed: (booking.overtimePrice) * 0.6 } }, 
+      { $inc: { amountToBeRedeemed: (booking.overtimeDetails.overtimePrice) * 0.6 } }, 
       { new: true }
     );
   }

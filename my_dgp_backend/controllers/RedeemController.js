@@ -40,9 +40,9 @@ exports.getRedeemDetails = catchAsyncErrors(async (req, res, next) => {
     status: [Enums.BOOKING_STATUS.CLOSED, Enums.BOOKING_STATUS.COMPLETED],
   });
   bookings.map((booking) => {
-    todayMinutesServiced += booking.hours * 60 + (booking.minutes || 0);
-    todayEarnings += (booking.totalPrice+booking.overtimePrice) * 0.6; // giving 60% to service_provider for every booking
-    todayCashCollected += booking.overtimePrice;
+    todayMinutesServiced += (booking.hours + booking.overtimeDetails.overtimeHours) * 60 + ((booking.minutes + booking.overtimeDetails.overtimeMinutes) || 0);
+    todayEarnings += (booking.totalPrice+booking.overtimeDetails.overtimePrice) * 0.6; // giving 60% to service_provider for every booking
+    todayCashCollected += booking.overtimeDetails.overtimePrice;
   });
 
   // last week minutes services & earnings
@@ -55,9 +55,9 @@ exports.getRedeemDetails = catchAsyncErrors(async (req, res, next) => {
     status: [Enums.BOOKING_STATUS.CLOSED, Enums.BOOKING_STATUS.COMPLETED],
   });
   bookings.map((booking) => {
-    lastWeekMinutesServiced += booking.hours * 60 + (booking.minutes || 0);
-    lastWeekEarnings +=(booking.totalPrice+booking.overtimePrice) * 0.6; // giving 60% to service_provider for every booking
-    lastWeekCashCollected += booking.overtimePrice;
+    lastWeekMinutesServiced += (booking.hours + booking.overtimeDetails.overtimeHours) * 60 + ((booking.minutes + booking.overtimeDetails.overtimeMinutes) || 0);
+    lastWeekEarnings +=(booking.totalPrice+booking.overtimeDetails.overtimePrice) * 0.6; // giving 60% to service_provider for every booking
+    lastWeekCashCollected += booking.overtimeDetails.overtimePrice;
   });
 
   // last month minutes serviced & earnings
@@ -70,9 +70,9 @@ exports.getRedeemDetails = catchAsyncErrors(async (req, res, next) => {
     status: [Enums.BOOKING_STATUS.CLOSED, Enums.BOOKING_STATUS.COMPLETED],
   });
   bookings.map((booking) => {
-    lastMonthMinutesServiced += booking.hours * 60 + (booking.minutes || 0);
-    lastMonthEarnings += (booking.totalPrice+booking.overtimePrice) * 0.6; // giving 60% to service_provider for every booking
-    lastMonthCashCollected += booking.overtimePrice;
+    lastMonthMinutesServiced += (booking.hours + booking.overtimeDetails.overtimeHours) * 60 + ((booking.minutes + booking.overtimeDetails.overtimeMinutes) || 0);
+    lastMonthEarnings += (booking.totalPrice+booking.overtimeDetails.overtimePrice) * 0.6; // giving 60% to service_provider for every booking
+    lastMonthCashCollected += booking.overtimeDetails.overtimePrice;
   });
 
   // total Earnings
@@ -81,8 +81,8 @@ exports.getRedeemDetails = catchAsyncErrors(async (req, res, next) => {
     status: [Enums.BOOKING_STATUS.CLOSED, Enums.BOOKING_STATUS.COMPLETED],
   });
   bookings.map((booking) => {
-    totalEarnings += (booking.totalPrice+booking.overtimePrice) * 0.6; // giving 60% to service_provider for every booking
-    totalCashCollected += booking.overtimePrice;
+    totalEarnings += (booking.totalPrice+booking.overtimeDetails.overtimePrice) * 0.6; // giving 60% to service_provider for every booking
+    totalCashCollected += booking.overtimeDetails.overtimePrice;
   });
 
   res.status(200).json({

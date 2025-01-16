@@ -100,10 +100,21 @@ const bookingModel = new mongoose.Schema(
       required: true,
       default: 0,
     },
-    overtimePrice: {
-      type: Number,
-      default: 0,
+    overtimeDetails:{
+      overtimePrice: {
+        type: Number,
+        default: 0,
+      },
+      overtimeHours: {
+        type: Number,
+        default: 0,
+      },
+      overtimeMinutes: {
+        type: Number,
+        default: 0,
+      },
     },
+
     otp: {
       type: Number,
       required: false,
