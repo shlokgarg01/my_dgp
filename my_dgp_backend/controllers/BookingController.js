@@ -212,7 +212,7 @@ exports.updateBookingStatus = catchAsyncErrors(async (req, res, next) => {
       // updating the amount in Redeem model
       await Redeem.findOneAndUpdate(
         { serviceProvider: req.user._id },
-        { $inc: { amountToBeRedeemed: (booking.totalPrice+booking.overtimePrice) * 0.6 } }, //60% given to rider
+        { $inc: { amountToBeRedeemed: (booking.totalPrice) * 0.6 } }, //60% given to rider
         { new: true }
       ); 
     }
@@ -422,6 +422,13 @@ exports.getPendingBookingAmount = catchAsyncErrors(async (req, res, next) => {
         status: Enums.BOOKING_STATUS.COMPLETED
       },
       { new: true, runValidators: true, useFindAndModify: false }
+    );
+
+    //add redeem amount based on overtime.
+    await Redeem.findOneAndUpdate(
+      { serviceProvider: req.user._id },
+      { $inc: { amountToBeRedeemed: (booking.overtime) * 0.6 } }, 
+      { new: true }
     );
   }
 // UPDATES EXTRA CHARGES FOR EXTRA DURATION
