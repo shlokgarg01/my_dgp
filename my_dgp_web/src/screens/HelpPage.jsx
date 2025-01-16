@@ -8,12 +8,12 @@ const HelpPage = () => {
 
   // Function to handle calling functionality
   const handleCall = () => {
-    window.open('tel:+917827343931');
+    window.open('tel:+918810588762');
   };
 
   // Function to handle opening WhatsApp
   const handleWhatsApp = () => {
-    window.open('https://wa.me/+918076255278');
+    window.open('https://wa.me/+918810588762');
   };
 
   // Inline styles
@@ -83,7 +83,7 @@ const HelpPage = () => {
               style={styles.button}
               onClick={handleCall}
             >
-              Call: 7827343931
+              Call: 8810588762
             </button>
             <button
               style={styles.button}

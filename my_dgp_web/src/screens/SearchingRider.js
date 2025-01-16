@@ -502,14 +502,14 @@ const callCreateDeliveryRequestApi = async (booking) => {
           <SOS
             text="WhatsApp"
             color={Colors.DARK_GREEN}
-            link="https://wa.me/+918076255278"
+            link="https://wa.me/+918810588762"
             Icon={IoLogoWhatsapp}
             width={160}
           />
           <SOS
             text="SOS"
             color={Colors.RED}
-            link="tel:+917827343931"
+            link="tel:+918810588762"
             Icon={FaShieldAlt}
             width={100}
           />
@@ -520,7 +520,7 @@ const callCreateDeliveryRequestApi = async (booking) => {
           <SOS
             text="WhatsApp"
             color={Colors.DARK_GREEN}
-            link="https://wa.me/+917827343931"
+            link="https://wa.me/+918810588762"
             Icon={IoLogoWhatsapp}
             width={160}
           />
@@ -529,7 +529,7 @@ const callCreateDeliveryRequestApi = async (booking) => {
           <SOS
             text="SOS"
             color={Colors.RED}
-            link="tel:+917827343931"
+            link="tel:+918810588762"
             Icon={FaShieldAlt}
             width={100}
           />
