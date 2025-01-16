@@ -212,7 +212,7 @@ exports.updateBookingStatus = catchAsyncErrors(async (req, res, next) => {
       // updating the amount in Redeem model
       await Redeem.findOneAndUpdate(
         { serviceProvider: req.user._id },
-        { $inc: { amountToBeRedeemed: booking.totalPrice * 0.6 } }, //60% given to rider
+        { $inc: { amountToBeRedeemed: (booking.totalPrice+booking.overtimePrice) * 0.6 } }, //60% given to rider
         { new: true }
       ); 
     }
