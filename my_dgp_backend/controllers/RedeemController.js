@@ -41,7 +41,7 @@ exports.getRedeemDetails = catchAsyncErrors(async (req, res, next) => {
   });
   bookings.map((booking) => {
     todayMinutesServiced += (booking.hours + booking.overtimeDetails.overtimeHours) * 60 + ((booking.minutes + booking.overtimeDetails.overtimeMinutes) || 0);
-    todayEarnings += (booking.totalPrice+booking.overtimeDetails.overtimePrice) * 0.6; // giving 60% to service_provider for every booking
+    todayEarnings += ((booking.totalPrice - booking.taxPrice) + booking.overtimeDetails.overtimePrice) * 0.5; // giving 50% to service_provider for every booking
     todayCashCollected += booking.overtimeDetails.overtimePrice;
   });
 
@@ -56,7 +56,7 @@ exports.getRedeemDetails = catchAsyncErrors(async (req, res, next) => {
   });
   bookings.map((booking) => {
     lastWeekMinutesServiced += (booking.hours + booking.overtimeDetails.overtimeHours) * 60 + ((booking.minutes + booking.overtimeDetails.overtimeMinutes) || 0);
-    lastWeekEarnings +=(booking.totalPrice+booking.overtimeDetails.overtimePrice) * 0.6; // giving 60% to service_provider for every booking
+    lastWeekEarnings += ((booking.totalPrice - booking.taxPrice) + booking.overtimeDetails.overtimePrice) * 0.5; // giving 50% to service_provider for every booking
     lastWeekCashCollected += booking.overtimeDetails.overtimePrice;
   });
 
@@ -71,7 +71,7 @@ exports.getRedeemDetails = catchAsyncErrors(async (req, res, next) => {
   });
   bookings.map((booking) => {
     lastMonthMinutesServiced += (booking.hours + booking.overtimeDetails.overtimeHours) * 60 + ((booking.minutes + booking.overtimeDetails.overtimeMinutes) || 0);
-    lastMonthEarnings += (booking.totalPrice+booking.overtimeDetails.overtimePrice) * 0.6; // giving 60% to service_provider for every booking
+    lastMonthEarnings += ((booking.totalPrice - booking.taxPrice) + booking.overtimeDetails.overtimePrice) * 0.5; // giving 50% to service_provider for every booking
     lastMonthCashCollected += booking.overtimeDetails.overtimePrice;
   });
 
@@ -81,7 +81,7 @@ exports.getRedeemDetails = catchAsyncErrors(async (req, res, next) => {
     status: [Enums.BOOKING_STATUS.CLOSED, Enums.BOOKING_STATUS.COMPLETED],
   });
   bookings.map((booking) => {
-    totalEarnings += (booking.totalPrice+booking.overtimeDetails.overtimePrice) * 0.6; // giving 60% to service_provider for every booking
+    totalEarnings += ((booking.totalPrice - booking.taxPrice) + booking.overtimeDetails.overtimePrice) * 0.5; // giving 50% to service_provider for every booking
     totalCashCollected += booking.overtimeDetails.overtimePrice;
   });
 
