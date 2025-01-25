@@ -8,6 +8,7 @@ import { PriceReducer } from './reducers/PriceReducer'
 import { ApplyCouponReducer } from "./reducers/CouponReducer";
 import { SavedDataReducer } from "./reducers/DataReducer";
 import { LoginReducer, RegisterCustomerReducer } from "./reducers/LoginReducer";
+import { CustomerReducer } from "./reducers/CustomerReducer";
 
 // Root reducer with reset logic
 const appReducer = combineReducers({
@@ -22,6 +23,7 @@ const appReducer = combineReducers({
   savedData: SavedDataReducer,
   loginData: LoginReducer,
   registerCustomerReducer: RegisterCustomerReducer,
+  customer: CustomerReducer,
 });
 
 // Root reducer to handle resetting the state

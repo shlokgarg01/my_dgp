@@ -21,6 +21,7 @@ import { toast } from "react-custom-alert";
 import { CLEAR_ERRORS } from "../constants/UserConstants";
 import { saveData } from "../actions/DataActions";
 import { isExisting, registerCustomer } from "../actions/LoginActions";
+import { loginCustomerViaOTP } from "../actions/CustomerActions";
 
 export default function Login() {
   const TIMER = 59;
@@ -29,7 +30,7 @@ export default function Login() {
   const navigate = useNavigate();
   const { savedData } = useSelector((state) => state.savedData);
 
-  const { user, error, isAuthenticated } = useSelector((state) => state.user);
+  const { user, error, isAuthenticated } = useSelector((state) => state.customer);
   const [otpLoading, setOtpLoading] = useState(false);
   const [loading, setLoading] = useState(false);
   const [contactNumber, setContactNumber] = useState(savedData.contactNumber);
@@ -126,10 +127,11 @@ export default function Login() {
 
   useEffect(() => {
     if (error) {
-      toast.error(error);
+      console.log('login error =>',error);
+      setRegistered(false);
       dispatch(clearErrors());
+      setOtpLoading(false);
     }
-
     if (isAuthenticated) {
       setOtpLoading(false);
       dispatch({ type: CLEAR_ERRORS });
@@ -223,7 +225,7 @@ export default function Login() {
       await firebaseConfirmation.confirm(otp);
       let data = { name, email, contactNumber };
       dispatch(saveData(data));
-      dispatch(loginViaOTP(data));
+      dispatch(loginCustomerViaOTP(data));
     } catch (err) {
       toast.error("Invalid OTP! Please try again.");
       setOtpLoading(false);

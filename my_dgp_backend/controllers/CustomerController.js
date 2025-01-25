@@ -2,6 +2,7 @@ const ErrorHandler = require("../utils/errorHandler");
 const catchAsyncErrors = require("../middleware/CatchAsyncErrors");
 const Customer = require("../models/CustomerModel");
 const { getDaysFromCreatedAt } = require("../utils/orderUtils");
+const sendToken = require("../utils/JwtToken");
 
 // register customer
 exports.registerCustomer = catchAsyncErrors(async (req, res) => {
@@ -13,13 +14,23 @@ exports.registerCustomer = catchAsyncErrors(async (req, res) => {
     contactNumber,
   });
 
-  res.status(200).json({
-    success: true,
-    customer,
-  });
-
-  //   sendToken(customer, 201, res);
+    sendToken(customer, 201, res);
 });
+
+
+// authenticate the Customer for Login using otp
+exports.loginCustomer = catchAsyncErrors(
+  async (req, res, next) => {
+    const { contactNumber } = req.body;
+    let user = await Customer.findOne({ contactNumber });
+    if (!user) {
+      return next(
+        new ErrorHandler("No user found for the given Contact Number.", 404)
+      );
+    }
+    sendToken(user, 201, res);
+  }
+);
 
 exports.isCustomerRegistered = catchAsyncErrors(
   async (req, res) => {

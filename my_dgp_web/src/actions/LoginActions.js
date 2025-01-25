@@ -34,6 +34,7 @@ export const registerCustomer = (customerDetails) => async (dispatch) => {
         customerDetails,
         config
       );  
+      localStorage.setItem("token", JSON.stringify(data.token));
       dispatch({ type: CUSTOMER_SIGNUP_SUCCESS, payload: data });
     } catch (error) {
       dispatch({
