@@ -643,7 +643,7 @@ export default function Home() {
               // fontSize: 14,
             }}
           >
-            Book a photographer & videographer instantly.
+            Book services instantly
           </div>
 
           {/* Services Slider */}
