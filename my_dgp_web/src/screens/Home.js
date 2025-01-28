@@ -320,7 +320,9 @@ export default function Home() {
     },[])
 
     useEffect(() => {
-      setIsFeedbackVisible(booking?.status === Enums.BOOKING_STATUS.COMPLETED)
+      if(JSON.parse(localStorage.getItem("feedback"))?.bookingId){
+        setIsFeedbackVisible(booking?.status === Enums.BOOKING_STATUS.COMPLETED)
+      }
     },[booking])
 
   const SubServiceSlider = ({ subService }) => {
