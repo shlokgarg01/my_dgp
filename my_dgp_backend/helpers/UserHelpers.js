@@ -27,7 +27,7 @@ const getAvailableServiceProviders = async (date, service, subService, package,c
   // Calculate distance and filter service providers based on distance
   const filteredServiceProviders = service_providers.filter(provider => {
     const minDistance = 0;
-    const maxDistance = 10; // max 10km
+    const maxDistance = 20; // max 20km
     const providerCoordinates = provider.lastActiveLocation;
 
     // Check if provider coordinates are available
