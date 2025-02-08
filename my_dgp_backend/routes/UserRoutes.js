@@ -11,6 +11,7 @@ const {
   updateFCMTokem,
   updateProfilePicture,
   updateLastActiveLocation,
+  getAllServiceProviders
 } = require("../controllers/UserController");
 const { isAuthenticatedUser } = require("../middleware/Auth");
 const router = express.Router();
@@ -30,5 +31,7 @@ router.route("/me/updatephoto").post(isAuthenticatedUser, upload.any(), updatePr
 router.route("/me/update_status").put(isAuthenticatedUser, updateDutyStatus);
 router.route("/me/update_fcm").put(isAuthenticatedUser, updateFCMTokem);
 router.route("/me/updateLastLocation").patch(isAuthenticatedUser,updateLastActiveLocation)
+
+router.route("/team/all").get(getAllServiceProviders)
 
 module.exports = router;

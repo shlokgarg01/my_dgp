@@ -121,6 +121,16 @@ exports.getUserDetails = catchAsyncErrors(async (req, res, next) => {
   });
 });
 
+// get all users
+exports.getAllServiceProviders = catchAsyncErrors(async (req, res, next) => {
+  const users = await User.find({ role: "service_provider" }).select('-accountDetails');
+
+  res.status(200).json({
+    success: true,
+    users,
+  });
+});
+
 // update profile
 exports.updateProfile = catchAsyncErrors(async (req, res, next) => {
   const user = await User.findByIdAndUpdate(req.user.id, req.body, {
