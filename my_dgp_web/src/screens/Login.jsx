@@ -7,8 +7,6 @@ import {
 } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { clearErrors, loginViaOTP } from "../actions/UserActions";
-import { RecaptchaVerifier, signInWithPhoneNumber } from "firebase/auth";
-import { auth } from "../firebase/config";
 import InputGroup from "../components/components/InputGroup";
 import LogoHeader from "../components/components/LogoHeader";
 import Btn from "../components/components/Btn";
@@ -37,6 +35,7 @@ export default function Login() {
   const [email, setEmail] = useState(savedData.email || "");
   const [name, setName] = useState(savedData.name || "");
   const [otp, setOtp] = useState(null);
+  const [sentOtp,setSentOtp] = useState();
   const [firebaseConfirmation, setFirebaseConfirmation] = useState(null);
   const [editNumber, setEditNumber] = useState(false);
   const [captchaElementCount, setCaptchaElementCount] = useState(0);
@@ -189,43 +188,67 @@ export default function Login() {
     return true;
   };
 
-  const addCaptchaDiv = () => {
-    let captcha_id = `captcha-container-${captchaElementCount}`;
-    const node = document.createElement("div");
-    node.setAttribute("id", captcha_id);
-
-    document.getElementById("captcha-container").appendChild(node);
-    setCaptchaElementCount(captchaElementCount + 1);
-    return captcha_id;
-  };
-
   const sendOTP = async () => {
     if (validateOTPSend()) {
-      let captcha_id = addCaptchaDiv();
       setLoading(true);
-      const recaptcha = new RecaptchaVerifier(auth, captcha_id, {
-        size: "invisible",
-      });
-      let contactNoOTP = contactNumber
-      const confirmation = await signInWithPhoneNumber(
-        auth,
-        `+91${contactNoOTP}`,
-        recaptcha
-      );
-      setLoading(false);
-      setFirebaseConfirmation(confirmation);
+      await callDltSmsApi(contactNumber,sentOtp)
+      setLoading(false)
+      setFirebaseConfirmation(true)
       setEditNumber(false);
       setTimer(TIMER);
     }
   };
 
-  const submit = async () => {
+const generateUniqueOTP = () => {
+  return Math.floor(1000 + Math.random() * 9000);
+};
+
+  const callDltSmsApi = async (contactNumber) => {
+    const generatedOtp = await generateUniqueOTP();
+    setSentOtp(generatedOtp);
+    const url = "https://www.fast2sms.com/dev/bulkV2";
+    const queryParams = new URLSearchParams({
+      authorization: "BHYGzJ41ufU9Dpjk3AncCT7igKtZW0mqrhQFIEb2loNVS5saLxcdTCEa1u7wg460HJUf5xNFeV3SpoOs",
+      route: "dlt",
+      sender_id: "MYIDGP",
+      message: "179287",
+      variables_values: generatedOtp, 
+      flash: "0",
+      numbers: contactNumber, 
+      schedule_time: "", 
+    });
+
     try {
+      const response = await fetch(`${url}?${queryParams}`, {
+        method: "GET", 
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.message || "Failed to send message");
+      }
+
+      const data = await response.json();
+      return data;
+    } catch (error) {
+      console.error("Error calling DLT API:", error);
+      throw error; 
+    }
+  };
+
+  const submit = async () => {
+    try {      
       setOtpLoading(true);
-      await firebaseConfirmation.confirm(otp);
-      let data = { name, email, contactNumber };
-      dispatch(saveData(data));
-      dispatch(loginCustomerViaOTP(data));
+      if(otp.toString()===sentOtp.toString()){
+        let data = { name, email, contactNumber };
+        dispatch(saveData(data));
+        dispatch(loginCustomerViaOTP(data));
+      }
+      else{
+        toast.error("Invalid OTP! Please try again.");
+        setOtpLoading(false);
+      }
+     
     } catch (err) {
       toast.error("Invalid OTP! Please try again.");
       setOtpLoading(false);
