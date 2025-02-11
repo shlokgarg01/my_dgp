@@ -269,10 +269,10 @@ export default function Home() {
         flexDirection: "column",
         justifyContent: "center",
         alignItems: "center",
-        height: 50,
+        height: 40,
         flex: "0.05  0 50px",
         fontWeight: "bold",
-        fontSize: 17,
+        fontSize: 16,
         boxShadow:
           selectedHours === time ? "0 0 0" : `1px 1px 4px ${Colors.LIGHT_GRAY}`,
         border: selectedHours === time ? `1px solid ${Colors.DARK_GRAY}` : null,
@@ -292,24 +292,21 @@ export default function Home() {
       style={styles.serviceSliderImageContainer}
     >
       {/* In order to make page non-scrollable, we remove icon once sub-service is selected */}
-      {!subService ? icon : null}
       <div
         style={{
-          color: service.name === serviceName ? Colors.PRIMARY : Colors.GRAY,
+          color: service.name === serviceName ? Colors.WHITE : Colors.BLACK,
           fontWeight: "bold",
+          backgroundColor: service.name === serviceName ? Colors.PRIMARY : Colors.LIGHT_GRAY,
+          borderRadius:14,
+          paddingRight:14,
+          paddingLeft:14,
+          paddingTop:4,
+          paddingBottom:4,
+          marginRight:4,
         }}
       >
         {service.name}
       </div>
-      <div
-        style={{
-          border:
-            service.name === serviceName ? `1px solid ${Colors.PRIMARY}` : null,
-          width: "50%",
-          marginLeft: "25%",
-          borderRadius: 100,
-        }}
-      />
     </div>
   );
 
@@ -342,30 +339,25 @@ export default function Home() {
       <div
         style={{
           color:
-          subService.name === subServiceName ? Colors.PRIMARY : Colors.GRAY,
-          fontWeight: "bold",
-          overflow: "hidden",
-          fontSize: 14,
+          subService.name === subServiceName ? Colors.WHITE : Colors.BLACK,
+          fontWeight: "600",
+          overflow: 'visible',
+          fontSize: 16,
           display: "-webkit-box",
           WebkitBoxOrient: "vertical",
           WebkitLineClamp: "2",
           width: "auto",
           userSelect:'none',
+          backgroundColor: subService.name === subServiceName ? Colors.PRIMARY : Colors.LIGHT_GRAY,
+          borderRadius:14,
+          paddingRight:14,
+          paddingLeft:14,
+          paddingTop:4,
+          paddingBottom:4
         }}
       >
         {subService.name}
       </div>
-      <div
-        style={{
-          border:
-            subService.name === subServiceName
-              ? `1px solid ${Colors.PRIMARY}`
-              : null,
-          width: "50%",
-          marginLeft: "25%",
-          borderRadius: 100,
-        }}
-      />
     </div>
   )};
 
@@ -761,7 +753,6 @@ export default function Home() {
                   <div
                     style={{
                       width: "30%",
-                      padding: 4,
                       borderRadius: 7,
                       boxShadow: `1px 1px 4px ${Colors.GRAY}`,
                     }}
@@ -789,7 +780,7 @@ export default function Home() {
                           0
                         ) && currentAMPM === date.ampm ? (
                         <>
-                          <IoMdAlarm color={Colors.BLACK} size={25} />
+                          <IoMdAlarm color={Colors.BLACK} size={22} />
                           Now
                         </>
                       ) : (
@@ -1155,16 +1146,19 @@ const styles = {
     justifyContent: "space-between",
     overflowX: "auto",
     whiteSpace: "nowrap",
-    padding: 12,
+    paddingTop: 8,
+    paddingBottom:8,
+    paddingLeft:8,
     borderBottom: "0.5px solid grey",
   },
   serviceSliderImageContainer: {
     textAlign: "center",
-    whiteSpace: "pre-wrap",
+    // whiteSpace: "pre-wrap",
     cursor: "pointer",
-    marginBottom: 7,
-    marginRight: 10,
-    width: 100,
+        marginRight: 4,
+    paddingTop: 8,
+    paddingBottom:8,
+    paddingLeft:8,
   },
   serviceSliderImage: { height: 40, width: 58 },
   packagePricesContainer: {
