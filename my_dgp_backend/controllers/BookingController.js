@@ -266,6 +266,24 @@ exports.getBookingsOfCustomer = catchAsyncErrors(
   }
 );
 
+// fetch all completed bookings of a user
+exports.getActiveBookingsOfCustomer = catchAsyncErrors(
+  async (req, res, next) => {
+    let bookings = await Booking.find({
+      customer: req.query._id,
+      status: { $nin: [Enums.BOOKING_STATUS.COMPLETED, Enums.BOOKING_STATUS.CANCELLED] } // Filter out/not includes completed and cancelled bookings
+    })
+      .sort("-date")
+      .populate("customer address service subService");
+
+    res.status(200).json({
+      success: true,
+      bookings,
+      bookingsCount: bookings.length,
+    });
+  }
+);
+
 // fetch all current bookings of a user
 exports.getCurrentBookingsOfAUser = catchAsyncErrors(async (req, res, next) => {
   const currentDate = new Date();
@@ -315,7 +333,9 @@ exports.getFutureBookingsOfAUser = catchAsyncErrors(async (req, res, next) => {
 
 // Called from search rider screen to get booking status. If booking is accepted, then get service provider details as well.
 exports.confirmBookingStatus = catchAsyncErrors(async (req, res, next) => {
-  let booking = await Booking.findOne({ _id: req.params.id }).select("+otp");
+  let booking = await Booking.findOne({ _id: req.params.id })
+    .select("+otp")
+    .populate("service subService package");
   if (!booking) {
     return next(new ErrorHandler("No such booking found", 400));
   }
@@ -332,7 +352,7 @@ exports.confirmBookingStatus = catchAsyncErrors(async (req, res, next) => {
         status: Enums.BOOKING_STATUS.CANCELLED,
       },
       { new: true, runValidators: true, useFindAndModify: false }
-    )
+    );
 
     // refund amount if it was pre-paid order
     if (booking.paymentInfo.status === Enums.PAYMENT_STATUS.PAID) {
@@ -360,7 +380,10 @@ exports.confirmBookingStatus = catchAsyncErrors(async (req, res, next) => {
   let status = booking.status;
   let service_provider = null;
 
-  if (booking.status === Enums.BOOKING_STATUS.ACCEPTED) {
+  if (
+    booking.status === Enums.BOOKING_STATUS.ACCEPTED || 
+    booking.status === Enums.BOOKING_STATUS.ONGOING
+  ) {
     service_provider = await User.findOne({ _id: booking.serviceProvider });
   }
 

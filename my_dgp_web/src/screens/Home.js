@@ -30,6 +30,7 @@ import DemoContentModal from "../components/components/DemoContentModal/DemoCont
 import FeedbackComponent from "./Feedback/FeedbackComponent";
 import Enums from "../utils/Enums";
 import { loginViaOTP } from "../actions/UserActions";
+import { BASE_URL } from "../config/Axios";
 
 export default function Home() {
   const { savedData } = useSelector((state) => state.savedData);
@@ -68,6 +69,7 @@ export default function Home() {
     (state) => state.confirmedBooking//get booking from id
   );
   const [isFeedbackVisible,setIsFeedbackVisible] = useState(false)
+  const [activeBookings,setActiveBookings] = useState();
 
     const currentTime = () => {
     const now = new Date();
@@ -147,6 +149,7 @@ export default function Home() {
     if(isLogin()){
       dispatch(loginViaOTP({contactNumber:localStorage.getItem('userNumber')}))
     }
+    fetchActiveBookings(localStorage.getItem('userId'))
   }, [])
   
   //unselects sub category when category changes
@@ -595,6 +598,49 @@ export default function Home() {
     );
   };
 
+  const fetchActiveBookings = async (id) => {
+    try {
+      const response = await axios.get(`${BASE_URL}/api/v1/customer/bookings/activeBookings`, {
+        params: { _id: id },
+      });
+      setActiveBookings(response?.data?.bookings);
+    } catch (error) {
+      console.error("Error fetching active bookings:", error);
+      throw error; // Rethrow the error for further handling if needed
+    }
+  };
+
+  const currentBookingStrip = () => {
+    return (
+      <div style={{padding: 10, fontWeight:'400'}}>
+        Active Bookings
+      <div style={{ display: 'flex', overflowX: 'auto' }}>
+        {activeBookings?.map((booking, index) => (
+          <div
+            key={index}
+            style={{
+              backgroundColor: Colors.LIGHT_GRAY,
+              color: Colors.BLACK,
+              padding: 6,
+              borderRadius: 5,
+              fontWeight: '500',
+              marginRight:10,
+              marginTop:10,
+              minWidth: '200px',
+            }}
+            onClick={() => { navigate('/booking-details', { state: { bookingId: booking?._id } }) }}
+          >
+            {booking?.service?.name} {booking?.subService?.name}
+            <div style={{ color: Colors.DARK_GRAY, fontSize: 12 }}>
+              {new Date(booking?.date).toLocaleDateString()} • {booking?.status}
+            </div>
+          </div>
+        ))}
+      </div>
+      </div>
+    );
+  };
+
   return loading ? (
     <LoaderComponent />
   ) : (
@@ -626,6 +672,7 @@ export default function Home() {
         </div>
 
         <div className="homepage-container" >
+        {!serviceName && activeBookings && currentBookingStrip()}
           {/* Tag line */}
           <div
             style={{

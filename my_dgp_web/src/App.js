@@ -19,6 +19,7 @@ import AdvancePayments from './screens/BalancePayments/AdvancePayments'
 import AboutMydgp from './screens/AboutMydgp'
 import ServiceAgreement from './screens/ServiceAgreement'
 import FAQPage from './screens/Faq/FAQPage'
+import BookingDetails from './screens/BookingDetails'
 
 
 export default function App() {
@@ -42,6 +43,7 @@ export default function App() {
             <Route exact path="/aboutus" element={<AboutMydgp/>} />
             <Route exact path="/service-agreement" element={<ServiceAgreement/>} />
             <Route exact path="/advance-payment" element={<AdvancePayments/>} />
+            <Route exact path="/booking-details" element={<BookingDetails/>} />
             <Route exact path="/faq" element={<FAQPage/>} />
             <Route path="*" element={<NotFound />} />
           </Routes>

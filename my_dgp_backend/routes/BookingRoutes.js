@@ -12,6 +12,7 @@ const {
   paymentSuccess,
   getBookingsOfCustomer,
   updatePaymentOnBooking,
+  getActiveBookingsOfCustomer,
 } = require("../controllers/BookingController");
 const router = express.Router();
 
@@ -36,6 +37,7 @@ router.route("/bookings/pendingAmount/:id").get(isAuthenticatedUser, getPendingB
 router.route("/bookings/createOrder").post(createOrder)
 router.route("/bookings/payment/success").post(paymentSuccess)
 router.route("/bookings/customer").get(getBookingsOfCustomer)
+router.route("/customer/bookings/activeBookings").get(getActiveBookingsOfCustomer)
 router.route("/bookings/payment/update").post(updatePaymentOnBooking)
 
 

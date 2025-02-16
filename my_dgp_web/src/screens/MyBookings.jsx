@@ -2,9 +2,11 @@ import React, { useEffect, useState } from 'react'
 import Colors from '../utils/Colors';
 import { BASE_URL } from '../config/Axios';
 import HamburgerMenu from '../components/components/HamburgerMenu';
+import { useNavigate } from 'react-router-dom';
 
 const MyBookings = () => {
     const [bookingData, setBookingData] = useState(null);
+    const navigate = useNavigate();
 
     const formatDate = (dateString) => {
         const date = new Date(dateString);
@@ -45,10 +47,10 @@ const MyBookings = () => {
             <div style={{position:'sticky',top:0,backgroundColor:'white',padding:10}} >
                 <div><HamburgerMenu /></div><div style={{ textAlign: 'center', fontSize: 20, fontWeight: '600' }} >My Bookings</div>
             </div>
-            <div style={{padding:20,height:"93vh",position:"static",overflow:"scroll"}} >
+            <div style={{ padding: 20, height: "93vh", position: "static", overflow: "scroll" }} >
                 <ul style={{ listStyleType: 'none', padding: 0, marginTop: 20 }}>
                     {bookingData?.bookings.map(booking => (
-                        <li key={booking.id} style={{ borderRadius: 10, margin: '20px 0', padding: '10px', backgroundColor: Colors.WHITE }}>
+                        <li onClick={() => { navigate('/booking-details', { state: { bookingId: booking?._id } }) }} key={booking.id} style={{ borderRadius: 10, margin: '20px 0', padding: '10px', backgroundColor: Colors.WHITE }}>
                             <h3 style={{ fontSize: 16, fontWeight: '600' }} >{booking?.service?.name} for {booking?.subService?.name} </h3>
                             <div style={{ fontWeight: '300', fontSize: 14 }} > {booking?._id} • {formatDate(booking.date)} • {booking?.status?.charAt(0).toUpperCase() + booking?.status?.slice(1).toLowerCase()} </div>
                             <div style={{ fontWeight: '300', fontSize: 14 }} >₹{booking.totalPrice.toFixed(2)}</div>
