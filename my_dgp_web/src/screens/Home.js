@@ -672,7 +672,7 @@ export default function Home() {
         </div>
 
         <div className="homepage-container" >
-        {!serviceName && activeBookings && currentBookingStrip()}
+        {!serviceName && activeBookings?.length > 0 && currentBookingStrip()}
           {/* Tag line */}
           <div
             style={{
