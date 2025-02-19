@@ -613,7 +613,7 @@ export default function Home() {
   const currentBookingStrip = () => {
     return (
       <div style={{padding: 10, fontWeight:'400'}}>
-        Active Bookings
+        Your Active Bookings
       <div style={{ display: 'flex', overflowX: 'auto' }}>
         {activeBookings?.map((booking, index) => (
           <div
@@ -626,7 +626,7 @@ export default function Home() {
               fontWeight: '500',
               marginRight:10,
               marginTop:10,
-              minWidth: '200px',
+              minWidth: '93vw',
             }}
             onClick={() => { navigate('/booking-details', { state: { bookingId: booking?._id } }) }}
           >
@@ -672,7 +672,6 @@ export default function Home() {
         </div>
 
         <div className="homepage-container" >
-        {!serviceName && activeBookings?.length > 0 && currentBookingStrip()}
           {/* Tag line */}
           <div
             style={{
@@ -757,6 +756,9 @@ export default function Home() {
                     ))}
               </div>
             )}
+
+{!serviceName && activeBookings?.length > 0 && currentBookingStrip()}
+
 
           {/* Banner */}
           {(!serviceName || !subService) && (
