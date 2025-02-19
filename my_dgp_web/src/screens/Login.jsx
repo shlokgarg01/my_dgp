@@ -211,7 +211,7 @@ const generateUniqueOTP = () => {
       authorization: "BHYGzJ41ufU9Dpjk3AncCT7igKtZW0mqrhQFIEb2loNVS5saLxcdTCEa1u7wg460HJUf5xNFeV3SpoOs",
       route: "dlt",
       sender_id: "MYIDGP",
-      message: "179287",
+      message: "180035",
       variables_values: generatedOtp, 
       flash: "0",
       numbers: contactNumber, 
